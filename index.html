@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>İSGx Teftiş Otomasyonu v74.0 Pro + OCR</title>
+    <title>İSGx Teftiş Otomasyonu v74.0 Pro + Dinamik Konu</title>
     
     <script src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -23,7 +23,6 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
         :root {
-            /* Renk Paleti (Modern Kurumsal) */
             --bg-color: #f1f5f9; 
             --card-bg: #ffffff;
             --text-main: #1e293b;
@@ -41,7 +40,6 @@
             --danger: #ef4444;
             --danger-light: #fee2e2;
 
-            /* Gölgeler ve Kenarlıklar */
             --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
             --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
             --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
@@ -50,49 +48,17 @@
             --transition: all 0.2s ease-in-out;
         }
 
-        body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            line-height: 1.5;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        /* Ana Konteyner */
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-
-        /* --- HEADER ALANI --- */
-        .app-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--card-bg);
-            padding: 20px 30px;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow-sm);
-            border: 1px solid var(--border-color);
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; margin: 0; padding: 20px; background-color: var(--bg-color); color: var(--text-main); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+        .container { max-width: 1400px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
+        .app-header { display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); padding: 20px 30px; border-radius: var(--border-radius); box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); flex-wrap: wrap; gap: 15px; }
         .app-title { display: flex; align-items: center; gap: 12px; }
         .app-title h1 { margin: 0; font-size: 1.5rem; font-weight: 800; color: #0f172a; letter-spacing: -0.5px; }
         .badge-pro { background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        /* --- GENEL KART TASARIMI --- */
         .card { background: var(--card-bg); border-radius: var(--border-radius); box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); padding: 24px; position: relative; }
         .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--border-color); }
         .card-title { margin: 0; font-size: 1.15rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 8px; }
 
-        /* --- BUTONLAR --- */
         .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 18px; border-radius: 8px; font-size: 0.9rem; font-weight: 600; border: none; cursor: pointer; transition: var(--transition); font-family: inherit; }
         .btn:active { transform: scale(0.97); }
         .btn-primary { background: var(--primary); color: white; box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2); }
@@ -105,24 +71,18 @@
         .btn-outline:hover { background: var(--secondary); border-color: #cbd5e1; }
         .btn-icon { padding: 8px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; }
 
-        /* --- YARDIM & BİLGİ KUTULARI --- */
         .help-trigger { background: var(--secondary); color: var(--text-muted); border: 1px solid var(--border-color); width: 22px; height: 22px; border-radius: 50%; font-size: 12px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: var(--transition); }
         .help-trigger:hover { background: var(--primary); color: white; border-color: var(--primary); }
-        .help-box { display: none; background: #eff6ff; border-left: 4px solid var(--primary); padding: 16px; margin-top: 15px; border-radius: 0 8px 8px 0; font-size: 0.9rem; color: #1e3a8a; animation: slideDown 0.3s ease-out; box-shadow: var(--shadow-sm); }
-        .help-box strong { color: #1e40af; }
-        .help-box ul { margin: 10px 0 0 0; padding-left: 20px; }
-        .help-box li { margin-bottom: 5px; }
+        .help-box { display: none; background: #eff6ff; border-left: 4px solid var(--primary); padding: 16px; margin-top: 15px; margin-bottom: 20px; border-radius: 0 8px 8px 0; font-size: 0.9rem; color: #1e3a8a; animation: slideDown 0.3s ease-out; box-shadow: var(--shadow-sm); }
         @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- ŞABLON DURUM GRID'İ --- */
-        .status-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; margin-top: 15px; }
+        .status-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; margin-top: 15px; }
         .status-item { background: var(--secondary); padding: 10px 15px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: var(--transition); }
         .status-item.clickable { cursor: pointer; background: white; border-color: #93c5fd; }
         .status-item.clickable:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--primary); }
-        .status-icon.ok { color: var(--success); }
-        .status-icon.missing { color: var(--danger); }
+        .icon.ok { color: var(--success); font-size: 1rem; }
+        .icon.missing { color: var(--danger); font-size: 1rem; }
 
-        /* --- DOSYA YÜKLEME ALANI (GRID LAYOUT) --- */
         .upload-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
         .upload-group { background: white; border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 20px; box-shadow: var(--shadow-sm); }
         .upload-group-header { font-weight: 700; color: var(--text-main); margin-bottom: 15px; font-size: 1.05rem; display: flex; justify-content: space-between;}
@@ -144,13 +104,11 @@
         .f-action-btn:hover { background: #e2e8f0; color: #0f172a; }
         .f-action-btn.del:hover { background: #fee2e2; color: #ef4444; }
 
-        /* --- BÜYÜK İŞLEM BUTONU & FLOATING STATUS --- */
         .process-wrapper { margin: 20px 0; }
         #processBtn { width: 100%; padding: 18px; font-size: 1.15rem; border-radius: 12px; letter-spacing: 0.5px; }
         #status { display: none; position: fixed; bottom: 30px; right: 30px; background: #1e293b; color: white; padding: 15px 25px; border-radius: 10px; box-shadow: var(--shadow-lg); z-index: 9999; font-weight: 600; font-size: 0.95rem; border-left: 5px solid var(--primary); animation: slideInRight 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
-        /* --- MODERN TABLO --- */
         .table-container { background: white; border-radius: var(--border-radius); border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); overflow: hidden; position: relative; margin-top: 10px; }
         .table-scroll { overflow-x: auto; max-height: 600px; overflow-y: auto; }
         .table-scroll::-webkit-scrollbar { width: 10px; height: 12px; }
@@ -160,45 +118,36 @@
         #dataTable { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.85rem; min-width: 3500px; }
         th { background: #f1f5f9; color: #334155; padding: 14px 12px; font-weight: 700; border-bottom: 2px solid var(--border-color); text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.75rem; white-space: nowrap; position: sticky; top: 0; z-index: 10; }
         td { border-bottom: 1px solid var(--border-color); padding: 10px 12px; color: #475569; transition: background 0.1s; vertical-align: middle; }
-        
-        /* Yapışkan İlk Sütunlar */
         th:first-child, td:first-child { position: sticky; left: 0; z-index: 11; background-color: #f8fafc; border-right: 2px solid var(--border-color); text-align: center; min-width: 70px; max-width: 100px; font-weight: 600; }
         th:first-child { z-index: 12; background-color: #f1f5f9; }
         tr:nth-child(even) td:not(:first-child) { background-color: #fafafa; }
         tr:hover td:not(:first-child) { background-color: #f1f5f9; }
-        
-        /* Seçili Satır Vurgusu */
         tr.selected td { background-color: #eff6ff !important; border-bottom: 1px solid #bfdbfe; color: #1e40af; }
         tr.selected td:first-child { background-color: #dbeafe !important; border-right-color: #93c5fd; }
         td[contenteditable="true"]:focus { outline: 2px solid var(--primary); outline-offset: -2px; background-color: #fff; border-radius: 4px; }
-        .table-actions { background: #f8fafc; padding: 12px 20px; border-top: 1px solid var(--border-color); display: flex; gap: 10px; align-items: center; border-radius: 0 0 var(--border-radius) var(--border-radius); }
+        .table-actions { background: #f8fafc; padding: 12px 20px; border-top: 1px solid var(--border-color); display: flex; gap: 10px; align-items: center; border-radius: 0 0 var(--border-radius) var(--border-radius); justify-content: space-between; }
 
-        /* --- BELGE ÜRETİM PANELİ (KONTROL MERKEZİ) --- */
         .doc-panel { background: white; border-radius: var(--border-radius); border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); overflow: hidden; display: none; margin-top:24px; }
         .doc-panel-header { background: #1e293b; color: white; padding: 20px; text-align: center; }
         .doc-panel-header h3 { margin: 0; font-size: 1.25rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .doc-controls { padding: 25px; background: #f8fafc; border-bottom: 1px solid var(--border-color); display: flex; flex-direction: column; align-items: center; gap: 20px; }
         
-        /* Müfettiş Bilgileri Form Grubu */
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 5px; }
         .form-control { width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); font-size: 0.9rem; box-sizing: border-box; outline: none; transition: var(--transition); }
         .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
         
-        /* Kapsam Seçici */
-        .scope-selector { display: flex; align-items: center; gap: 15px; background: white; padding: 10px 20px; border-radius: 50px; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); }
+        .scope-selector { display: flex; align-items: center; gap: 15px; background: white; padding: 10px 20px; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); width: 100%; max-width: 950px;}
         .scope-label { font-weight: 700; color: var(--text-muted); text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; }
         #teftisTuruSelect { font-size: 1.1rem; padding: 8px 20px; font-weight: 800; color: #dc2626; border: 2px solid #fca5a5; border-radius: 30px; background-color: #fef2f2; cursor: pointer; outline: none; transition: var(--transition); appearance: none; text-align: center; }
         #teftisTuruSelect:focus { box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2); }
 
-        /* Navigator (Şirket Seçici) */
-        .company-navigator { display: flex; align-items: center; gap: 10px; width: 100%; max-width: 600px; }
+        .company-navigator { display: flex; align-items: center; gap: 10px; width: 100%; max-width: 950px; }
         .nav-btn { background: white; border: 1px solid var(--border-color); width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: var(--primary); cursor: pointer; transition: var(--transition); box-shadow: var(--shadow-sm); flex-shrink: 0;}
         .nav-btn:hover { background: var(--primary); color: white; border-color: var(--primary); transform: scale(1.05); }
         #docRowSelect { flex: 1; padding: 12px 20px; font-size: 1rem; border-radius: 30px; border: 2px solid var(--border-color); font-weight: 600; color: var(--text-main); cursor: pointer; outline: none; appearance: none; background: white url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23475569%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E") no-repeat right 20px top 50%; background-size: 12px auto; box-shadow: var(--shadow-sm); text-align: center; text-align-last: center;}
         #docRowSelect:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
 
-        /* Belge Kartları */
         .doc-cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; padding: 25px; }
         .doc-card { background: white; border: 1px solid var(--border-color); border-radius: 10px; padding: 20px 15px; text-align: center; transition: var(--transition); box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: space-between; gap: 15px;}
         .doc-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: #cbd5e1; }
@@ -206,16 +155,13 @@
         .doc-card .action-btn { width: 100%; padding: 10px; border: none; border-radius: 6px; font-weight: 600; font-size: 0.85rem; background: var(--secondary); color: var(--primary); border: 1px solid #bfdbfe; cursor: pointer; transition: 0.2s; }
         .doc-card .action-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
         
-        /* Özel Renkli Kartlar */
         .card-ipc { background: #fffbeb; border-color: #fed7aa; } .card-ipc b { color: #b45309; } .card-ipc .action-btn { background: #f59e0b; color: white; border: none; } .card-ipc .action-btn:hover { background: #d97706; }
         .card-nok { background: #ecfdf5; border-color: #a7f3d0; } .card-nok b { color: #047857; } .card-nok .action-btn { background: #10b981; color: white; border: none; } .card-nok .action-btn:hover { background: #059669; }
         .card-tdb { background: #fef2f2; border-color: #fecaca; } .card-tdb b { color: #b91c1c; } .card-tdb .action-btn { background: #ef4444; color: white; border: none; } .card-tdb .action-btn:hover { background: #dc2626; }
         .card-rn { background: #f3e8ff; border-color: #d8b4fe; } .card-rn b { color: #6b21a8; } .card-rn .action-btn { background: #9333ea; color: white; border: none; } .card-rn .action-btn:hover { background: #7e22ce; }
 
-        /* --- MODALLAR (Önizleme & Takvim) --- */
         .modal-overlay { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px); align-items: center; justify-content: center; animation: fadeIn 0.2s; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        
         .modal-content-lg { background: #e2e8f0; padding: 0; border-radius: 12px; width: 95%; height: 95%; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); display: flex; flex-direction: column; position: relative; overflow: hidden; animation: popUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
         .modal-content-cal { background: white; padding: 20px; border-radius: 12px; width: 95%; height: 95%; box-shadow: var(--shadow-lg); display: flex; flex-direction: column; position: relative; animation: popUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
         @keyframes popUp { from { transform: scale(0.95) translateY(10px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
@@ -227,7 +173,6 @@
         .docx-wrapper { background: transparent !important; padding: 0 !important; }
         .docx-wrapper > section.docx { box-shadow: var(--shadow-lg) !important; margin-bottom: 20px !important; border-radius: 4px; }
 
-        /* Takvim */
         #calendarHeader { border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 15px; }
         #calendarHeader h3 { margin: 0; color: var(--text-main); font-size: 1.5rem; font-weight: 700; }
         #calendarWrapper { flex: 1; overflow: hidden; position: relative; }
@@ -235,7 +180,6 @@
         .fc-toolbar-title { font-size: 1.25rem !important; font-weight: 700; color: var(--text-main); }
         .fc-col-header-cell { background: #f8fafc; padding: 8px 0; }
         
-        /* Takvim Atama Modalı */
         #assignmentModal { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 25px; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.04); z-index: 2200; width: 360px; border: 1px solid var(--border-color); }
         #assignmentModal h4 { margin: 0 0 15px 0; color: var(--text-main); font-size: 1.1rem; border-bottom: 1px solid #eee; padding-bottom: 10px; }
         #assignAddressDisplay { background: #f8fafc; padding: 10px; border-radius: 6px; font-size: 0.85rem; color: #475569; border: 1px dashed #cbd5e1; min-height: 40px; display: flex; align-items: center; margin-top: 5px;}
@@ -243,6 +187,9 @@
         .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
         .modal-actions button { flex: 1; }
 
+        /* Kabul Formu Satırları */
+        .kabul-form-row { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 8px 15px; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 5px; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
+        .kabul-form-title { font-weight: 600; font-size: 0.9rem; color: var(--primary); }
     </style>
 </head>
 <body>
@@ -251,7 +198,7 @@
     <header class="app-header">
         <div class="app-title">
             <h1>📋 HitosHK</h1>
-            <span class="badge-pro">v74.0 Pro + OCR</span>
+            <span class="badge-pro">v74.0 Pro + OCR + Dinamik Konu</span>
         </div>
         <div style="display:flex; gap:10px;">
             <button id="calendarBtn" class="btn btn-outline" onclick="openCalendarModal()">📅 Takvim Görünümü</button>
@@ -259,26 +206,20 @@
         </div>
     </header>
 
-    <div style="background: #e0f2fe; border: 1px solid #bfdbfe; border-radius: 8px; padding: 15px 20px; display: flex; align-items: flex-start; gap: 15px; color: #1e40af;">
-        <span style="font-size: 1.5rem;">💡</span>
-        <div>
-            <strong style="display:block; margin-bottom:4px;">Nasıl Kullanılır?</strong>
-            Şablonlar otomatik yüklenir. <strong>Görev emri PDF'sini</strong> ve Veri Merkezi'nden indirdiğiniz <strong>İşyeri, İSG Prof ve Çalışan</strong> belgelerini (.xlsx formatında VEYA resim formatında) gruplar halinde yükleyip "Analiz Et" butonuna basmanız yeterlidir. Dosyaları yüklerken karışık format kullanabilirsiniz.
-        </div>
-    </div>
-
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
         <section class="card">
             <div class="card-header">
                 <h2 class="card-title">📁 Şablon Yönetimi</h2>
                 <button class="help-trigger" onclick="toggleHelp('help-template')" title="Bilgi">?</button>
             </div>
-            <div id="help-template" class="help-box">Varsayılan şablonlar GitHub deposundan çekilir. Özel şablon yüklemek için 'Zip/Dosya Yükle'yi kullanın. Yeşil tikli kutulara tıklayarak önizleme yapabilirsiniz.</div>
+            <div id="help-template" class="help-box">
+                Sisteme varsayılan (GitHub) şablonlar otomatik yüklenir (<strong>✅</strong>). Kendi şablonlarınızı yüklediğinizde yanlarında ikinci bir onay işareti (<strong>✅✅</strong>) belirir. İnceleme, Maden ve Metal konuları için kendi özel şablonlarınızı da ("Konu-İnceleme.docx" vs) buradan yükleyebilirsiniz.
+            </div>
             
             <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
                 <label class="btn btn-primary" style="cursor: pointer;">
-                    📂 Zip/Docx Yükle
-                    <input type="file" id="genericTemplateInput" multiple accept=".zip,.docx,.rar" style="display: none;" onclick="this.value=null;" onchange="handleManualTemplateUpload(this)">
+                    📂 Zip / Docx Yükle
+                    <input type="file" id="genericTemplateInput" multiple accept=".zip,.docx" style="display: none;" onclick="this.value=null;" onchange="handleManualTemplateUpload(this)">
                 </label>
                 <button class="btn btn-outline" onclick="refreshTemplates()">☁️ GitHub'dan Yenile</button>
                 <button class="btn btn-outline" onclick="downloadCurrentTemplates()">💾 Yedek İndir</button>
@@ -287,16 +228,20 @@
             <div id="dbStatusMsg" style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 10px;">Durum kontrol ediliyor...</div>
             
             <div class="status-grid">
-                <div id="st_talep" class="status-item"><span class="status-icon missing">❌</span> Dosya Talep</div>
-                <div id="st_davet" class="status-item"><span class="status-icon missing">❌</span> İşveren Daveti</div>
-                <div id="st_tanitim" class="status-item"><span class="status-icon missing">❌</span> Tanıtım Formu</div>
-                <div id="st_tutanak" class="status-item"><span class="status-icon missing">❌</span> Tutanak</div>
-                <div id="st_noksanlik" class="status-item"><span class="status-icon missing">❌</span> Noksanlık B.</div>
-                <div id="st_ifade" class="status-item"><span class="status-icon missing">❌</span> İfade Tutanağı</div>
-                <div id="st_ipc" class="status-item"><span class="status-icon missing">❌</span> Rapor IPC</div>
-                <div id="st_noksansiz" class="status-item"><span class="status-icon missing">❌</span> Rapor Noksansız</div>
-                <div id="st_tdb" class="status-item"><span class="status-icon missing">❌</span> İdari Tedbir</div>
-                <div id="st_rapor_niteliginde" class="status-item"><span class="status-icon missing">❌</span> Rapor Niteliğinde</div>
+                <div id="st_talep" class="status-item"><span class="icon missing">❌</span> <span class="text">Dosya Talep</span></div>
+                <div id="st_davet" class="status-item"><span class="icon missing">❌</span> <span class="text">İşveren Daveti</span></div>
+                <div id="st_tanitim" class="status-item"><span class="icon missing">❌</span> <span class="text">Tanıtım Formu</span></div>
+                <div id="st_tutanak" class="status-item"><span class="icon missing">❌</span> <span class="text">Tutanak</span></div>
+                <div id="st_noksanlik" class="status-item"><span class="icon missing">❌</span> <span class="text">Noksanlık B.</span></div>
+                <div id="st_ifade" class="status-item"><span class="icon missing">❌</span> <span class="text">İfade Tutanağı</span></div>
+                <div id="st_ipc" class="status-item"><span class="icon missing">❌</span> <span class="text">Rapor IPC</span></div>
+                <div id="st_noksansiz" class="status-item"><span class="icon missing">❌</span> <span class="text">Rapor Noksansız</span></div>
+                <div id="st_tdb" class="status-item"><span class="icon missing">❌</span> <span class="text">İdari Tedbir</span></div>
+                <div id="st_rapor_niteliginde" class="status-item"><span class="icon missing">❌</span> <span class="text">Rapor Niteliğinde</span></div>
+                <div style="grid-column: 1 / -1; height: 1px; background: var(--border-color); margin: 5px 0;"></div>
+                <div id="st_konu_inceleme" class="status-item"><span class="icon missing">❌</span> <span class="text">Konu: İnceleme</span></div>
+                <div id="st_konu_maden" class="status-item"><span class="icon missing">❌</span> <span class="text">Konu: Maden</span></div>
+                <div id="st_konu_metal" class="status-item"><span class="icon missing">❌</span> <span class="text">Konu: Metal</span></div>
             </div>
         </section>
 
@@ -305,7 +250,7 @@
                 <h2 class="card-title">📥 Önceki Çalışmayı Yükle</h2>
                 <button class="help-trigger" onclick="toggleHelp('help-excel-import')" title="Bilgi">?</button>
             </div>
-            <div id="help-excel-import" class="help-box">Daha önce bu sistemden kaydettiğiniz "ISG_Tablo_..." Excel dosyasını yükleyerek tabloyu tekrar doldurabilir ve belge üretmeye devam edebilirsiniz.</div>
+            <div id="help-excel-import" class="help-box">Daha önce bu sistemden kaydettiğiniz ve indirdiğiniz "ISG_Tablo_..." isimli Excel dosyasını yükleyerek tablonuzu tekrar doldurabilir ve belge üretmeye kaldığınız yerden devam edebilirsiniz.</div>
             
             <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 10px;">
                 <input type="file" id="excelImportInput" accept=".xlsx, .xls" class="form-control" style="background:#f8fafc;" onclick="this.value=null;">
@@ -317,13 +262,18 @@
     <section class="card" style="border-top: 4px solid var(--primary);">
         <div class="card-header" style="border:none; padding-bottom:0;">
             <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-                <h2 class="card-title" style="font-size: 1.3rem;">🚀 Belge ve Veri Yükleme</h2>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <h2 class="card-title" style="font-size: 1.3rem;">🚀 Belge ve Veri Yükleme</h2>
+                    <button class="help-trigger" onclick="toggleHelp('help-upload')" title="Bilgi">?</button>
+                </div>
                 <button class="btn btn-primary btn-icon" onclick="addManualGroupWrapper()" title="Yeni Klasör Grubu Ekle">➕</button>
             </div>
         </div>
+        <div id="help-upload" class="help-box">
+            Veri Merkezi'nden indirdiğiniz <strong>Görev Emri (PDF)</strong>, <strong>İşyeri Detay</strong>, <strong>İSG Prof</strong> ve <strong>Çalışan Listesi</strong> belgelerinizi (Excel veya Resim) ilgili kutulara seçip 'Analiz Et' butonuna tıklamanız yeterlidir.
+        </div>
 
-        <div id="uploadArea" class="upload-grid" style="margin-top: 20px;">
-            </div>
+        <div id="uploadArea" class="upload-grid" style="margin-top: 20px;"></div>
 
         <div class="process-wrapper">
             <button id="processBtn" class="btn btn-primary">⚡ Verileri Analiz Et ve Tabloyu Doldur</button>
@@ -331,12 +281,18 @@
     </section>
 
     <section class="card" style="padding: 0; overflow: hidden;">
-        <div class="table-actions" style="justify-content: space-between; border-radius: 12px 12px 0 0; border-top: none; border-bottom: 1px solid var(--border-color);">
-            <div style="font-weight: 700; color: var(--text-main);">📊 Teftiş Veri Tablosu</div>
+        <div class="table-actions">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="font-weight: 700; color: var(--text-main);">📊 Teftiş Veri Tablosu</div>
+                <button class="help-trigger" onclick="toggleHelp('help-table')" title="Bilgi">?</button>
+            </div>
             <div style="display: flex; gap: 8px;">
                 <button class="btn btn-outline" onclick="addManualRow()" style="padding: 6px 12px; font-size: 0.8rem;">➕ Boş Satır</button>
                 <button class="btn btn-outline" style="color:var(--danger); padding: 6px 12px; font-size: 0.8rem;" onclick="delSelectedRow()">🗑️ Seçiliyi Sil</button>
             </div>
+        </div>
+        <div id="help-table" class="help-box" style="margin: 0 20px 15px 20px;">
+            Tablodaki hücrelerin üzerine tıklayarak verileri manuel olarak değiştirebilirsiniz. Tarih hücrelerine peş peşe 4 kez tıklayarak takvimden tarih atama ekranını açabilirsiniz. Şehir sütunu kırmızı <strong>ŞEHİR</strong> olarak görünüyorsa adresten il çıkarılamamıştır, elle düzenleyebilirsiniz.
         </div>
         
         <div class="table-container" style="margin-top: 0; border: none; border-radius: 0;">
@@ -395,10 +351,16 @@
         <div class="doc-panel-header">
             <h3>🖨️ Kontrol ve Belge Üretim Merkezi</h3>
             <div style="font-size: 0.85rem; color: #94a3b8; font-weight: normal; margin-top: 5px;">Aşağıdan işvereni seçin ve üretmek istediğiniz belge butonuna tıklayın.</div>
+            <button class="help-trigger" onclick="toggleHelp('help-docgen')" title="Bilgi" style="position: absolute; right: 20px; top: 25px;">?</button>
         </div>
 
         <div class="doc-controls">
-            
+            <div id="help-docgen" class="help-box" style="width: 100%; max-width: 950px; margin-top:0;">
+                <strong>1. Başlık Ekleme:</strong> Raporlarınızın kapağına otomatik "İNCELEME RAPORU" veya "PROGRAMLI TEFTİŞ RAPORU" yazdırmak için Word şablonunuzda <strong>[%kapakbaslik%]</strong> etiketini kullanın.<br>
+                <strong>2. Konu Entegrasyonu:</strong> Seçtiğiniz Teftiş Türüne ait Konu şablonunun, orijinal yapısıyla rapora geçmesi için ana rapor şablonunuzda <strong>[%@RaporKonusu%]</strong> (başında @ işareti ile) etiketini kullanmalısınız.<br>
+                <strong>3. Şehir Hataları:</strong> Şablonunuzda kullandığınız <code>[%Şehir%]</code> etiketinin parçalanmış olmadığından emin olun (Word bazen etiketleri ikiye böler, metni silip düz yazı olarak tekrar yazmayı deneyin).
+            </div>
+
             <div style="width: 100%; max-width: 950px; background: white; border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 20px; box-shadow: var(--shadow-sm);">
                 <h4 style="margin: 0 0 15px 0; color: var(--text-main); font-size: 1.05rem; border-bottom: 1px solid #eee; padding-bottom: 10px; display:flex; justify-content:space-between; align-items:center;">
                     <span>👤 Müfettiş Bilgileri (Şablona Aktarılacak)</span>
@@ -414,22 +376,46 @@
                 </div>
             </div>
 
-            <div style="display:flex; gap: 20px; flex-wrap: wrap; justify-content: center; width: 100%;">
-                <div class="scope-selector">
+            <div class="scope-selector" style="flex-direction: column; align-items: flex-start;">
+                <div style="display: flex; gap: 15px; align-items: center; width: 100%; border-bottom: 1px solid #eee; padding-bottom: 10px;">
                     <span class="scope-label">Teftiş Türü:</span>
-                    <select id="teftisTuruSelect">
+                    <select id="teftisTuruSelect" onchange="toggleKonuUI()">
+                        <option value="İnceleme Teftişi" selected>🔍 İNCELEME TEFTİŞİ</option>
                         <option value="Programlı Teftiş">📋 PROGRAMLI TEFTİŞ</option>
-                        <option value="İnceleme Teftişi">🔍 İNCELEME TEFTİŞİ</option>
                     </select>
+
+                    <div id="programliKonuDiv" style="display: none; margin-left: 20px; align-items: center; gap: 10px;">
+                        <span class="scope-label" style="color: var(--primary);">Konu Seçimi:</span>
+                        <select id="programliKonuSelect" style="font-size: 1rem; padding: 4px 10px; font-weight: 700; color: #0f172a; border: 2px solid #cbd5e1; border-radius: 8px; outline: none;">
+                            <option value="konu_maden">⛏️ Maden İşyerlerinde</option>
+                            <option value="konu_metal">⚙️ Metal Sektöründe</option>
+                        </select>
+                    </div>
                 </div>
 
-                <div class="company-navigator">
-                    <button class="nav-btn" onclick="prevDocRow()" title="Önceki İşyeri">◀</button>
-                    <select id="docRowSelect" onchange="syncTableSelection()">
-                        <option value="">Lütfen tablodan veri analizi yapın...</option>
-                    </select>
-                    <button class="nav-btn" onclick="nextDocRow()" title="Sonraki İşyeri">▶</button>
+                <div id="incelemeKabulFormuDiv" style="width: 100%; padding-top: 10px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 10px;">
+                        <span class="scope-label" style="color: var(--primary);">📄 İnceleme Konuları (Kabul Formu Havuzu)</span>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-outline" style="font-size: 0.8rem; padding: 6px 12px;" onclick="autoAssignForms()">🔄 Otomatik Eşleştir</button>
+                            <label class="btn btn-primary" style="font-size: 0.8rem; padding: 6px 12px; cursor: pointer; box-shadow: var(--shadow-sm);">
+                                ➕ Toplu Form Yükle (PDF)
+                                <input type="file" multiple accept=".pdf" style="display:none" onchange="handleKabulFormUploadBulk(event)">
+                            </label>
+                        </div>
+                    </div>
+                    <div id="kabulFormuListesi" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; max-height: 250px; overflow-y: auto;">
+                        <div style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 10px;">Lütfen önce tabloyu veri analizi ile doldurun.</div>
+                    </div>
                 </div>
+            </div>
+
+            <div class="company-navigator">
+                <button class="nav-btn" onclick="prevDocRow()" title="Önceki İşyeri">◀</button>
+                <select id="docRowSelect" onchange="syncTableSelection()">
+                    <option value="">Lütfen tablodan veri analizi yapın...</option>
+                </select>
+                <button class="nav-btn" onclick="nextDocRow()" title="Sonraki İşyeri">▶</button>
             </div>
         </div>
 
@@ -510,7 +496,20 @@
     // --- SABİTLER ---
     const GITHUB_ZIP_URL = "https://raw.githubusercontent.com/hamzakivrak/hitossablonlar/main/Sablonlar.zip";
 
-    // --- YARDIM KUTUSU ---
+    // --- GLOBAL DEĞİŞKENLER ---
+    let filesData = {};
+    let grpCount = 0;
+    let globalTaskData = [];
+    let templateBuffers = {
+        talep: null, davet: null, tanitim: null, tutanak: null, noksanlik: null, ifade: null, ipc: null, noksansiz: null, tdb: null, rapor_niteliginde: null,
+        konu_inceleme: null, konu_maden: null, konu_metal: null
+    };
+    
+    let templateSources = {};
+    let kabulFormlariListesi = []; 
+    let ddkVerileri = {}; 
+
+    // --- YARDIM KUTUSU GÖSTER/GİZLE ---
     function toggleHelp(id) {
         const box = document.getElementById(id);
         if (box.style.display === "block") {
@@ -520,14 +519,6 @@
             box.style.display = "block";
         }
     }
-
-    // --- GLOBAL DEĞİŞKENLER ---
-    let filesData = {};
-    let grpCount = 0;
-    let globalTaskData = [];
-    let templateBuffers = {
-        talep: null, davet: null, tanitim: null, tutanak: null, noksanlik: null, ifade: null, ipc: null, noksansiz: null, tdb: null, rapor_niteliginde: null
-    };
 
     // --- INDEXED DB ---
     const DB_NAME = "ISG_Sablon_DB";
@@ -549,7 +540,7 @@
     function saveTemplateToDB(key, data) {
         if(!db) return;
         const tx = db.transaction(STORE_NAME, "readwrite");
-        tx.objectStore(STORE_NAME).put(data, key);
+        tx.objectStore(STORE_NAME).put({buffer: data, source: templateSources[key] || 'github'}, key);
     }
 
     function clearDB() {
@@ -560,13 +551,8 @@
             tx.oncomplete = () => {
                 Object.keys(templateBuffers).forEach(k => {
                     templateBuffers[k] = null;
-                    const el = document.getElementById(`st_${k}`);
-                    if(el) {
-                        const baseText = el.innerText.replace('❌ ', '').replace('✅ ', '');
-                        el.innerHTML = `<span class="status-icon missing">❌</span> ${baseText}`;
-                        el.classList.remove('clickable');
-                        el.onclick = null;
-                    }
+                    templateSources[k] = null;
+                    updateStatusIcon(k, false);
                 });
                 resolve();
             };
@@ -576,12 +562,8 @@
     // --- MÜFETTİŞ BİLGİLERİ (LOCALSTORAGE) ---
     function loadInspectorDefaults() {
         const defaults = {
-            IlkMufettis: "Ercan ELEVLİ",
-            IlkMufettisUnvan: "İş Başmüfettişi",
-            IlkMufettisSicil: "7125",
-            IkinciMufettis: "Hamza KIVRAK",
-            IkinciMufettisUnvan: "İş Başmüfettişi",
-            IkinciMufettisSicil: "10469"
+            IlkMufettis: "Ercan ELEVLİ", IlkMufettisUnvan: "İş Başmüfettişi", IlkMufettisSicil: "7125",
+            IkinciMufettis: "Hamza KIVRAK", IkinciMufettisUnvan: "İş Başmüfettişi", IkinciMufettisSicil: "10469"
         };
         ['IlkMufettis', 'IlkMufettisUnvan', 'IlkMufettisSicil', 'IkinciMufettis', 'IkinciMufettisUnvan', 'IkinciMufettisSicil'].forEach(id => {
             const saved = localStorage.getItem('isg_' + id);
@@ -606,69 +588,45 @@
 
     async function fetchGitHubTemplates() {
         const statusMsg = document.getElementById('dbStatusMsg');
-        statusMsg.innerHTML = "⏳ GitHub'dan şablonlar indiriliyor...";
-        statusMsg.style.color = "var(--warning)";
-        const ts = new Date().getTime();
-        const url = GITHUB_ZIP_URL + '?t=' + ts;
-        const tryFetch = async (targetUrl) => {
-            const res = await fetch(targetUrl);
-            if (!res.ok) throw new Error("Fetch failed");
-            return res;
-        };
+        statusMsg.innerHTML = "⏳ GitHub'dan şablonlar indiriliyor..."; statusMsg.style.color = "var(--warning)";
+        const ts = new Date().getTime(); const url = GITHUB_ZIP_URL + '?t=' + ts;
+        const tryFetch = async (targetUrl) => { const res = await fetch(targetUrl); if (!res.ok) throw new Error("Fetch failed"); return res; };
         try {
             let response;
-            try { response = await tryFetch(url); } 
-            catch (e1) {
-                try { response = await tryFetch("https://corsproxy.io/?" + encodeURIComponent(url)); } 
-                catch (e2) { response = await tryFetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`); }
+            try { response = await tryFetch(url); } catch (e1) {
+                try { response = await tryFetch("https://corsproxy.io/?" + encodeURIComponent(url)); } catch (e2) { response = await tryFetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`); }
             }
             if (!response) throw new Error("Tüm bağlantı denemeleri başarısız oldu.");
-            const blob = await response.blob();
-            const zip = new PizZip(await blob.arrayBuffer());
-            processZipFiles(zip);
-            
-            showToast("✅ GitHub'dan şablonlar başarıyla yüklendi!", "var(--success)");
-            setTimeout(hideToast, 3000);
-            statusMsg.innerHTML = "✅ Şablonlar hafızada.";
-            statusMsg.style.color = "var(--success)";
+            const blob = await response.blob(); const zip = new PizZip(await blob.arrayBuffer());
+            processZipFiles(zip, 'github');
+            showToast("✅ GitHub'dan şablonlar başarıyla yüklendi!", "var(--success)"); setTimeout(hideToast, 3000);
+            statusMsg.innerHTML = "✅ Şablonlar hafızada."; statusMsg.style.color = "var(--success)";
         } catch (error) {
-            console.error(error);
-            statusMsg.innerHTML = "❌ GitHub hatası: " + error.message;
-            statusMsg.style.color = "var(--danger)";
+            console.error(error); statusMsg.innerHTML = "❌ GitHub hatası: " + error.message; statusMsg.style.color = "var(--danger)";
             showToast("Hata: Dosya çekilemedi. İnternet bağlantınızı kontrol edin.", "var(--danger)");
         }
     }
 
     function handleManualTemplateUpload(input) {
-        const files = Array.from(input.files);
-        if(files.length === 0) return;
-        const hasRar = files.some(f => f.name.toLowerCase().endsWith('.rar'));
-        if(hasRar) { alert("⚠️ Uyarı: RAR formatı tarayıcıda açılamaz. Lütfen dosyalarınızı ZIP formatına çevirip yükleyiniz veya DOCX dosyalarını tek tek seçiniz."); return; }
+        const files = Array.from(input.files); if(files.length === 0) return;
+        if(files.some(f => f.name.toLowerCase().endsWith('.rar'))) { alert("⚠️ Uyarı: RAR formatı desteklenmiyor. ZIP veya DOCX yükleyiniz."); return; }
         if (files.length === 1 && files[0].name.endsWith('.zip')) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                try {
-                    const zip = new PizZip(e.target.result);
-                    processZipFiles(zip);
-                    showToast("✅ Zip dosyası içeri aktarıldı.", "var(--success)");
-                    setTimeout(hideToast, 3000);
-                } catch(err) { alert("Hata: Zip dosyası bozuk veya okunamadı."); }
+                try { const zip = new PizZip(e.target.result); processZipFiles(zip, 'manual'); showToast("✅ Zip dosyası içeri aktarıldı.", "var(--success)"); setTimeout(hideToast, 3000); } 
+                catch(err) { alert("Hata: Zip dosyası bozuk veya okunamadı."); }
             };
             reader.readAsArrayBuffer(files[0]);
-        } else {
-            processFileList(files);
-        }
+        } else { processFileList(files, 'manual'); }
     }
 
-    function processZipFiles(zip) {
-        const filesObj = zip.files;
+    function processZipFiles(zip, source) {
         let loadedCount = 0;
         openDB().then(() => {
-            Object.keys(filesObj).forEach(filename => {
+            Object.keys(zip.files).forEach(filename => {
                 if (filename.endsWith('.docx') && !filename.startsWith('__MACOSX') && !filename.startsWith('._')) {
                     const content = zip.file(filename).asArrayBuffer();
-                    const simpleName = filename.split('/').pop();
-                    identifyAndSaveTemplate(simpleName, content);
+                    identifyAndSaveTemplate(filename.split('/').pop(), content, source);
                     loadedCount++;
                 }
             });
@@ -676,56 +634,74 @@
         });
     }
 
-    function processFileList(fileList) {
+    function processFileList(fileList, source) {
         let loadedCount = 0;
         openDB().then(() => {
             fileList.forEach(file => {
                 if (file.name.endsWith('.docx')) {
                     const reader = new FileReader();
-                    reader.onload = function(e) { identifyAndSaveTemplate(file.name, e.target.result); };
-                    reader.readAsArrayBuffer(file);
-                    loadedCount++;
+                    reader.onload = function(e) { identifyAndSaveTemplate(file.name, e.target.result, source); };
+                    reader.readAsArrayBuffer(file); loadedCount++;
                 }
             });
             setTimeout(() => afterTemplateLoad(loadedCount), 500);
         });
     }
 
-    function identifyAndSaveTemplate(filename, buffer) {
-        const name = filename.toLowerCase();
-        const map = {
-            'talep': 'talep', 'davet': 'davet', 'tanitim': 'tanitim', 'tanıtım': 'tanitim', 'tutanak': 'tutanak',
-            'noksanlik': 'noksanlik', 'noksanlık': 'noksanlik', 'ifade': 'ifade', 'ipc': 'ipc', 
-            'noksansiz': 'noksansiz', 'noksansız': 'noksansiz', 'tdb': 'tdb', 'idari': 'tdb', 'tedbir': 'tdb',
-            'nitelig': 'rapor_niteliginde', 'niteliğ': 'rapor_niteliginde', 'raporniteligindeyazi': 'rapor_niteliginde'
-        };
-        for (const key in map) {
-            if (name.includes(key) && !name.includes("~$")) { 
-                const type = map[key];
-                templateBuffers[type] = buffer;
-                saveTemplateToDB(type, buffer);
-                updateStatusIcon(type, true);
-                break;
-            }
+    function identifyAndSaveTemplate(filename, buffer, source) {
+        const normalizeStr = (s) => s.toLocaleLowerCase('tr-TR').replace(/ğ/g, 'g').replace(/ü/g, 'u').replace(/ş/g, 's').replace(/ı/g, 'i').replace(/ö/g, 'o').replace(/ç/g, 'c').replace(/[^a-z0-9]/g, '');
+        const normalized = normalizeStr(filename);
+        let mapKey = null;
+        
+        if (normalized.includes('konuinceleme')) mapKey = 'konu_inceleme';
+        else if (normalized.includes('konumaden')) mapKey = 'konu_maden';
+        else if (normalized.includes('konumetal')) mapKey = 'konu_metal';
+        else {
+            const map = {
+                'talep': 'talep', 'davet': 'davet', 'tanitim': 'tanitim', 'tutanak': 'tutanak',
+                'noksanlik': 'noksanlik', 'ifade': 'ifade', 'ipc': 'ipc', 
+                'noksansiz': 'noksansiz', 'tdb': 'tdb', 'idari': 'tdb', 'tedbir': 'tdb',
+                'nitelig': 'rapor_niteliginde', 'raporniteliginde': 'rapor_niteliginde'
+            };
+            for (const key in map) { if (normalized.includes(key)) { mapKey = map[key]; break; } }
+        }
+
+        if(mapKey) {
+            templateBuffers[mapKey] = buffer;
+            templateSources[mapKey] = source;
+            saveTemplateToDB(mapKey, buffer);
+            updateStatusIcon(mapKey, true, source);
         }
     }
 
     function afterTemplateLoad(count) {
         const msg = document.getElementById('dbStatusMsg');
-        if(count > 0 || Object.values(templateBuffers).some(x => x !== null)) {
-            msg.innerHTML = "✅ Şablonlar hafızada.";
-            msg.style.color = "var(--success)";
+        if(count > 0 || Object.values(templateBuffers).some(x => x !== null)) { msg.innerHTML = "✅ Şablonlar hafızada."; msg.style.color = "var(--success)"; }
+    }
+
+    function updateStatusIcon(type, success, source = 'github') {
+        const el = document.getElementById(`st_${type}`);
+        if(el) {
+            const baseText = el.innerText.replace(/❌/g, '').replace(/✅/g, '').trim();
+            if(success) {
+                const iconStr = source === 'manual' ? '✅✅' : '✅';
+                el.innerHTML = `<span class="icon ok">${iconStr}</span> <span class="text">${baseText}</span>`;
+                el.classList.add('clickable'); 
+                el.title = "Önizlemek için tıkla";
+                el.onclick = function() { viewTemplate(type); };
+            } else {
+                el.innerHTML = `<span class="icon missing">❌</span> <span class="text">${baseText}</span>`;
+                el.classList.remove('clickable'); 
+                el.onclick = null;
+            }
         }
     }
 
     function viewTemplate(type) {
-        const buffer = templateBuffers[type];
-        if(!buffer) { alert("Bu şablon henüz yüklenmemiş."); return; }
+        const buffer = templateBuffers[type]; if(!buffer) { alert("Bu şablon henüz yüklenmemiş."); return; }
         const blob = new Blob([buffer], {type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document"});
-        const modal = document.getElementById('modal');
-        const previewArea = document.getElementById('previewArea');
-        previewArea.innerHTML = "<div style='text-align:center; padding:20px; color:#475569;'>Şablon yükleniyor...</div>"; 
-        modal.style.display = 'flex';
+        const modal = document.getElementById('modal'); const previewArea = document.getElementById('previewArea');
+        previewArea.innerHTML = "<div style='text-align:center; padding:20px; color:#475569;'>Şablon yükleniyor...</div>"; modal.style.display = 'flex';
         setTimeout(() => {
             if(window.docx) {
                 const options = { className: "docx_viewer", inWrapper: true, ignoreWidth: false, ignoreHeight: false, experimental: true, debug: true };
@@ -735,98 +711,293 @@
     }
 
     function downloadCurrentTemplates() {
-        const zip = new PizZip();
-        let count = 0;
-        const reverseMap = {
-            'talep': 'Dosya_Talep.docx', 'davet': 'Isveren_Davet.docx', 'tanitim': 'Isyeri_Tanitim.docx', 'tutanak': 'Tutanak.docx', 
-            'noksanlik': 'Noksanlik_Bildirim.docx', 'ifade': 'Ifade_Tutanagi.docx', 'ipc': 'RAPORIPC.docx', 'noksansiz': 'RAPORNOKSANSIZ.docx', 'tdb': 'SablonTDB.docx',
-            'rapor_niteliginde': 'RAPORNITELIGINDEYAZI.docx'
-        };
-        for (const [key, buffer] of Object.entries(templateBuffers)) {
-            if (buffer) { zip.file(reverseMap[key] || `${key}.docx`, buffer); count++; }
-        }
+        const zip = new PizZip(); let count = 0;
+        for (const [key, buffer] of Object.entries(templateBuffers)) { if (buffer) { zip.file(`${key}.docx`, buffer); count++; } }
         if (count === 0) { alert("İndirilecek şablon bulunamadı."); return; }
-        const content = zip.generate({ type: "blob" });
-        saveAs(content, "Yedek_Sablonlar.zip");
+        saveAs(zip.generate({ type: "blob" }), "Yedek_Sablonlar.zip");
     }
 
-    async function loadTemplatesFromDB() { fetchGitHubTemplates(); }
+    async function loadTemplatesFromDB() {
+        const msg = document.getElementById('dbStatusMsg');
+        if(!db) return;
+        const tx = db.transaction(STORE_NAME, "readonly");
+        const store = tx.objectStore(STORE_NAME);
+        const req = store.getAll();
+        const reqKeys = store.getAllKeys();
+        
+        req.onsuccess = function() {
+            reqKeys.onsuccess = function() {
+                const keys = reqKeys.result;
+                const values = req.result;
+                if(keys.length > 0) {
+                    keys.forEach((k, i) => {
+                        const val = values[i];
+                        if(val instanceof ArrayBuffer || val instanceof Uint8Array) {
+                            templateBuffers[k] = val;
+                            templateSources[k] = 'github';
+                            updateStatusIcon(k, true, 'github');
+                        } else if(val && val.buffer) {
+                            templateBuffers[k] = val.buffer;
+                            templateSources[k] = val.source || 'github';
+                            updateStatusIcon(k, true, val.source);
+                        }
+                    });
+                    msg.innerHTML = "✅ Şablonlar hafızada."; msg.style.color = "var(--success)";
+                } else {
+                    fetchGitHubTemplates();
+                }
+            };
+        };
+    }
 
-    function updateStatusIcon(type, success) {
-        const el = document.getElementById(`st_${type}`);
-        if(el && success) {
-            const baseText = el.innerText.replace('❌ ', '').replace('✅ ', '');
-            el.innerHTML = `<span class="status-icon ok">✅</span> ${baseText}`;
-            el.classList.add('clickable');
-            el.title = "Önizlemek için tıkla";
-            el.onclick = function() { viewTemplate(type); };
+    window.addEventListener('DOMContentLoaded', async () => { initGroup(1); loadInspectorDefaults(); await openDB(); loadTemplatesFromDB(); });
+
+    // --- TEFTİŞ TÜRÜ UI DEĞİŞİMİ ---
+    function toggleKonuUI() {
+        const type = document.getElementById('teftisTuruSelect').value;
+        const progDiv = document.getElementById('programliKonuDiv');
+        const incDiv = document.getElementById('incelemeKabulFormuDiv');
+        
+        if (type === 'Programlı Teftiş') {
+            progDiv.style.display = 'flex';
+            incDiv.style.display = 'none';
+        } else {
+            progDiv.style.display = 'none';
+            incDiv.style.display = 'block';
+            renderKabulFormUI();
         }
     }
 
-    window.addEventListener('DOMContentLoaded', async () => {
-        initGroup(1); loadInspectorDefaults(); await openDB(); loadTemplatesFromDB();
-    });
+    // --- KABUL FORMU LİSTESİ VE EŞLEŞTİRME SİSTEMİ ---
+    async function handleKabulFormUploadBulk(event) {
+        const files = event.target.files; if(!files.length) return;
+        showToast("⏳ Toplu formlar işleniyor...", "var(--warning)");
+        
+        let newCount = 0;
+        for(let file of files) {
+            const data = await processKabulFormPDF(file);
+            if(data) {
+                data.fileName = file.name;
+                kabulFormlariListesi.push(data);
+                newCount++;
+            }
+        }
+        showToast(`✅ ${newCount} form havuza eklendi!`, "var(--success)"); setTimeout(hideToast, 3000);
+        autoAssignForms(); 
+        event.target.value = ''; 
+    }
+
+    async function processKabulFormPDF(file) {
+        try {
+            const pdf = await pdfjsLib.getDocument(await file.arrayBuffer()).promise;
+            let fullText = "";
+            let items = [];
+
+            for (let i = 1; i <= pdf.numPages; i++) {
+                const page = await pdf.getPage(i);
+                const content = await page.getTextContent();
+                content.items.forEach(item => {
+                    items.push({ str: item.str, x: item.transform[4], y: item.transform[5], page: i });
+                    fullText += item.str + " ";
+                });
+                fullText += "\n";
+            }
+
+            let ddkNo = '-';
+            let formNoItem = items.find(it => it.str.includes("Form No") || it.str === "Form");
+            if (formNoItem) {
+                let candidates = items.filter(it => 
+                    it.page === formNoItem.page &&
+                    Math.abs(it.x - formNoItem.x) < 50 && 
+                    it.y < formNoItem.y &&                
+                    it.str.trim().match(/^\d+$/)          
+                );
+                candidates.sort((a, b) => b.y - a.y);
+                if (candidates.length >= 2) {
+                    ddkNo = `${candidates[0].str.trim()}-${candidates[1].str.trim()}`;
+                } else if (candidates.length === 1) {
+                    ddkNo = candidates[0].str.trim();
+                }
+            }
+
+            let ddkTarih = '-';
+            let tarihMatch = fullText.match(/Düzenlenme Tarihi[:;\s]*([\d/.]+)/i) || fullText.match(/(\d{2}[./]\d{2}[./]\d{4})/);
+            if(tarihMatch) ddkTarih = tarihMatch[1];
+
+            let ddkKonu = '-';
+            let konuRegex = /Değerlendirme Komisyonu Tarafından Belirlenen Hususlar\s*(?:1\))?\s*([\s\S]*?)(?:İNCELENMEYEN KONU|TEFTİŞ KAPSAMI|BÖLÜM\/ÇALIŞAN)/i;
+            let konuMatch = fullText.match(konuRegex);
+            if(konuMatch) {
+                ddkKonu = konuMatch[1].trim().replace(/^1\)\s*/, '');
+            }
+
+            let sgk = null;
+            let sgkMatch = fullText.match(/(\d{1,2}[\.\-]\d{4}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{7}[\.\-]\d{3}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{3})/);
+            if(sgkMatch) {
+                sgk = sgkMatch[1].replace(/\D/g, '');
+            } else {
+                let s2 = fullText.match(/(\d{23})/);
+                if(s2) sgk = s2[1];
+            }
+
+            return { sgk, ddkTarih, ddkNo, ddkKonu };
+        } catch(e) {
+            console.error(e); return null;
+        }
+    }
+
+    function autoAssignForms() {
+        const rows = document.querySelectorAll('#dataTable tbody tr');
+        ddkVerileri = {}; 
+        
+        rows.forEach((row, idx) => {
+            const rowIndex = idx + 1;
+            const rowSgk = (row.cells[18].innerText || "").replace(/\D/g, ''); 
+            
+            let bestMatchIdx = -1;
+            for(let i=0; i<kabulFormlariListesi.length; i++) {
+                let form = kabulFormlariListesi[i];
+                if (form.sgk && rowSgk && (form.sgk.includes(rowSgk) || rowSgk.includes(form.sgk))) {
+                    bestMatchIdx = i; break;
+                }
+            }
+            if (bestMatchIdx !== -1) { ddkVerileri[rowIndex] = bestMatchIdx; }
+        });
+        renderKabulFormUI();
+    }
+
+    function renderKabulFormUI() {
+        const listDiv = document.getElementById('kabulFormuListesi');
+        const rows = document.querySelectorAll('#dataTable tbody tr');
+        
+        if (rows.length === 0) {
+            listDiv.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 10px;">Lütfen önce tabloyu veri analizi ile doldurun.</div>`;
+            return;
+        }
+        
+        listDiv.innerHTML = "";
+        rows.forEach((row, idx) => {
+            const rowIndex = idx + 1;
+            let unvanTam = row.cells[17].innerText || row.cells[16].innerText || "İşyeri";
+            if(unvanTam === '-') unvanTam = "İşyeri";
+            let ilkKelime = unvanTam.split(' ')[0]; 
+            
+            const assignedFormIdx = ddkVerileri[rowIndex] !== undefined ? ddkVerileri[rowIndex] : -1;
+            
+            let optionsHtml = `<option value="-1">-- Form Seçiniz --</option>`;
+            kabulFormlariListesi.forEach((form, fIdx) => {
+                let selected = (fIdx == assignedFormIdx) ? "selected" : "";
+                let subTitle = form.fileName.length > 25 ? form.fileName.substring(0,25) + '...' : form.fileName;
+                optionsHtml += `<option value="${fIdx}" ${selected}>${subTitle}</option>`;
+            });
+
+            const div = document.createElement('div');
+            div.className = 'kabul-form-row';
+            div.innerHTML = `
+                <div class="kabul-form-title" style="flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${unvanTam}">${rowIndex}. ${ilkKelime}</div>
+                <div style="flex: 2; display: flex; gap: 10px; align-items: center; justify-content: flex-end;">
+                    <select class="form-control" style="font-size: 0.8rem; padding: 4px 8px; max-width: 250px; cursor:pointer;" onchange="assignFormToRow(${rowIndex}, this.value)">
+                        ${optionsHtml}
+                    </select>
+                    <span style="font-size: 1.1rem; width:20px; text-align:center;" title="${assignedFormIdx !== -1 ? 'Eşleşti' : 'Eşleşmedi'}">
+                        ${assignedFormIdx !== -1 ? '✅' : '❌'}
+                    </span>
+                </div>
+            `;
+            listDiv.appendChild(div);
+        });
+    }
+
+    function assignFormToRow(rowIndex, formIdxStr) {
+        const formIdx = parseInt(formIdxStr);
+        if (formIdx === -1) delete ddkVerileri[rowIndex];
+        else ddkVerileri[rowIndex] = formIdx;
+        renderKabulFormUI();
+    }
 
     // --- DOC SEÇİM VE SENKRONİZASYON ---
     function updateDocRowSelect() {
-        const sel = document.getElementById('docRowSelect');
-        sel.innerHTML = '';
+        const sel = document.getElementById('docRowSelect'); sel.innerHTML = '';
         const rows = document.querySelectorAll('#dataTable tbody tr');
-        if(rows.length === 0) {
-            sel.innerHTML = '<option value="">Lütfen tablodan veri analizi yapın...</option>';
-            return;
-        }
+        if(rows.length === 0) { sel.innerHTML = '<option value="">Lütfen tablodan veri analizi yapın...</option>'; return; }
         rows.forEach((r, idx) => {
             const siraNo = r.cells[0].innerText.split('\n')[0];
-            let isveren = r.cells[17].innerText || r.cells[16].innerText || "İsimsiz İşyeri";
-            if(isveren === '-') isveren = "İsimsiz İşyeri";
-            const opt = document.createElement("option");
-            opt.value = idx; 
-            opt.text = `${siraNo} - ${isveren.substring(0, 60)}`;
-            sel.appendChild(opt);
+            let isveren = r.cells[17].innerText || r.cells[16].innerText || "İsimsiz İşyeri"; if(isveren === '-') isveren = "İsimsiz İşyeri";
+            const opt = document.createElement("option"); opt.value = idx; opt.text = `${siraNo} - ${isveren.substring(0, 60)}`; sel.appendChild(opt);
         });
         syncDropdownFromTable();
+        if(document.getElementById('teftisTuruSelect').value === 'İnceleme Teftişi') renderKabulFormUI();
     }
 
     function syncDropdownFromTable() {
-        const sel = document.getElementById('docRowSelect');
-        const rows = document.querySelectorAll('#dataTable tbody tr');
-        let found = false;
-        rows.forEach((r, idx) => {
-            if(r.classList.contains('selected')) {
-                sel.value = idx;
-                found = true;
+        const sel = document.getElementById('docRowSelect'); const rows = document.querySelectorAll('#dataTable tbody tr');
+        let found = false; rows.forEach((r, idx) => { if(r.classList.contains('selected')) { sel.value = idx; found = true; } });
+        if(!found && rows.length > 0) { selRow(rows[0], false); sel.value = 0; }
+    }
+
+    function syncTableSelection() { const sel = document.getElementById('docRowSelect'); const idx = sel.value; const rows = document.querySelectorAll('#dataTable tbody tr'); if(idx !== "" && rows[idx]) { selRow(rows[idx], false); } }
+    function nextDocRow() { const sel = document.getElementById('docRowSelect'); if(sel.options.length > 0 && sel.selectedIndex < sel.options.length - 1) { sel.selectedIndex++; syncTableSelection(); } }
+    function prevDocRow() { const sel = document.getElementById('docRowSelect'); if(sel.options.length > 0 && sel.selectedIndex > 0) { sel.selectedIndex--; syncTableSelection(); } }
+
+    // --- WORD ŞABLONU SAF XML AYIKLAMA (SİYAH ARKA PLANI ENGELLER) ---
+    function getBodyXmlFromXmlString(xml) {
+        let bodyMatch = xml.match(/<w:body[^>]*>([\s\S]*?)<\/w:body>/);
+        if (!bodyMatch) return "";
+        let bodyXml = bodyMatch[1];
+        
+        bodyXml = bodyXml.replace(/<w:sectPr[^>]*>[\s\S]*?<\/w:sectPr>/g, '');
+        bodyXml = bodyXml.replace(/<w:shd[^>]*\/>/g, '');
+        bodyXml = bodyXml.replace(/<w:shd[^>]*>.*?<\/w:shd>/g, '');
+        bodyXml = bodyXml.replace(/<w:color[^>]*\/>/g, '');
+        bodyXml = bodyXml.replace(/<w:highlight[^>]*\/>/g, '');
+        return bodyXml;
+    }
+
+    // --- WORD ŞABLONU MADDELEME AYIKLAMA ---
+    function extractTextWithBullets(xmlStr) {
+        let textContent = "";
+        let bodyMatch = xmlStr.match(/<w:body[^>]*>([\s\S]*?)<\/w:body>/);
+        if (!bodyMatch) return "";
+        
+        let paragraphs = bodyMatch[1].match(/<w:p(?:\s|>)[\s\S]*?<\/w:p>/g) || [];
+        for(let p of paragraphs) {
+            let isList = p.includes('<w:numPr>'); 
+            let nodes = p.match(/(<w:t(?:\s|>[^>]*>)([\s\S]*?)<\/w:t>|<w:br\s*\/>|<w:br>)/g) || [];
+            let pText = nodes.map(n => {
+                if(n.startsWith('<w:br')) return '\n';
+                return n.replace(/<[^>]+>/g, '');
+            }).join('');
+            
+            if (pText.trim() !== '') {
+                if (isList) pText = "◼ " + pText.trim().replace(/\n/g, '\n  '); 
+                textContent += pText + "\n";
+            } else if (pText === '') {
+                textContent += "\n";
             }
-        });
-        if(!found && rows.length > 0) {
-            selRow(rows[0], false);
-            sel.value = 0;
         }
+        return textContent.replace(/\n{3,}/g, '\n\n').trim();
     }
 
-    function syncTableSelection() {
-        const sel = document.getElementById('docRowSelect');
-        const idx = sel.value;
-        const rows = document.querySelectorAll('#dataTable tbody tr');
-        if(idx !== "" && rows[idx]) {
-            selRow(rows[idx], false);
+    // --- 81 İL TANIMA FONKSİYONU ---
+    function extractCityFromAddress(adres) {
+        if(!adres) return null;
+        const normMap = {'ı':'i', 'i':'i', 'I':'i', 'İ':'i', 'ğ':'g', 'Ğ':'g', 'ü':'u', 'Ü':'u', 'ş':'s', 'Ş':'s', 'ö':'o', 'Ö':'o', 'ç':'c', 'Ç':'c'};
+        let normalizedAdres = adres.replace(/[ıiIİğĞüÜşŞöÖçÇ]/g, m => normMap[m]).toLowerCase();
+        
+        const cities = ["adana", "adiyaman", "afyonkarahisar", "agri", "aksaray", "amasya", "ankara", "antalya", "ardahan", "artvin", "aydin", "balikesir", "bartin", "batman", "bayburt", "bilecik", "bingol", "bitlis", "bolu", "burdur", "bursa", "canakkale", "cankiri", "corum", "denizli", "diyarbakir", "duzce", "edirne", "elazig", "erzincan", "erzurum", "eskisehir", "gaziantep", "giresun", "gumushane", "hakkari", "hatay", "igdir", "isparta", "istanbul", "izmir", "kahramanmaras", "karabuk", "karaman", "kars", "kastamonu", "kayseri", "kirikkale", "kirklareli", "kirsehir", "kilis", "kocaeli", "konya", "kutahya", "malatya", "manisa", "mardin", "mersin", "mugla", "mus", "nevsehir", "nigde", "ordu", "osmaniye", "rize", "sakarya", "samsun", "siirt", "sinop", "sivas", "sanliurfa", "sirnak", "tekirdag", "tokat", "trabzon", "tunceli", "usak", "van", "yalova", "yozgat", "zonguldak"];
+        const trCities = ["ADANA", "ADIYAMAN", "AFYONKARAHİSAR", "AĞRI", "AKSARAY", "AMASYA", "ANKARA", "ANTALYA", "ARDAHAN", "ARTVİN", "AYDIN", "BALIKESİR", "BARTIN", "BATMAN", "BAYBURT", "BİLECİK", "BİNGÖL", "BİTLİS", "BOLU", "BURDUR", "BURSA", "ÇANAKKALE", "ÇANKIRI", "ÇORUM", "DENİZLİ", "DİYARBAKIR", "DÜZCE", "EDİRNE", "ELAZIĞ", "ERZİNCAN", "ERZURUM", "ESKİŞEHİR", "GAZİANTEP", "GİRESUN", "GÜMÜŞHANE", "HAKKARİ", "HATAY", "IĞDIR", "ISPARTA", "İSTANBUL", "İZMİR", "KAHRAMANMARAŞ", "KARABÜK", "KARAMAN", "KARS", "KASTAMONU", "KAYSERİ", "KIRIKKALE", "KIRKLARELİ", "KIRŞEHİR", "KİLİS", "KOCAELİ", "KONYA", "KÜTAHYA", "MALATYA", "MANİSA", "MARDİN", "MERSİN", "MUĞLA", "MUŞ", "NEVŞEHİR", "NİĞDE", "ORDU", "OSMANİYE", "RİZE", "SAKARYA", "SAMSUN", "SİİRT", "SİNOP", "SİVAS", "ŞANLIURFA", "ŞIRNAK", "TEKİRDAĞ", "TOKAT", "TRABZON", "TUNCELİ", "UŞAK", "VAN", "YALOVA", "YOZGAT", "ZONGULDAK"];
+        
+        for(let i=0; i<cities.length; i++) {
+            let regex = new RegExp("\\b" + cities[i] + "\\b", "g");
+            if (regex.test(normalizedAdres)) return trCities[i];
         }
-    }
-
-    function nextDocRow() {
-        const sel = document.getElementById('docRowSelect');
-        if(sel.options.length > 0 && sel.selectedIndex < sel.options.length - 1) {
-            sel.selectedIndex++;
-            syncTableSelection();
+        
+        const aliases = { "afyon": "AFYONKARAHİSAR", "antep": "GAZİANTEP", "maras": "KAHRAMANMARAŞ", "adapazari": "SAKARYA", "izmit": "KOCAELİ", "icel": "MERSİN" };
+        for (let alias in aliases) {
+            let regex = new RegExp("\\b" + alias + "\\b", "g");
+            if (regex.test(normalizedAdres)) return aliases[alias];
         }
-    }
-
-    function prevDocRow() {
-        const sel = document.getElementById('docRowSelect');
-        if(sel.options.length > 0 && sel.selectedIndex > 0) {
-            sel.selectedIndex--;
-            syncTableSelection();
-        }
+        return null;
     }
 
     // --- WORD OLUŞTURMA (DOCXTEMPLATER) ---
@@ -843,79 +1014,75 @@
             "IkinciMufettisSicil": document.getElementById('IkinciMufettisSicil').value
         };
         
+        let kapakbaslik = document.getElementById('teftisTuruSelect').value === 'İnceleme Teftişi' ? "İNCELEME RAPORU" : "PROGRAMLI TEFTİŞ RAPORU";
+        dataToFill["kapakbaslik"] = kapakbaslik;
+
         const d = (r, i) => r.cells[i] ? r.cells[i].innerText.trim() : '';
         const rows = document.querySelectorAll('#dataTable tbody tr');
 
-        const now = new Date();
-        const yil = now.getFullYear();
-        const ay = (now.getMonth() + 1).toString().padStart(2, '0');
-        const gun = now.getDate().toString().padStart(2, '0');
+        const now = new Date(); const yil = now.getFullYear(); const ay = (now.getMonth() + 1).toString().padStart(2, '0'); const gun = now.getDate().toString().padStart(2, '0');
         const yilAyGun = `${yil}/${ay}${gun}`; 
+        
+        let activeRowIndexForKonu = 1; 
 
         if(type === 'talep') {
             if(rows.length === 0) { alert("Tabloda veri yok."); return; }
-            const r0 = rows[0];
+            const r0 = rows[0]; activeRowIndexForKonu = 1;
             const gorevInfoFull = d(r0, 15); 
             
             let ayIsmi = ".......";
             try {
-                let datePart = gorevInfoFull.split('/')[0].trim();
-                let parts = datePart.split('.');
-                if(parts.length===3) {
-                    const dateObj = new Date(parts[2], parts[1]-1, parts[0]);
-                    const monthNames = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
-                    ayIsmi = monthNames[dateObj.getMonth()] + " " + dateObj.getFullYear();
-                }
+                let datePart = gorevInfoFull.split('/')[0].trim(); let parts = datePart.split('.');
+                if(parts.length===3) { const dateObj = new Date(parts[2], parts[1]-1, parts[0]); const monthNames = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"]; ayIsmi = monthNames[dateObj.getMonth()] + " " + dateObj.getFullYear(); }
             } catch(e){}
 
-            let sehir = d(r0, 20).toUpperCase();
-            if(!sehir || sehir === '-') {
-                const adres = d(r0, 2).toUpperCase();
-                if(adres.includes("İSTANBUL")) sehir = "İSTANBUL";
-                else if(adres.includes("ANKARA")) sehir = "ANKARA";
-                else if(adres.includes("İZMİR")) sehir = "İZMİR";
-                else sehir = "......."; 
+            let sehir = d(r0, 20).trim();
+            if(!sehir || sehir === '-' || sehir.toUpperCase() === 'ŞEHİR') { 
+                const adres = d(r0, 2); 
+                sehir = extractCityFromAddress(adres) || "Şehir_Yazılmamış"; 
             }
+            sehir = toTitleCase(sehir); // Şehrin sadece baş harfini büyük yapar
 
             let talepListesi = [];
             rows.forEach((row, idx) => {
-                const sira = idx + 1;
-                const tamUnvan = d(row, 17); 
-                const kisaUnvan = d(row, 16); 
-                const sgk = d(row, 18); 
-                let finalUnvan = tamUnvan;
-                if(!finalUnvan || finalUnvan === '-') return;
+                const sira = idx + 1; const tamUnvan = d(row, 17); const kisaUnvan = d(row, 16); const sgk = d(row, 18); 
+                let finalUnvan = tamUnvan; if(!finalUnvan || finalUnvan === '-') return;
                 if(kisaUnvan && kisaUnvan !== '-' && kisaUnvan !== tamUnvan && kisaUnvan.length > 2) { finalUnvan += ` (${kisaUnvan})`; }
                 talepListesi.push({ "Sira": sira, "TalepUnvan": finalUnvan, "TalepSGK": sgk });
             });
 
-            Object.assign(dataToFill, { "GorevAyGun": gorevInfoFull.split('/')[0].trim(), "Şehir": sehir, "GörevEmriYılveAy": ayIsmi, "TalepListesi": talepListesi, "YIL-AY-GUN": yilAyGun });
+            Object.assign(dataToFill, { 
+                "GorevAyGun": gorevInfoFull.split('/')[0].trim(), 
+                "Şehir": sehir, "şehir": sehir, "sehir": sehir, "Sehir": sehir, "ŞEHİR": sehir, "SEHİR": sehir, "İL": sehir, "İl": sehir, "il": sehir, 
+                "GörevEmriYılveAy": ayIsmi, "TalepListesi": talepListesi, "YIL-AY-GUN": yilAyGun 
+            });
         } 
         else {
             const row = document.querySelector('#dataTable tbody tr.selected');
             if(!row) { alert("Lütfen tablodan veya açılır menüden bir satır seçiniz."); return; }
+            activeRowIndexForKonu = row.rowIndex;
             
-            const tamUnvan = d(row, 17);
-            const kisaUnvan = d(row, 16);
-            let raporNoFull = d(row, 32);
-            let raporSadeceTarih = "";
-            let m = raporNoFull.match(/(\d{2}[./]\d{2}[./]\d{4})/);
-            if(m) raporSadeceTarih = m[1];
+            const tamUnvan = d(row, 17); const kisaUnvan = d(row, 16); let raporNoFull = d(row, 32); let raporSadeceTarih = "";
+            let m = raporNoFull.match(/(\d{2}[./]\d{2}[./]\d{4})/); if(m) raporSadeceTarih = m[1];
 
-            let tehlikeStr = d(row, 13).toLowerCase();
-            let azTehlikeliX = "", tehlikeliX = "", cokTehlikeliX = "";
-            
-            if (tehlikeStr.includes("çok") || tehlikeStr.includes("cok")) {
-                cokTehlikeliX = "X";
-            } else if (tehlikeStr.includes("az")) {
-                azTehlikeliX = "X";
-            } else if (tehlikeStr.includes("tehlikeli")) {
-                tehlikeliX = "X";
+            let tehlikeStr = d(row, 13).toLowerCase(); let azTehlikeliX = "", tehlikeliX = "", cokTehlikeliX = "";
+            if (tehlikeStr.includes("çok") || tehlikeStr.includes("cok")) cokTehlikeliX = "X";
+            else if (tehlikeStr.includes("az")) azTehlikeliX = "X";
+            else if (tehlikeStr.includes("tehlikeli")) tehlikeliX = "X";
+
+            let sehir = d(row, 20).trim();
+            if(!sehir || sehir === '-' || sehir.toUpperCase() === 'ŞEHİR') { 
+                const adres = d(row, 2); 
+                sehir = extractCityFromAddress(adres) || "Şehir_Yazılmamış"; 
             }
+            sehir = toTitleCase(sehir); // Şehrin sadece baş harfini büyük yapar
 
             Object.assign(dataToFill, {
                 "DosyaSicil": d(row, 19), "SGK Sicil No": d(row, 18), "İşveren": tamUnvan, "Unvan": kisaUnvan && kisaUnvan!=='-' ? kisaUnvan : tamUnvan, 
+                "TebligatAdresi": d(row, 1), "Tebligat Adresi": d(row, 1), 
                 "Adres": d(row, 2), "Telefon": d(row, 3), "Ruhsat No": d(row, 4), "TehlikeSınıfı": d(row, 13), 
+                "GörüşülenKişiler": d(row, 5), "Görüşülen Kişiler": d(row, 5), 
+                "Şehir": sehir, "şehir": sehir, "sehir": sehir, "Sehir": sehir, "ŞEHİR": sehir, "SEHİR": sehir, "İL": sehir, "İl": sehir, "il": sehir,
                 "AzTehlikeliX": azTehlikeliX, "TehlikeliX": tehlikeliX, "CokTehlikeliX": cokTehlikeliX,
                 "İmzalayacakVekil": d(row, 14), "GörevTarihSayı": d(row, 15), "Erkek": d(row, 6), "Kadın": d(row, 7), "Toplam": d(row, 8), 
                 "İlkTeftişBaşlangıç": d(row, 9), "İlkTeftişBaslangıç": d(row, 9), "İlkTeftişBitiş": d(row, 10), 
@@ -926,6 +1093,66 @@
             });
         }
 
+        // ==========================================
+        // RAPOR KONUSU DİNAMİK XML ENTEGRASYONU VE DDK VERİLERİ
+        // ==========================================
+        let konuTipiStr = document.getElementById('teftisTuruSelect').value;
+        let secilenKonuKey = "";
+        
+        if(konuTipiStr === 'İnceleme Teftişi') { 
+            secilenKonuKey = 'konu_inceleme'; 
+            
+            const formIdx = ddkVerileri[activeRowIndexForKonu];
+            const kabulData = formIdx !== undefined ? kabulFormlariListesi[formIdx] : null;
+            
+            if (kabulData) {
+                dataToFill["DDKtarih"] = kabulData.ddkTarih || '.......';
+                dataToFill["DDKno"] = kabulData.ddkNo || '.......';
+                dataToFill["DDKkonu"] = kabulData.ddkKonu || '.......';
+            } else {
+                dataToFill["DDKtarih"] = '.......'; dataToFill["DDKno"] = '.......'; dataToFill["DDKkonu"] = '.......';
+            }
+        } 
+        else { 
+            secilenKonuKey = document.getElementById('programliKonuSelect').value; 
+        } 
+        
+        let konuTemplateBuffer = templateBuffers[secilenKonuKey];
+        let rawRaporKonusuXml = "";
+
+        if (konuTemplateBuffer) {
+            let konuDataToFill = { ...dataToFill, "yıl": yil }; 
+
+            try {
+                let bufferClone = (konuTemplateBuffer instanceof ArrayBuffer) ? konuTemplateBuffer.slice(0) : konuTemplateBuffer;
+                const zipKonu = new PizZip(bufferClone);
+                const docKonu = new window.docxtemplater(zipKonu, { delimiters: {start: '[%', end: '%]'}, paragraphLoop: true, linebreaks: true, nullGetter: function() { return ""; } });
+                
+                const safeEscape = (str) => { if (typeof str !== 'string') return str; return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;'); };
+                let escapedKonuData = {}; for (let k in konuDataToFill) escapedKonuData[k] = safeEscape(konuDataToFill[k]);
+
+                docKonu.render(escapedKonuData);
+                
+                let renderedXml = docKonu.getZip().file("word/document.xml").asText();
+                rawRaporKonusuXml = getBodyXmlFromXmlString(renderedXml);
+                
+            } catch(e) {
+                console.error("Konu şablonu render hatası", e); 
+                let errMsg = e.message;
+                if(e.properties && e.properties.errors) {
+                    errMsg = e.properties.errors.map(err => err.properties.explanation).join('\n');
+                }
+                alert("Konu Şablonunda Hata Tespit Edildi!\nLütfen yüklediğiniz Konu şablonunu (İnceleme vb.) kontrol edin.\n\nHata Detayı: " + errMsg);
+                rawRaporKonusuXml = "<w:p><w:r><w:t>ŞABLON HATASI: " + errMsg + "</w:t></w:r></w:p>";
+            }
+        } else {
+            showToast("⚠️ Seçilen Konu Şablonu sisteme yüklü değil!", "var(--danger)");
+            rawRaporKonusuXml = "<w:p><w:r><w:t>Lütfen ilgili Konu Şablonunu sisteme yükleyiniz.</w:t></w:r></w:p>";
+        }
+
+        dataToFill["RaporKonusu"] = rawRaporKonusuXml;
+        // ==========================================
+
         const escapeXml = (str) => {
             if (typeof str !== 'string') return str;
             return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
@@ -933,7 +1160,9 @@
 
         const sanitizedData = {};
         for (const key in dataToFill) {
-            if (Array.isArray(dataToFill[key])) {
+            if (key === 'RaporKonusu') {
+                sanitizedData[key] = dataToFill[key];
+            } else if (Array.isArray(dataToFill[key])) {
                 sanitizedData[key] = dataToFill[key].map(item => {
                     const newItem = {};
                     for(const subKey in item) { newItem[subKey] = escapeXml(item[subKey]); }
@@ -965,16 +1194,12 @@
     }
 
     // --- YARDIMCI FORMAT FONKSİYONLARI ---
-    function toTitleCase(str) {
-        if (!str || str === '-') return '-';
-        return str.toString().replace(/[\u200B-\u200D\uFEFF\u200C]/g, '').replace(/\s+/g, ' ').trim().toLocaleLowerCase('tr-TR').split(' ').map(w => w ? w.charAt(0).toLocaleUpperCase('tr-TR') + w.slice(1) : '').join(' ');
-    }
-
+    function toTitleCase(str) { if (!str || str === '-') return '-'; return str.toString().replace(/[\u200B-\u200D\uFEFF\u200C]/g, '').replace(/\s+/g, ' ').trim().toLocaleLowerCase('tr-TR').split(' ').map(w => w ? w.charAt(0).toLocaleUpperCase('tr-TR') + w.slice(1) : '').join(' '); }
     function cleanName(s){return s?s.replace(/^\d+\s*/,'').replace(/^[\s•oO0e*·\-_]+|[\s•oO0e*·\-_]+$/g,'').trim():''}
     function normalizeDate(d){ if(!d||d==='-')return null; d=d.trim(); let m=d.match(/(\d{4})[-/.](\d{2})[-/.](\d{2})/); if(m)return `${m[3]}.${m[2]}.${m[1]}`; m=d.match(/(\d{2})[-/.](\d{2})[-/.](\d{4})/); return m?`${m[1]}.${m[2]}.${m[3]}`:d; }
     function formatSGK(r){ if(!r||r.length<15||r==='-')return r; let s=r.replace(/\D/g,''); if(s.length<20)return s; const p=(a,b)=>s.slice(a,b)||'?'; return `${p(0,1)}.${p(1,5)}.${p(5,7)}.${p(7,9)}.${p(9,16)}.${p(16,19)}.${p(19,21)}.${p(21,23)}`; }
     
-    // --- OCR PARSE FONKSİYONLARI (HitosHK'dan eklendi) ---
+    // --- OCR PARSE FONKSİYONLARI ---
     function smartExtract(t,p){for(let x of p){try{let m=t.match(new RegExp(x,'i'));if(m&&m[1])return m[1].replace(/^[:;.\- ]+/,'').trim();}catch(e){}}return '-';}
     function parseWorkplace(t) {
         let sgk = smartExtract(t, [ 'Sgk\\s*No.*?[\\s:;]*([\\d\\.]{20,})', '(\\d{23})', '(\\d{20,})' ]);
@@ -982,18 +1207,11 @@
         let adres=smartExtract(t,['Adres\\s*[:;](.*)','Adres\\s+(.*)']);
         let telRawMatch = t.match(/(?:Telefon|Tel|Faks|Fax).*?[:;]\s*([^\n\r]+)/i);
         let tel='-';
-        if(telRawMatch) {
-            let fullLine = telRawMatch[1];
-            let firstPart = fullLine.split('/')[0].trim();
-            let d = firstPart.replace(/\D/g,'');
-            if(d.length===10) tel='0'+d; else if(d.length===11 && d.startsWith('0')) tel=d; else if(d.length===11 && d.startsWith('9')) tel='0'+d.substring(1); else if(d.length>5) tel=d;
-        }
+        if(telRawMatch) { let fullLine = telRawMatch[1]; let firstPart = fullLine.split('/')[0].trim(); let d = firstPart.replace(/\D/g,''); if(d.length===10) tel='0'+d; else if(d.length===11 && d.startsWith('0')) tel=d; else if(d.length===11 && d.startsWith('9')) tel='0'+d.substring(1); else if(d.length>5) tel=d; }
         let tarih=normalizeDate(smartExtract(t,['Kapsamına\\s*Alınma\\s*T\\.\\s*[:;]\\s*([\\d-./]+)']))||'-';
         let tehlike=smartExtract(t,['Tehlike\\s*Sınıfı\\s*[:;](.*)']).replace(/[\?<>]+/g,'');
         let yon=smartExtract(t,['Yönetici\\s*[:;](.*)']); if(yon!=='-') yon=toTitleCase(cleanName(yon.split('-')[0]));
-        let sehirMatch = adres.match(/(ADANA|ADIYAMAN|AFYONKARAH[İI]SAR|A[ĞG]RI|AKSARAY|AMASYA|ANKARA|ANTALYA|ARDAHAN|ARTV[İI]N|AYDIN|BALIKES[İI]R|BARTIN|BATMAN|BAYBURT|B[İI]LEC[İI]K|B[İI]NG[ÖO]L|B[İI]TL[İI]S|BOLU|BURDUR|BURSA|[ÇC]ANAKKALE|[ÇC]ANKIRI|[ÇC]ORUM|DEN[İI]ZL[İI]|D[İI]YARBAKIR|D[ÜU]ZCE|ED[İI]RNE|ELAZI[ĞG]|ERZ[İI]NCAN|ERZURUM|ESK[İI][ŞS]EH[İI]R|GAZ[İI]ANTEP|G[İI]RESUN|G[ÜU]M[ÜU][ŞS]HANE|HAKKAR[İI]|HATAY|I[ĞG]DIR|ISPARTA|[İI]STANBUL|[İI]ZM[İI]R|KAHRAMANMARA[ŞS]|KARAB[ÜU]K|KARAMAN|KARS|KASTAMONU|KAYSER[İI]|KIRIKKALE|KIRKLAREL[İI]|KIR[ŞS]EH[İI]R|K[İI]L[İI]S|KOCAEL[İI]|KONYA|K[ÜU]TAHYA|MALATYA|MAN[İI]SA|MARD[İI]N|MERS[İI]N|MU[ĞG]LA|MU[ŞS]|NEV[ŞS]EH[İI]R|N[İI][ĞG]DE|ORDU|OSMAN[İI]YE|R[İI]ZE|SAKARYA|SAMSUN|S[İI][İI]RT|S[İI]NOP|S[İI]VAS|[ŞS]ANLIURFA|[ŞS]IRNAK|TEK[İI]RDA[ĞG]|TOKAT|TRABZON|TUNCEL[İI]|U[ŞS]AK|VAN|YALOVA|YOZGAT|ZONGULDAK)/i);
-        let sehir = sehirMatch ? sehirMatch[0].toLocaleUpperCase('tr-TR') : '-';
-        if(sehir === "ISTANBUL") sehir = "İSTANBUL"; if(sehir === "IZMIR") sehir = "İZMİR";
+        let sehir = extractCityFromAddress(adres) || extractCityFromAddress(t) || "ŞEHİR";
         return {unvan:toTitleCase(cleanName(unvan)), adres:toTitleCase(adres), telefon:tel, sgkRaw:sgk, tarih, tehlike, yonetici:yon, sehir};
     }
 
@@ -1017,21 +1235,14 @@
     }
     function parseCount(t){ let m=t.match(/(\d+)\s*kayıt/i)||t.match(/(\d+)\s*(?:kişi|personel|çalışan)/i); return m?m[1]:'-'; }
 
-    // --- YENİ EXCEL OKUMA VE PARSE FONKSİYONLARI ---
+    // --- EXCEL OKUMA VE PARSE ---
     function readExcel(file) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.onload = (e) => {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, {type: 'array'});
-                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                    const jsonData = XLSX.utils.sheet_to_json(firstSheet, {header: 1});
-                    resolve(jsonData);
-                } catch(err) { reject(err); }
+                try { const data = new Uint8Array(e.target.result); const workbook = XLSX.read(data, {type: 'array'}); const firstSheet = workbook.Sheets[workbook.SheetNames[0]]; resolve(XLSX.utils.sheet_to_json(firstSheet, {header: 1})); } catch(err) { reject(err); }
             };
-            reader.onerror = reject;
-            reader.readAsArrayBuffer(file);
+            reader.onerror = reject; reader.readAsArrayBuffer(file);
         });
     }
 
@@ -1039,214 +1250,122 @@
         let unvan='-', adres='-', telefon='-', sgkRaw='-', tarih='-', tehlike='-', yon='-', sehir='-';
         data.forEach(r => {
             if(r && r.length > 0 && r[0]) {
-                let key = r[0].toString().toLowerCase().replace(/[\u200B-\u200D\uFEFF\u200C]/g, '').trim();
-                let val = (r.length > 1 && r[1] !== undefined && r[1] !== null) ? r[1].toString().trim() : '-';
-                if (key.includes('sgk no')) sgkRaw = val;
-                else if (key.includes('ünvan') || key.includes('unvan')) unvan = val;
-                else if (key.includes('adres')) adres = val;
-                else if (key.includes('telefon') || key.includes('fax')) telefon = val;
-                else if (key.includes('kapsamına alınma')) tarih = val;
-                else if (key.includes('tehlike sınıfı')) tehlike = val;
-                else if (key.includes('yönetim')) yon = val;
-                else if (key === 'il' || key.includes('şehir')) sehir = val;
+                let key = r[0].toString().toLowerCase().replace(/[\u200B-\u200D\uFEFF\u200C]/g, '').trim(); let val = (r.length > 1 && r[1] !== undefined && r[1] !== null) ? r[1].toString().trim() : '-';
+                if (key.includes('sgk no')) sgkRaw = val; else if (key.includes('ünvan') || key.includes('unvan')) unvan = val; else if (key.includes('adres')) adres = val; else if (key.includes('telefon') || key.includes('fax')) telefon = val; else if (key.includes('kapsamına alınma')) tarih = val; else if (key.includes('tehlike sınıfı')) tehlike = val; else if (key.includes('yönetim')) yon = val; else if (key === 'il' || key.includes('şehir')) sehir = val;
             }
         });
         if(yon !== '-') { yon = toTitleCase(cleanName(yon.split(',')[0].split('(')[0])); }
-        return {
-            unvan: toTitleCase(cleanName(unvan)), adres: toTitleCase(adres), telefon: telefon,
-            sgkRaw: sgkRaw, tarih: normalizeDate(tarih), tehlike: tehlike, yonetici: yon, sehir: sehir.toLocaleUpperCase('tr-TR')
-        };
+        
+        if (!sehir || sehir === '-') {
+            sehir = extractCityFromAddress(adres) || "ŞEHİR";
+        } else {
+            let checkedCity = extractCityFromAddress(sehir);
+            sehir = checkedCity ? checkedCity : sehir.toLocaleUpperCase('tr-TR');
+        }
+        
+        return { unvan: toTitleCase(cleanName(unvan)), adres: toTitleCase(adres), telefon: telefon, sgkRaw: sgkRaw, tarih: normalizeDate(tarih), tehlike: tehlike, yonetici: yon, sehir: sehir };
     }
 
     function parseISGExcel(data) {
-        let res = {
-            hekim: {ad:'-', sert:'-', bas:'-', bit:'-', sure:'-'},
-            uzman: {ad:'-', sert:'-', bas:'-', bit:'-', sure:'-'},
-            dsp: {ad:'-', sert:'-', bas:'-', bit:'-', sure:'-'}
-        };
+        let res = { hekim: {ad:'-', sert:'-', bas:'-', bit:'-', sure:'-'}, uzman: {ad:'-', sert:'-', bas:'-', bit:'-', sure:'-'}, dsp: {ad:'-', sert:'-', bas:'-', bit:'-', sure:'-'} };
         if (!data || data.length < 2) return res;
-        
-        let headerRow = data.find(r => r.includes('Ad Soyad') || r.includes('Söz. Süre'));
-        if (!headerRow) headerRow = data[0]; 
-        
-        const nameIdx = headerRow.findIndex(c => typeof c === 'string' && c.includes('Ad Soyad'));
-        const dateIdx = headerRow.findIndex(c => typeof c === 'string' && c.includes('Sözleşme Tarihi'));
-        const timeIdx = headerRow.findIndex(c => typeof c === 'string' && c.includes('Söz. Süre'));
+        let headerRow = data.find(r => r.includes('Ad Soyad') || r.includes('Söz. Süre')); if (!headerRow) headerRow = data[0]; 
+        const nameIdx = headerRow.findIndex(c => typeof c === 'string' && c.includes('Ad Soyad')); const dateIdx = headerRow.findIndex(c => typeof c === 'string' && c.includes('Sözleşme Tarihi')); const timeIdx = headerRow.findIndex(c => typeof c === 'string' && c.includes('Söz. Süre'));
         
         data.forEach(r => {
-            if(!r || !r[nameIdx]) return;
-            const adSoyadField = r[nameIdx].toString();
-            if(adSoyadField.includes('Ad Soyad')) return; 
+            if(!r || !r[nameIdx]) return; const adSoyadField = r[nameIdx].toString(); if(adSoyadField.includes('Ad Soyad')) return; 
+            let ad = adSoyadField; let sert = '-'; const match = adSoyadField.match(/\((.*?)\)/);
+            if(match) { sert = match[1]; ad = adSoyadField.split('(')[0].trim(); } else { ad = adSoyadField.split(' İş')[0].trim(); }
             
-            let ad = adSoyadField;
-            let sert = '-';
-            const match = adSoyadField.match(/\((.*?)\)/);
-            if(match) {
-                sert = match[1]; ad = adSoyadField.split('(')[0].trim();
-            } else { ad = adSoyadField.split(' İş')[0].trim(); }
-            
-            let sure = timeIdx >= 0 && r[timeIdx] ? r[timeIdx].toString() : '-';
-            let dateStr = dateIdx >= 0 && r[dateIdx] ? r[dateIdx].toString() : '-';
-            let bas = dateStr.split('-')[0].trim();
-            let bit = dateStr.includes('-') ? dateStr.split('-')[1].trim() : '-';
-            if(!bit) bit = '-';
-
+            let sure = timeIdx >= 0 && r[timeIdx] ? r[timeIdx].toString() : '-'; let dateStr = dateIdx >= 0 && r[dateIdx] ? r[dateIdx].toString() : '-'; let bas = dateStr.split('-')[0].trim(); let bit = dateStr.includes('-') ? dateStr.split('-')[1].trim() : '-'; if(!bit) bit = '-';
             let obj = { ad: toTitleCase(cleanName(ad)), sert, bas, bit, sure };
 
-            if(adSoyadField.match(/İşyeri Hekimi/i) && res.hekim.ad === '-') res.hekim = obj;
-            else if(adSoyadField.match(/İş Güvenliği Uzmanı/i) && res.uzman.ad === '-') res.uzman = obj;
-            else if(adSoyadField.match(/Diğer Sağlık Personeli/i) && res.dsp.ad === '-') res.dsp = obj;
-        });
-        return res;
+            if(adSoyadField.match(/İşyeri Hekimi/i) && res.hekim.ad === '-') res.hekim = obj; else if(adSoyadField.match(/İş Güvenliği Uzmanı/i) && res.uzman.ad === '-') res.uzman = obj; else if(adSoyadField.match(/Diğer Sağlık Personeli/i) && res.dsp.ad === '-') res.dsp = obj;
+        }); return res;
     }
 
     function parseEmpExcel(data) {
         let total = 0, erkek = 0, kadin = 0;
         if(!data || data.length === 0) return {total:'-', erkek:'-', kadin:'-'};
-        let headerRow = data.find(r => r.includes('Cinsiyet'));
-        if(!headerRow) { return {total: data.length > 1 ? data.length - 1 : data.length, erkek: '-', kadin: '-'}; }
+        let headerRow = data.find(r => r.includes('Cinsiyet')); if(!headerRow) { return {total: data.length > 1 ? data.length - 1 : data.length, erkek: '-', kadin: '-'}; }
         const cinIdx = headerRow.findIndex(c => typeof c === 'string' && c.includes('Cinsiyet'));
         data.forEach((r, i) => {
-            if(r === headerRow) return;
-            if(!r || r.length === 0 || !r[0]) return; 
-            total++;
-            if(cinIdx >= 0 && r[cinIdx]) {
-                const c = r[cinIdx].toString().toLowerCase();
-                if(c.includes('erkek')) erkek++;
-                else if(c.includes('kadın') || c.includes('kadin')) kadin++;
-            }
-        });
-        return { total, erkek: erkek || '-', kadin: kadin || '-' };
+            if(r === headerRow || !r || r.length === 0 || !r[0]) return; total++;
+            if(cinIdx >= 0 && r[cinIdx]) { const c = r[cinIdx].toString().toLowerCase(); if(c.includes('erkek')) erkek++; else if(c.includes('kadın') || c.includes('kadin')) kadin++; }
+        }); return { total, erkek: erkek || '-', kadin: kadin || '-' };
     }
 
-    // --- PDF OKUMA MANTIKLARI (Görev Belgesi İçin) ---
+    // --- PDF OKUMA ---
     async function readPdfSimple(f){const p=await pdfjsLib.getDocument(await f.arrayBuffer()).promise; let t=""; for(let i=1;i<=p.numPages;i++)t+=(await (await p.getPage(i)).getTextContent()).items.map(x=>x.str).join(' ')+"\n"; return t;}
     
     async function analyzePDFGeometry(file) {
-        const pdf = await pdfjsLib.getDocument(await file.arrayBuffer()).promise;
-        let sgkList = []; let tNoList = []; let globalInfo = "-";
-        
+        const pdf = await pdfjsLib.getDocument(await file.arrayBuffer()).promise; let sgkList = []; let tNoList = []; let globalInfo = "-";
         for (let i = 1; i <= pdf.numPages; i++) {
-            const page = await pdf.getPage(i);
-            const content = await page.getTextContent();
-            const allText = content.items.map(it => it.str).join(' ');
-            
-            let hDate = '-', hNum = '-';
-            let dm = allText.match(/(\d{2}[./]\d{2}[./]\d{4})/);
-            if (dm) hDate = dm[1].replace(/\//g, '.');
-            
-            let nm = allText.match(/Sayı\s*[:;]?\s*([A-Z0-9\-\.\/]+)/i);
-            if (nm) { let fullStr = nm[1]; let parts = fullStr.split(/[\-\/]/); hNum = parts[parts.length - 1]; }
+            const page = await pdf.getPage(i); const content = await page.getTextContent(); const allText = content.items.map(it => it.str).join(' ');
+            let hDate = '-', hNum = '-'; let dm = allText.match(/(\d{2}[./]\d{2}[./]\d{4})/); if (dm) hDate = dm[1].replace(/\//g, '.');
+            let nm = allText.match(/Sayı\s*[:;]?\s*([A-Z0-9\-\.\/]+)/i); if (nm) { let fullStr = nm[1]; let parts = fullStr.split(/[\-\/]/); hNum = parts[parts.length - 1]; }
             if(globalInfo === "-" && hDate !== '-') globalInfo = `${hDate} / ${hNum}`;
 
             content.items.forEach(item => {
-                const str = item.str.replace(/\s+/g, '');
-                const y = item.transform[5]; // Y ekseni konumu
-                
-                const sgkMatch = str.match(/(\d{20,})/);
-                if (sgkMatch) { sgkList.push({ val: sgkMatch[1], y: y, page: i }); }
-                
-                const tMatch = str.match(/(T[\d\-\/]{10,})/i);
-                if (tMatch) { tNoList.push({ val: tMatch[1], y: y, page: i }); }
+                const str = item.str.replace(/\s+/g, ''); const y = item.transform[5];
+                const sgkMatch = str.match(/(\d{20,})/); if (sgkMatch) { sgkList.push({ val: sgkMatch[1], y: y, page: i }); }
+                const tMatch = str.match(/(T[\d\-\/]{10,})/i); if (tMatch) { tNoList.push({ val: tMatch[1], y: y, page: i }); }
             });
         }
-        
         let map = [];
         tNoList.forEach(t => {
-            let pageSgks = sgkList.filter(s => s.page === t.page);
-            let closest = pageSgks.sort((a,b) => Math.abs(a.y - t.y) - Math.abs(b.y - t.y))[0];
-            if(closest && Math.abs(closest.y - t.y) < 30) {
-                map.push({ sgk: closest.val, no: t.val, info: globalInfo, dosyaSicil: '-' });
-            }
-        });
-        
-        return map;
+            let pageSgks = sgkList.filter(s => s.page === t.page); let closest = pageSgks.sort((a,b) => Math.abs(a.y - t.y) - Math.abs(b.y - t.y))[0];
+            if(closest && Math.abs(closest.y - t.y) < 30) { map.push({ sgk: closest.val, no: t.val, info: globalInfo, dosyaSicil: '-' }); }
+        }); return map;
     }
 
     async function safeOCR(w,f){try{return f.type==="application/pdf"?{data:{text:await readPdfSimple(f)}}:(()=>{const u=URL.createObjectURL(f);const r=w.recognize(u);URL.revokeObjectURL(u);return r;})();}catch(e){return{data:{text:""}};}}
 
     function clearAll() {
         if(!confirm("Tüm tablo verileri ve yüklenen dosyalar silinecek. Emin misiniz?")) return;
-        document.querySelector('#dataTable tbody').innerHTML = "";
-        document.getElementById('excelSection').style.display='none';
-        document.getElementById('docButtons').style.display='none';
-        hideToast();
-        document.getElementById('processBtn').disabled=false;
-        document.getElementById('excelImportInput').value = '';
-        document.getElementById('uploadArea').innerHTML = '';
-        grpCount = 1; initGroup(1);
+        document.querySelector('#dataTable tbody').innerHTML = ""; document.getElementById('excelSection').style.display='none'; document.getElementById('docButtons').style.display='none';
+        hideToast(); document.getElementById('processBtn').disabled=false; document.getElementById('excelImportInput').value = ''; document.getElementById('uploadArea').innerHTML = '';
+        grpCount = 1; initGroup(1); ddkVerileri = {}; kabulFormlariListesi = [];
     }
 
     function parseTaskDocLines(linesArray) {
-        let hDate='-', hNum='-';
-        const fullText = linesArray.join(' ');
+        let hDate='-', hNum='-'; const fullText = linesArray.join(' ');
         let dm=fullText.match(/(\d{2}[./]\d{2}[./]\d{4})/); if(dm) hDate=dm[1].replace(/\//g, '.');
-        let nm=fullText.match(/Sayı\s*[:;]\s*(.*?)(\s|$)/); 
-        if(!nm) nm = fullText.match(/Sayı\s*[:;]\s*(\d+)/);
-        if(nm) { let digits = nm[0].match(/(\d+)$/); if(digits) hNum = digits[1]; }
-        const info = `${hDate} / ${hNum}`;
-        let map=[];
+        let nm=fullText.match(/Sayı\s*[:;]\s*(.*?)(\s|$)/); if(!nm) nm = fullText.match(/Sayı\s*[:;]\s*(\d+)/); if(nm) { let digits = nm[0].match(/(\d+)$/); if(digits) hNum = digits[1]; }
+        const info = `${hDate} / ${hNum}`; let map=[];
         linesArray.forEach(line => {
             const taskMatch = line.match(/(T[\d\-\/]{10,})/i);
             if(taskMatch) {
-                const taskNo = taskMatch[1];
-                let cleanLine = line.replace(taskNo, '').replace(/Unvan/i, '').replace(/Adres/i, '').replace(/[:;]/g, '').trim();
-                let sgk = null;
-                const k = cleanLine.match(/(\d{20,})/);
-                if(k) { sgk = k[1]; cleanLine = cleanLine.replace(k[0], ''); }
-                let unvan = cleanLine.trim();
-                if(unvan.length > 2) { map.push({no: taskNo, unvan: unvan, sgk: sgk, info, dosyaSicil: '-'}); }
+                const taskNo = taskMatch[1]; let cleanLine = line.replace(taskNo, '').replace(/Unvan/i, '').replace(/Adres/i, '').replace(/[:;]/g, '').trim(); let sgk = null;
+                const k = cleanLine.match(/(\d{20,})/); if(k) { sgk = k[1]; cleanLine = cleanLine.replace(k[0], ''); }
+                let unvan = cleanLine.trim(); if(unvan.length > 2) { map.push({no: taskNo, unvan: unvan, sgk: sgk, info, dosyaSicil: '-'}); }
             }
-        });
-        return map;
+        }); return map;
     }
 
     let qClickRowIndex = -1; let qClickCount = 0; let qClickTimer = null;
     function handleCellQuadClick(el) {
         const row = el.parentElement; const currentRowIndex = row.rowIndex;
         if (qClickRowIndex !== currentRowIndex) { qClickCount = 0; clearTimeout(qClickTimer); qClickRowIndex = currentRowIndex; }
-        qClickCount++;
-        if (qClickCount === 1) { qClickTimer = setTimeout(() => { qClickCount = 0; qClickRowIndex = -1; }, 800); } 
+        qClickCount++; if (qClickCount === 1) { qClickTimer = setTimeout(() => { qClickCount = 0; qClickRowIndex = -1; }, 800); } 
         else if (qClickCount === 4) {
-            clearTimeout(qClickTimer); qClickCount = 0; qClickRowIndex = -1;
-            const content = el.innerText.trim();
-            if(content && content.length > 5) {
-                let iso = parseDateToISO(content);
-                if(iso) { openCalendarModal(); setTimeout(() => { if(calendar) calendar.gotoDate(iso); }, 200); }
-            } else {
-                let iso = new Date().toISOString().split('T')[0];
-                openCalendarModal(); setTimeout(() => { if(calendar) calendar.gotoDate(iso); openAssignModal(iso, null, currentRowIndex); }, 200);
-            }
+            clearTimeout(qClickTimer); qClickCount = 0; qClickRowIndex = -1; const content = el.innerText.trim();
+            if(content && content.length > 5) { let iso = parseDateToISO(content); if(iso) { openCalendarModal(); setTimeout(() => { if(calendar) calendar.gotoDate(iso); }, 200); } } 
+            else { let iso = new Date().toISOString().split('T')[0]; openCalendarModal(); setTimeout(() => { if(calendar) calendar.gotoDate(iso); openAssignModal(iso, null, currentRowIndex); }, 200); }
         }
     }
 
-    // Modern Bildirim Gösterimi
-    function showToast(message, colorStr = "var(--primary)") {
-        const toast = document.getElementById('status');
-        toast.innerText = message;
-        toast.style.borderLeftColor = colorStr;
-        toast.style.display = 'block';
-    }
-    
-    function hideToast() {
-        document.getElementById('status').style.display = 'none';
-    }
+    function showToast(message, colorStr = "var(--primary)") { const toast = document.getElementById('status'); toast.innerText = message; toast.style.borderLeftColor = colorStr; toast.style.display = 'block'; }
+    function hideToast() { document.getElementById('status').style.display = 'none'; }
 
     document.getElementById('processBtn').addEventListener('click', async ()=>{
-        const worker = await Tesseract.createWorker('tur');
-        const tb = document.querySelector('#dataTable tbody'); 
+        const worker = await Tesseract.createWorker('tur'); const tb = document.querySelector('#dataTable tbody'); 
+        showToast("⏳ Lütfen bekleyin, veriler analiz ediliyor..."); document.getElementById('processBtn').disabled=true;
         
-        showToast("⏳ Lütfen bekleyin, veriler analiz ediliyor...");
-        document.getElementById('processBtn').disabled=true;
-        
-        let rowIdx = tb.rows.length + 1;
-        const groupKeys = Object.keys(filesData);
-        globalTaskData = []; 
+        let rowIdx = tb.rows.length + 1; const groupKeys = Object.keys(filesData); globalTaskData = []; 
 
         for(let g=0; g<groupKeys.length; g++){
-            const gKey = groupKeys[g];
-            const fT = filesData[gKey].task; const fW = filesData[gKey].wp; const fI = filesData[gKey].isg; const fE = filesData[gKey].emp;
-            let taskMap = [];
+            const gKey = groupKeys[g]; const fT = filesData[gKey].task; const fW = filesData[gKey].wp; const fI = filesData[gKey].isg; const fE = filesData[gKey].emp; let taskMap = [];
             
             if(fT.length){
                 showToast(`⏳ Grup ${gKey} Görev Listesi Okunuyor...`, "var(--warning)");
@@ -1265,53 +1384,18 @@
             const max = Math.max(fW.length, fI.length, fE.length);
             for(let i=0; i<max; i++){
                 showToast(`⏳ İşleniyor: Grup ${gKey} - ${i+1} / ${max}`, "var(--primary)");
-                
                 let wp = {unvan:'-', adres:'-', telefon:'-', sgkRaw:'-', tarih:'-', tehlike:'-', yonetici:'-', sehir:'-'};
                 let isg = {hekim:{ad:'-',sert:'-',bas:'-',bit:'-',sure:'-'}, uzman:{ad:'-',sert:'-',bas:'-',bit:'-',sure:'-'}, dsp:{ad:'-',sert:'-',bas:'-',bit:'-',sure:'-'}};
                 let empStats = {total:'-', erkek:'-', kadin:'-'};
 
-                // İŞYERİ DETAY (Excel veya Resim)
-                if(fW[i]) { 
-                    try { 
-                        if(fW[i].name.match(/\.(xlsx|xls|csv)$/i)) {
-                            const data = await readExcel(fW[i]); wp = parseWorkplaceExcel(data); 
-                        } else {
-                            const res = await safeOCR(worker, fW[i]); wp = parseWorkplace(res.data.text);
-                        }
-                    } catch(e) { console.error(e); } 
-                }
-                
-                // İSG PROFESYONELİ (Excel veya Resim)
-                if(fI[i]) { 
-                    try { 
-                        if(fI[i].name.match(/\.(xlsx|xls|csv)$/i)) {
-                            const data = await readExcel(fI[i]); isg = parseISGExcel(data); 
-                        } else {
-                            const res = await safeOCR(worker, fI[i]); isg = parseISG(res.data.text);
-                        }
-                    } catch(e) { console.error(e); } 
-                }
-                
-                // ÇALIŞAN LİSTESİ (Excel veya Resim)
-                if(fE[i]) { 
-                    try { 
-                        if(fE[i].name.match(/\.(xlsx|xls|csv)$/i)) {
-                            const data = await readExcel(fE[i]); empStats = parseEmpExcel(data); 
-                        } else {
-                            const res = await safeOCR(worker, fE[i]); 
-                            const cnt = parseCount(res.data.text);
-                            empStats = {total: cnt, erkek: '-', kadin: '-'};
-                        }
-                    } catch(e) { console.error(e); } 
-                }
+                if(fW[i]) { try { if(fW[i].name.match(/\.(xlsx|xls|csv)$/i)) { const data = await readExcel(fW[i]); wp = parseWorkplaceExcel(data); } else { const res = await safeOCR(worker, fW[i]); wp = parseWorkplace(res.data.text); } } catch(e) { console.error(e); } }
+                if(fI[i]) { try { if(fI[i].name.match(/\.(xlsx|xls|csv)$/i)) { const data = await readExcel(fI[i]); isg = parseISGExcel(data); } else { const res = await safeOCR(worker, fI[i]); isg = parseISG(res.data.text); } } catch(e) { console.error(e); } }
+                if(fE[i]) { try { if(fE[i].name.match(/\.(xlsx|xls|csv)$/i)) { const data = await readExcel(fE[i]); empStats = parseEmpExcel(data); } else { const res = await safeOCR(worker, fE[i]); const cnt = parseCount(res.data.text); empStats = {total: cnt, erkek: '-', kadin: '-'}; } } catch(e) { console.error(e); } }
 
                 let tNo='-', tInfo='-', dSicil='-';
                 if(wp.sgkRaw && wp.sgkRaw.length > 10 && taskMap.length){
-                    const cleanWpSgk = wp.sgkRaw.replace(/\D/g, ''); 
-                    const matches = taskMap.filter(x => x.sgk && x.sgk.replace(/\D/g, '').includes(cleanWpSgk));
-                    if(matches.length > 0){
-                        const tNos = [...new Set(matches.map(m => m.no))]; tNo = tNos.join(', '); tInfo = matches[0].info; dSicil = matches[0].dosyaSicil || '-';
-                    }
+                    const cleanWpSgk = wp.sgkRaw.replace(/\D/g, ''); const matches = taskMap.filter(x => x.sgk && x.sgk.replace(/\D/g, '').includes(cleanWpSgk));
+                    if(matches.length > 0){ const tNos = [...new Set(matches.map(m => m.no))]; tNo = tNos.join(', '); tInfo = matches[0].info; dSicil = matches[0].dosyaSicil || '-'; }
                 }
                 let shortUnvan = wp.unvan; if(shortUnvan && shortUnvan !== '-') shortUnvan = shortUnvan.split(/\s+/).slice(0, 2).join(' ');
                 let firstWordOfIsveren = wp.unvan ? wp.unvan.split(' ')[0] : '';
@@ -1323,119 +1407,62 @@
                     <td contenteditable="true" oninput="calcDates(this)" onclick="handleCellQuadClick(this)"></td><td contenteditable="true" onclick="handleCellQuadClick(this)"></td><td contenteditable="true" onclick="handleCellQuadClick(this)"></td><td contenteditable="true" onclick="handleCellQuadClick(this)"></td>
                     <td contenteditable="true">${wp.tehlike}</td> <td contenteditable="true">${wp.yonetici}</td>
                     <td contenteditable="true" style="color:#fd7e14;font-weight:bold" oninput="propagateTaskInfo(this)">${tInfo}</td> <td contenteditable="true">${shortUnvan}</td><td contenteditable="true">${wp.unvan}</td><td contenteditable="true" style="font-family:monospace">${formatSGK(wp.sgkRaw)}</td><td contenteditable="true">${dSicil}</td>
-                    <td contenteditable="true" oninput="propagateCity(this)">${wp.sehir}</td> <td contenteditable="true">${isg.uzman.ad}</td><td contenteditable="true">${isg.uzman.sert !== '-' ? (isg.uzman.sert + (isg.uzman.bas ? ' / ' + isg.uzman.bas : '')) : '-'}</td><td contenteditable="true">${isg.uzman.sure}</td>
+                    <td contenteditable="true" oninput="propagateCity(this)" style="${wp.sehir === 'ŞEHİR' ? 'color:var(--danger);font-weight:bold;' : ''}">${wp.sehir}</td> <td contenteditable="true">${isg.uzman.ad}</td><td contenteditable="true">${isg.uzman.sert !== '-' ? (isg.uzman.sert + (isg.uzman.bas ? ' / ' + isg.uzman.bas : '')) : '-'}</td><td contenteditable="true">${isg.uzman.sure}</td>
                     <td contenteditable="true">${isg.hekim.ad}</td><td contenteditable="true">${isg.hekim.sert !== '-' ? (isg.hekim.sert + (isg.hekim.bas ? ' / ' + isg.hekim.bas : '')) : '-'}</td><td contenteditable="true">${isg.hekim.sure}</td>
                     <td contenteditable="true">${isg.dsp.ad}</td> <td contenteditable="true">${isg.dsp.sert !== '-' ? (isg.dsp.sert + (isg.dsp.bas ? ' / ' + isg.dsp.bas : '')) : '-'}</td> <td contenteditable="true">${isg.dsp.sure}</td>
                     <td contenteditable="true" style="color:var(--danger);font-weight:bold">${tNo}</td><td contenteditable="true">${wp.tarih}</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-                </tr>`;
-                tb.insertAdjacentHTML('beforeend', html);
+                </tr>`; tb.insertAdjacentHTML('beforeend', html);
             }
         }
-        await worker.terminate(); 
-        
-        showToast("✅ İşlem Tamamlandı!", "var(--success)");
-        setTimeout(hideToast, 4000); 
-        
-        document.getElementById('excelSection').style.display='block';
-        document.getElementById('docButtons').style.display='block';
-        document.getElementById('processBtn').disabled=false;
+        await worker.terminate(); showToast("✅ İşlem Tamamlandı!", "var(--success)"); setTimeout(hideToast, 4000); 
+        document.getElementById('excelSection').style.display='block'; document.getElementById('docButtons').style.display='block'; document.getElementById('processBtn').disabled=false;
         updateDocRowSelect();
-        if(tb.rows.length) {
-            selRow(tb.rows[tb.rows.length-1]);
-            tb.rows[tb.rows.length-1].scrollIntoView({behavior: "smooth", block: "center"});
-        }
+        if(tb.rows.length) { selRow(tb.rows[tb.rows.length-1]); tb.rows[tb.rows.length-1].scrollIntoView({behavior: "smooth", block: "center"}); }
     });
 
-    // DOSYA LİSTELEME VE OK BUTONLARI
     function initGroup(idx) {
-        filesData[idx] = { task: [], wp: [], isg: [], emp: [], processed: false };
-        const d = document.createElement('div'); d.className = 'upload-group'; d.id = `grp_${idx}`;
-        d.innerHTML = `
-            <div class="upload-group-header">
-                Klasör Grubu ${idx}
-                ${idx > 1 ? `<button class="f-action-btn del" style="background:#fee2e2; color:#ef4444;" onclick="this.parentElement.parentElement.remove()">Grubu Sil</button>` : ''}
-            </div>
-            <div class="dropzone-container">
-                ${createFileBox(idx, 'task', 'Görev Belgesi (PDF)', 'red')}
-                ${createFileBox(idx, 'wp', 'İşyeri Detay (.xlsx / Resim)', 'blue')}
-                ${createFileBox(idx, 'isg', 'İSG Prof. (.xlsx / Resim)', 'orange')}
-                ${createFileBox(idx, 'emp', 'Çalışan Listesi (.xlsx / Resim)', 'teal')}
-            </div>`;
-        document.getElementById('uploadArea').appendChild(d);
+        filesData[idx] = { task: [], wp: [], isg: [], emp: [], processed: false }; const d = document.createElement('div'); d.className = 'upload-group'; d.id = `grp_${idx}`;
+        d.innerHTML = `<div class="upload-group-header">Klasör Grubu ${idx} ${idx > 1 ? `<button class="f-action-btn del" style="background:#fee2e2; color:#ef4444;" onclick="this.parentElement.parentElement.remove()">Grubu Sil</button>` : ''}</div>
+            <div class="dropzone-container">${createFileBox(idx, 'task', 'Görev Belgesi (PDF)', 'red')}${createFileBox(idx, 'wp', 'İşyeri Detay (.xlsx / Resim)', 'blue')}${createFileBox(idx, 'isg', 'İSG Prof. (.xlsx / Resim)', 'orange')}${createFileBox(idx, 'emp', 'Çalışan Listesi (.xlsx / Resim)', 'teal')}</div>`; document.getElementById('uploadArea').appendChild(d);
     }
     
     function createFileBox(gIdx, type, label, colorClass) {
-        const isTask = type === 'task'; const mult = isTask ? '' : 'multiple';
-        const acceptExt = isTask ? 'application/pdf' : '.xlsx,.xls,.csv,image/*';
-        return `
-            <div class="dropzone ${colorClass}">
-                <label>${label}</label>
-                <div class="file-btn-add" onclick="triggerFileSelect(${gIdx}, '${type}')">+ Seç</div>
-                <input type="file" id="f_in_${gIdx}_${type}" ${mult} style="display:none" onchange="handleFileSelect(this, ${gIdx}, '${type}')" accept="${acceptExt}">
-                <ul class="file-list" id="list_${gIdx}_${type}"></ul>
-            </div>`;
+        const isTask = type === 'task'; const mult = isTask ? '' : 'multiple'; const acceptExt = isTask ? 'application/pdf' : '.xlsx,.xls,.csv,image/*';
+        return `<div class="dropzone ${colorClass}"><label>${label}</label><div class="file-btn-add" onclick="triggerFileSelect(${gIdx}, '${type}')">+ Seç</div><input type="file" id="f_in_${gIdx}_${type}" ${mult} style="display:none" onchange="handleFileSelect(this, ${gIdx}, '${type}')" accept="${acceptExt}"><ul class="file-list" id="list_${gIdx}_${type}"></ul></div>`;
     }
     
     function addManualGroupWrapper() { initGroup(document.querySelectorAll('.upload-group').length + 1); }
     function triggerFileSelect(gIdx, type) { document.getElementById(`f_in_${gIdx}_${type}`).click(); }
-    function handleFileSelect(inp, gIdx, type) {
-        const newFiles = Array.from(inp.files);
-        if(type === 'task') filesData[gIdx][type] = newFiles; else filesData[gIdx][type] = filesData[gIdx][type].concat(newFiles);
-        renderFileList(gIdx, type); inp.value = ''; 
-    }
+    function handleFileSelect(inp, gIdx, type) { const newFiles = Array.from(inp.files); if(type === 'task') filesData[gIdx][type] = newFiles; else filesData[gIdx][type] = filesData[gIdx][type].concat(newFiles); renderFileList(gIdx, type); inp.value = ''; }
     
     function renderFileList(gIdx, type) {
         const ul = document.getElementById(`list_${gIdx}_${type}`); ul.innerHTML = '';
         filesData[gIdx][type].forEach((f, i) => {
             const li = document.createElement('li'); li.className = 'file-item';
-            
             const upBtn = i > 0 ? `<button class="f-action-btn" onclick="moveFileUp(${gIdx}, '${type}', ${i})">▲</button>` : `<button class="f-action-btn" disabled style="opacity:0.3">▲</button>`;
             const downBtn = i < filesData[gIdx][type].length - 1 ? `<button class="f-action-btn" onclick="moveFileDown(${gIdx}, '${type}', ${i})">▼</button>` : `<button class="f-action-btn" disabled style="opacity:0.3">▼</button>`;
             const showBtn = `<button class="f-action-btn" onclick="previewFile(${gIdx}, '${type}', ${i})">👁️</button>`;
-            
-            li.innerHTML = `<span class="file-name" title="${f.name}">${f.name}</span><div class="file-actions">${upBtn}${downBtn}${showBtn}<button class="f-action-btn del" onclick="delFile(${gIdx}, '${type}', ${i})">X</button></div>`;
-            ul.appendChild(li);
+            li.innerHTML = `<span class="file-name" title="${f.name}">${f.name}</span><div class="file-actions">${upBtn}${downBtn}${showBtn}<button class="f-action-btn del" onclick="delFile(${gIdx}, '${type}', ${i})">X</button></div>`; ul.appendChild(li);
         });
     }
 
-    function moveFileUp(gIdx, type, idx) {
-        if (idx > 0) { const arr = filesData[gIdx][type]; [arr[idx - 1], arr[idx]] = [arr[idx], arr[idx - 1]]; renderFileList(gIdx, type); }
-    }
-    function moveFileDown(gIdx, type, idx) {
-        const arr = filesData[gIdx][type];
-        if (idx < arr.length - 1) { [arr[idx + 1], arr[idx]] = [arr[idx], arr[idx + 1]]; renderFileList(gIdx, type); }
-    }
-
+    function moveFileUp(gIdx, type, idx) { if (idx > 0) { const arr = filesData[gIdx][type]; [arr[idx - 1], arr[idx]] = [arr[idx], arr[idx - 1]]; renderFileList(gIdx, type); } }
+    function moveFileDown(gIdx, type, idx) { const arr = filesData[gIdx][type]; if (idx < arr.length - 1) { [arr[idx + 1], arr[idx]] = [arr[idx], arr[idx + 1]]; renderFileList(gIdx, type); } }
     function delFile(gIdx, type, idx) { filesData[gIdx][type].splice(idx, 1); renderFileList(gIdx, type); }
-    function previewFile(gIdx, type, idx) {
-        const file = filesData[gIdx][type][idx]; const url = URL.createObjectURL(file);
-        document.getElementById('previewArea').innerHTML = file.type.includes('pdf') ? `<iframe src="${url}" style="width:100%;height:100%;border:none;"></iframe>` : `<img src="${url}" style="max-width:100%; max-height:100%; display:block; margin:auto;">`;
-        document.getElementById('modal').style.display = 'flex';
-    }
+    function previewFile(gIdx, type, idx) { const file = filesData[gIdx][type][idx]; const url = URL.createObjectURL(file); document.getElementById('previewArea').innerHTML = file.type.includes('pdf') ? `<iframe src="${url}" style="width:100%;height:100%;border:none;"></iframe>` : `<img src="${url}" style="max-width:100%; max-height:100%; display:block; margin:auto;">`; document.getElementById('modal').style.display = 'flex'; }
     
     function addManualRow() { 
-        const tb = document.querySelector('#dataTable tbody'); let rowIdx = tb.rows.length + 1; 
-        let tr = `<tr tabindex="0" onclick="selRow(this)"><td style="text-align:center"><strong>${rowIdx}</strong><br><span style="font-size:10px;color:#777">...</span></td>`; 
+        const tb = document.querySelector('#dataTable tbody'); let rowIdx = tb.rows.length + 1; let tr = `<tr tabindex="0" onclick="selRow(this)"><td style="text-align:center"><strong>${rowIdx}</strong><br><span style="font-size:10px;color:#777">...</span></td>`; 
         for(let j=0; j<34; j++) { let events = (j===8) ? `oninput="calcDates(this)"` : ""; if([9,10,11,12].includes(j+1)) events += ` onclick="handleCellQuadClick(this)"`; tr += `<td contenteditable="true" ${events}></td>`; } 
-        tr += `</tr>`; tb.insertAdjacentHTML('beforeend', tr); 
-        const newRow = tb.lastElementChild; selRow(newRow); newRow.scrollIntoView({behavior: "smooth", block: "center"}); 
-        updateDocRowSelect();
+        tr += `</tr>`; tb.insertAdjacentHTML('beforeend', tr); const newRow = tb.lastElementChild; selRow(newRow); newRow.scrollIntoView({behavior: "smooth", block: "center"}); updateDocRowSelect();
     }
     
     function delSelectedRow() { 
-        const sel = document.querySelector('#dataTable tbody tr.selected'); 
-        if(!sel) return alert("Seçili satır yok."); 
-        if(confirm("Silmek istediğinize emin misiniz?")) { 
-            sel.remove(); document.querySelectorAll('#dataTable tbody tr').forEach((r, i) => { r.cells[0].innerHTML = `<strong>${i + 1}</strong><br><span style="font-size:10px;color:#777">...</span>`; }); 
-            updateDocRowSelect();
-        } 
+        const sel = document.querySelector('#dataTable tbody tr.selected'); if(!sel) return alert("Seçili satır yok."); 
+        if(confirm("Silmek istediğinize emin misiniz?")) { sel.remove(); document.querySelectorAll('#dataTable tbody tr').forEach((r, i) => { r.cells[0].innerHTML = `<strong>${i + 1}</strong><br><span style="font-size:10px;color:#777">...</span>`; }); updateDocRowSelect(); } 
     }
     
-    function selRow(r, updateDrop = true){ 
-        document.querySelectorAll('#dataTable tbody tr.selected').forEach(x => x.classList.remove('selected')); 
-        if(r) r.classList.add('selected'); 
-        if(updateDrop) syncDropdownFromTable();
-    }
+    function selRow(r, updateDrop = true){ document.querySelectorAll('#dataTable tbody tr.selected').forEach(x => x.classList.remove('selected')); if(r) r.classList.add('selected'); if(updateDrop) syncDropdownFromTable(); }
     
     function calcDates(el) { let row = el.parentElement, startVal = el.innerText.trim(); if(!startVal.match(/^\d{2}\.\d{2}\.\d{4}$/)) return; let parts = startVal.split('.'), d = new Date(parts[2], parts[1]-1, parts[0]); let dEnd1 = new Date(d); dEnd1.setDate(dEnd1.getDate() + 1); row.cells[10].innerText = dEnd1.toLocaleDateString('tr-TR'); let dStart2 = new Date(d); dStart2.setMonth(dStart2.getMonth() + 1); row.cells[11].innerText = dStart2.toLocaleDateString('tr-TR'); let dEnd2 = new Date(dStart2); dEnd2.setDate(dEnd2.getDate() + 1); row.cells[12].innerText = dEnd2.toLocaleDateString('tr-TR'); }
     function propagateTaskInfo(el) { let row = el.closest('tr'); if(row === document.querySelector('#dataTable tbody tr:first-child')) { let val = el.innerText, next = row.nextElementSibling; while(next) { next.cells[15].innerText = val; next = next.nextElementSibling; } } }
@@ -1446,32 +1473,19 @@
         const fileInput = document.getElementById('excelImportInput'); if (!fileInput.files.length) { alert("Lütfen bir Excel dosyası seçin."); return; }
         const file = fileInput.files[0]; const reader = new FileReader();
         reader.onload = function(e) {
-            const data = new Uint8Array(e.target.result); const workbook = XLSX.read(data, {type: 'array'});
-            const firstSheet = workbook.Sheets[workbook.SheetNames[0]]; const jsonData = XLSX.utils.sheet_to_json(firstSheet, {header: 1});
-            const tbody = document.querySelector("#dataTable tbody"); tbody.innerHTML = "";
-            let rowIndexCounter = 1;
+            const data = new Uint8Array(e.target.result); const workbook = XLSX.read(data, {type: 'array'}); const firstSheet = workbook.Sheets[workbook.SheetNames[0]]; const jsonData = XLSX.utils.sheet_to_json(firstSheet, {header: 1});
+            const tbody = document.querySelector("#dataTable tbody"); tbody.innerHTML = ""; let rowIndexCounter = 1;
             jsonData.slice(1).forEach((row, idx) => {
                 let hasContent = false; for(let c=1; c<35; c++) { if(row[c] !== undefined && row[c] !== null && row[c].toString().trim() !== "") { hasContent = true; break; } }
                 if(!hasContent) return; 
-                let rawIsveren = row[17] || row[16] || ""; let firstWord = rawIsveren ? rawIsveren.toString().split(' ')[0] : "...";
-                let html = `<tr tabindex="0" onclick="selRow(this)">`;
-                html += `<td style="text-align:center"><strong>${rowIndexCounter++}</strong><br><span style="font-size:10px;color:#777;display:block;margin-top:2px;">${firstWord}</span></td>`;
-                for(let c=1; c<35; c++) { 
-                    let val = row[c] !== undefined ? row[c] : ""; let ev = "";
-                    if(c===9) ev = `oninput="calcDates(this)"`; if(c===15) ev = `oninput="propagateTaskInfo(this)"`; if(c===20) ev = `oninput="propagateCity(this)"`;
-                    if([9,10,11,12].includes(c)) ev += ` onclick="handleCellQuadClick(this)"`;
-                    html += `<td contenteditable="true" ${ev}>${val}</td>`; 
-                }
+                let rawIsveren = row[17] || row[16] || ""; let firstWord = rawIsveren ? rawIsveren.toString().split(' ')[0] : "..."; let html = `<tr tabindex="0" onclick="selRow(this)">`; html += `<td style="text-align:center"><strong>${rowIndexCounter++}</strong><br><span style="font-size:10px;color:#777;display:block;margin-top:2px;">${firstWord}</span></td>`;
+                for(let c=1; c<35; c++) { let val = row[c] !== undefined ? row[c] : ""; let ev = ""; if(c===9) ev = `oninput="calcDates(this)"`; if(c===15) ev = `oninput="propagateTaskInfo(this)"`; if(c===20) ev = `oninput="propagateCity(this)"`; if([9,10,11,12].includes(c)) ev += ` onclick="handleCellQuadClick(this)"`; html += `<td contenteditable="true" ${ev}>${val}</td>`; }
                 html += `</tr>`; tbody.insertAdjacentHTML('beforeend', html);
             });
-            showToast("✅ Excel verileri yüklendi!", "var(--success)"); 
-            document.getElementById('excelSection').style.display='block'; document.getElementById('docButtons').style.display='block';
-            updateDocRowSelect();
-        };
-        reader.readAsArrayBuffer(file);
+            showToast("✅ Excel verileri yüklendi!", "var(--success)"); document.getElementById('excelSection').style.display='block'; document.getElementById('docButtons').style.display='block'; updateDocRowSelect();
+        }; reader.readAsArrayBuffer(file);
     }
 
-    // --- TAKVİM VE TARİH MANTIĞI ---
     let calendar; let tempAssignDate = null;
     function getColorForRow(index) { const colors = ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444', '#14b8a6', '#f43f5e', '#6366f1', '#84cc16']; return colors[index % colors.length]; }
     function parseDateToISO(d) { if (!d || d.length < 10) return null; let p = d.trim().split('.'); return (p.length === 3) ? `${p[2]}-${p[1]}-${p[0]}` : null; }
@@ -1480,8 +1494,7 @@
     function updateTableFromCalendar(info) {
         const event = info.event; const rowIndex = event.extendedProps.rowIndex; const startCol = event.extendedProps.startCol; const endCol = event.extendedProps.endCol;
         const table = document.getElementById("dataTable"); if (!table || table.rows.length <= rowIndex) return; const row = table.rows[rowIndex]; 
-        let newStart = parseISOToDate(event.start); let newEnd = newStart;
-        if(event.end) { let d = new Date(event.end); d.setDate(d.getDate() - 1); newEnd = parseISOToDate(d); }
+        let newStart = parseISOToDate(event.start); let newEnd = newStart; if(event.end) { let d = new Date(event.end); d.setDate(d.getDate() - 1); newEnd = parseISOToDate(d); }
         if (row.cells[startCol]) row.cells[startCol].innerText = newStart; if (row.cells[endCol]) row.cells[endCol].innerText = newEnd;
         row.cells[startCol].style.backgroundColor = "#eff6ff"; setTimeout(() => row.cells[startCol].style.backgroundColor = "", 1000);
     }
@@ -1493,16 +1506,9 @@
         rows.forEach((row, index) => {
             const siraNo = row.cells[0].innerText.split('\n')[0]; const isverenTam = row.cells[17].innerText || ("İşyeri " + siraNo); const isyeriAdi = isverenTam.split(' ').slice(0, 2).join(' ');
             const color = getColorForRow(index); const ilkBas = parseDateToISO(row.cells[9].innerText); const ilkBit = parseDateToISO(row.cells[10].innerText); const sonBas = parseDateToISO(row.cells[11].innerText); const sonBit = parseDateToISO(row.cells[12].innerText);
-            if (ilkBas) {
-                let endD; if(ilkBit) { endD = new Date(ilkBit); endD.setDate(endD.getDate() + 1); } else { endD = new Date(ilkBas); endD.setDate(endD.getDate() + 1); }
-                events.push({ title: `1.Tef: ${isyeriAdi}`, start: ilkBas, end: endD.toISOString().split('T')[0], color: color, allDay: true, editable: true, extendedProps: { rowIndex: index + 1, startCol: 9, endCol: 10, type: 1 } });
-            }
-            if (sonBas) {
-                let endD; if(sonBit) { endD = new Date(sonBit); endD.setDate(endD.getDate() + 1); } else { endD = new Date(sonBas); endD.setDate(endD.getDate() + 1); }
-                events.push({ title: `2.Tef: ${isyeriAdi}`, start: sonBas, end: endD.toISOString().split('T')[0], color: color, allDay: true, editable: true, extendedProps: { rowIndex: index + 1, startCol: 11, endCol: 12, type: 2 } });
-            }
-        });
-        return events;
+            if (ilkBas) { let endD; if(ilkBit) { endD = new Date(ilkBit); endD.setDate(endD.getDate() + 1); } else { endD = new Date(ilkBas); endD.setDate(endD.getDate() + 1); } events.push({ title: `1.Tef: ${isyeriAdi}`, start: ilkBas, end: endD.toISOString().split('T')[0], color: color, allDay: true, editable: true, extendedProps: { rowIndex: index + 1, startCol: 9, endCol: 10, type: 1 } }); }
+            if (sonBas) { let endD; if(sonBit) { endD = new Date(sonBit); endD.setDate(endD.getDate() + 1); } else { endD = new Date(sonBas); endD.setDate(endD.getDate() + 1); } events.push({ title: `2.Tef: ${isyeriAdi}`, start: sonBas, end: endD.toISOString().split('T')[0], color: color, allDay: true, editable: true, extendedProps: { rowIndex: index + 1, startCol: 11, endCol: 12, type: 2 } }); }
+        }); return events;
     }
 
     function renderCalendar() {
@@ -1512,13 +1518,11 @@
             editable: true, droppable: true, eventResizableFromStart: true, events: getEventsFromTable(),
             eventDrop: function(info) { updateTableFromCalendar(info); }, eventResize: function(info) { updateTableFromCalendar(info); },
             eventClick: function(info) { openAssignModal(info.event.startStr, info.event, null); }, dateClick: function(info) { openAssignModal(info.dateStr, null, null); }
-        });
-        calendar.render();
+        }); calendar.render();
     }
 
     function updateAssignmentModalUI() {
-        const select = document.getElementById('assignWorkplaceSelect'); const addrDiv = document.getElementById('assignAddressDisplay'); const typeSelect = document.getElementById('assignTypeSelect'); const statusInfo = document.getElementById('inspectionStatusInfo');
-        const table = document.getElementById("dataTable");
+        const select = document.getElementById('assignWorkplaceSelect'); const addrDiv = document.getElementById('assignAddressDisplay'); const typeSelect = document.getElementById('assignTypeSelect'); const statusInfo = document.getElementById('inspectionStatusInfo'); const table = document.getElementById("dataTable");
         if (select.value) {
             const row = table.rows[select.value]; const addr = row.cells[2].innerText; addrDiv.innerText = addr || "Adres bulunamadı.";
             const t1Start = row.cells[9].innerText; const t2Start = row.cells[11].innerText; 
@@ -1533,41 +1537,29 @@
         const modal = document.getElementById('assignmentModal'); const title = document.getElementById('assignModalTitle'); const startInput = document.getElementById('assignStartDate'); const endInput = document.getElementById('assignEndDate'); const select = document.getElementById('assignWorkplaceSelect');
         select.innerHTML = ""; const table = document.getElementById("dataTable"); let hasData = false;
         for(let i=1; i<table.rows.length; i++) {
-            const row = table.rows[i]; const siraNo = row.cells[0].innerText.split('\n')[0];
-            let unvan = row.cells[17].innerText; if(!unvan || unvan === '-') unvan = row.cells[16].innerText; if(!unvan || unvan === '-') unvan = "İsimsiz İşyeri";
+            const row = table.rows[i]; const siraNo = row.cells[0].innerText.split('\n')[0]; let unvan = row.cells[17].innerText; if(!unvan || unvan === '-') unvan = row.cells[16].innerText; if(!unvan || unvan === '-') unvan = "İsimsiz İşyeri";
             const opt = document.createElement("option"); opt.value = i; opt.text = `${siraNo} - ${unvan.substring(0, 40)}`; select.appendChild(opt); hasData = true;
         }
         if(!hasData) { alert("Listelenecek işyeri yok."); return; }
-        if(preSelectedRowIndex !== null && preSelectedRowIndex !== undefined) {
-            select.value = preSelectedRowIndex; title.innerText = "✏️ Teftiş Düzenle"; startInput.value = dateStr; endInput.value = dateStr; 
-        } 
+        if(preSelectedRowIndex !== null && preSelectedRowIndex !== undefined) { select.value = preSelectedRowIndex; title.innerText = "✏️ Teftiş Düzenle"; startInput.value = dateStr; endInput.value = dateStr; } 
         else if (event) {
             title.innerText = "✏️ Teftiş Düzenle"; select.value = event.extendedProps.rowIndex; startInput.value = dateStr; 
             let endDateStr = dateStr; if (event.end) { let d = new Date(event.endStr || event.end); d.setDate(d.getDate() - 1); endDateStr = d.toISOString().split('T')[0]; } endInput.value = endDateStr;
             const typeSelect = document.getElementById('assignTypeSelect'); if(event.extendedProps.startCol === 9) typeSelect.value = "1"; else typeSelect.value = "2";
-        } else {
-            title.innerText = "📅 Yeni Teftiş Atama"; startInput.value = dateStr; endInput.value = dateStr; select.selectedIndex = 0;
-        }
+        } else { title.innerText = "📅 Yeni Teftiş Atama"; startInput.value = dateStr; endInput.value = dateStr; select.selectedIndex = 0; }
         updateAssignmentModalUI(); modal.style.display = 'block'; window.currentEditingEvent = event;
     }
 
     function confirmAssignment() {
         const rowIndex = document.getElementById('assignWorkplaceSelect').value; const sDateVal = document.getElementById('assignStartDate').value; const eDateVal = document.getElementById('assignEndDate').value; const targetType = document.getElementById('assignTypeSelect').value; 
         if(!sDateVal || !eDateVal) { alert("Lütfen tarihleri giriniz."); return; }
-        const table = document.getElementById("dataTable"); const targetRow = table.rows[rowIndex];
-        const sDateStr = parseISOToDate(sDateVal); const eDateStr = parseISOToDate(eDateVal); const userDateObj = new Date(sDateVal);
+        const table = document.getElementById("dataTable"); const targetRow = table.rows[rowIndex]; const sDateStr = parseISOToDate(sDateVal); const eDateStr = parseISOToDate(eDateVal); const userDateObj = new Date(sDateVal);
         if (targetType === '1') {
             const secondStartStr = targetRow.cells[11].innerText;
-            if (secondStartStr && secondStartStr.length > 5) {
-                const secondISO = parseDateToISO(secondStartStr); const secondDateObj = new Date(secondISO);
-                if (userDateObj >= secondDateObj) { alert("HATA: İlk Teftiş tarihi, İkinci Teftiş tarihinden SONRA veya AYNI olamaz.\nLütfen daha erken bir tarih seçiniz."); return; }
-            }
+            if (secondStartStr && secondStartStr.length > 5) { const secondISO = parseDateToISO(secondStartStr); const secondDateObj = new Date(secondISO); if (userDateObj >= secondDateObj) { alert("HATA: İlk Teftiş tarihi, İkinci Teftiş tarihinden SONRA veya AYNI olamaz.\nLütfen daha erken bir tarih seçiniz."); return; } }
         } else {
             const firstStartStr = targetRow.cells[9].innerText;
-            if (firstStartStr && firstStartStr.length > 5) {
-                const firstISO = parseDateToISO(firstStartStr); const firstDateObj = new Date(firstISO);
-                if (userDateObj <= firstDateObj) { alert("HATA: İkinci Teftiş tarihi, İlk Teftiş tarihinden ÖNCE veya AYNI olamaz.\nLütfen daha ileri bir tarih seçiniz."); return; }
-            }
+            if (firstStartStr && firstStartStr.length > 5) { const firstISO = parseDateToISO(firstStartStr); const firstDateObj = new Date(firstISO); if (userDateObj <= firstDateObj) { alert("HATA: İkinci Teftiş tarihi, İlk Teftiş tarihinden ÖNCE veya AYNI olamaz.\nLütfen daha ileri bir tarih seçiniz."); return; } }
         }
         let startCol, endCol; if (targetType === '1') { startCol = 9; endCol = 10; } else { startCol = 11; endCol = 12; }
         targetRow.cells[startCol].innerText = sDateStr; targetRow.cells[endCol].innerText = eDateStr;
