@@ -1414,10 +1414,9 @@
                     <td contenteditable="true" oninput="calcDates(this)" onclick="handleCellQuadClick(this)"></td><td contenteditable="true" onclick="handleCellQuadClick(this)"></td><td contenteditable="true" onclick="handleCellQuadClick(this)"></td><td contenteditable="true" onclick="handleCellQuadClick(this)"></td>
                     <td contenteditable="true">${wp.tehlike}</td> <td contenteditable="true">${wp.yonetici}</td>
                     <td contenteditable="true" style="color:#fd7e14;font-weight:bold" oninput="propagateTaskInfo(this)">${tInfo}</td> <td contenteditable="true">${shortUnvan}</td><td contenteditable="true">${wp.unvan}</td><td contenteditable="true" style="font-family:monospace">${formatSGK(wp.sgkRaw)}</td><td contenteditable="true">${dSicil}</td>
-                    <td contenteditable="true" oninput="propagateCity(this)" style="${wp.sehir === 'ŞEHİR' ? 'color:var(--danger);font-weight:bold;' : ''}">${wp.sehir}</td> <td contenteditable="true">${isg.uzman.ad}</td><td contenteditable="true">${isg.uzman.sert !== '-' ? (isg.uzman.sert + (isg.uzman.bas ? ' / ' + isg.uzman.bas : '')) : '-'}</td><td contenteditable="true">${isg.uzman.sure}</td>
-                    <td contenteditable="true">${isg.hekim.ad}</td><td contenteditable="true">${isg.hekim.sert !== '-' ? (isg.hekim.sert + (isg.hekim.bas ? ' / ' + isg.hekim.bas : '')) : '-'}</td><td contenteditable="true">${isg.hekim.sure}</td>
-                    <td contenteditable="true">${isg.dsp.ad}</td> <td contenteditable="true">${isg.dsp.sert !== '-' ? (isg.dsp.sert + (isg.dsp.bas ? ' / ' + isg.dsp.bas : '')) : '-'}</td> <td contenteditable="true">${isg.dsp.sure}</td>
-                    <td contenteditable="true" style="color:var(--danger);font-weight:bold">${tNo}</td><td contenteditable="true">${wp.tarih}</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+                    <td contenteditable="true" oninput="propagateCity(this)" style="${wp.sehir === 'ŞEHİR' ? 'color:var(--danger);font-weight:bold;' : ''}">${wp.sehir}</td> <td contenteditable="true">${isg.uzman.ad}</td><td contenteditable="true">${isg.uzman.sert !== '-' ? (isg.uzman.sert + (isg.uzman.bas && isg.uzman.bas !== '-' ? ' / ' + isg.uzman.bas + (isg.uzman.bit && isg.uzman.bit !== '-' ? ' - ' + isg.uzman.bit : '') : '')) : '-'}</td><td contenteditable="true">${isg.uzman.sure}</td>
+<td contenteditable="true">${isg.hekim.ad}</td><td contenteditable="true">${isg.hekim.sert !== '-' ? (isg.hekim.sert + (isg.hekim.bas && isg.hekim.bas !== '-' ? ' / ' + isg.hekim.bas + (isg.hekim.bit && isg.hekim.bit !== '-' ? ' - ' + isg.hekim.bit : '') : '')) : '-'}</td><td contenteditable="true">${isg.hekim.sure}</td>
+<td contenteditable="true">${isg.dsp.ad}</td> <td contenteditable="true">${isg.dsp.sert !== '-' ? (isg.dsp.sert + (isg.dsp.bas && isg.dsp.bas !== '-' ? ' / ' + isg.dsp.bas + (isg.dsp.bit && isg.dsp.bit !== '-' ? ' - ' + isg.dsp.bit : '') : '')) : '-'}</td> <td contenteditable="true">${isg.dsp.sure}</td>                    <td contenteditable="true" style="color:var(--danger);font-weight:bold">${tNo}</td><td contenteditable="true">${wp.tarih}</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
                 </tr>`; tb.insertAdjacentHTML('beforeend', html);
             }
         }
@@ -1575,5 +1574,6 @@
 </script>
 </body>
 </html>
+
 
 
