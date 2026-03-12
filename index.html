@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <link rel="manifest" href="manifest.json">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
@@ -205,11 +204,16 @@
     <header class="app-header">
         <div class="app-title">
             <h1>📋 HitosHK</h1>
-            <span class="badge-pro">v74.0 Pro + OCR + Dinamik Konu</span>
+            <span class="badge-pro">v74.0 Pro + Proje Yönetimi</span>
         </div>
-        <div style="display:flex; gap:10px;">
-            <button id="calendarBtn" class="btn btn-outline" onclick="openCalendarModal()">📅 Takvim Görünümü</button>
-            <button id="clearBtn" class="btn btn-danger" onclick="clearAll()">🗑️ Tümünü Temizle</button>
+        <div style="display:flex; gap:10px; flex-wrap: wrap;">
+            <button class="btn btn-success" style="background:#059669; border:none;" onclick="saveProject()">💾 Projeyi Kaydet (.hk)</button>
+            <label class="btn btn-primary" style="cursor: pointer; background:#0ea5e9; border:none; margin:0;">
+                📂 Proje Yükle (.hk)
+                <input type="file" id="hkImportInput" accept=".hk" style="display: none;" onclick="this.value=null;" onchange="loadProject(event)">
+            </label>
+            <button id="calendarBtn" class="btn btn-outline" onclick="openCalendarModal()">📅 Takvim</button>
+            <button id="clearBtn" class="btn btn-danger" onclick="clearAll()">🗑️ Temizle</button>
         </div>
     </header>
 
@@ -1416,7 +1420,8 @@
                     <td contenteditable="true" style="color:#fd7e14;font-weight:bold" oninput="propagateTaskInfo(this)">${tInfo}</td> <td contenteditable="true">${shortUnvan}</td><td contenteditable="true">${wp.unvan}</td><td contenteditable="true" style="font-family:monospace">${formatSGK(wp.sgkRaw)}</td><td contenteditable="true">${dSicil}</td>
                     <td contenteditable="true" oninput="propagateCity(this)" style="${wp.sehir === 'ŞEHİR' ? 'color:var(--danger);font-weight:bold;' : ''}">${wp.sehir}</td> <td contenteditable="true">${isg.uzman.ad}</td><td contenteditable="true">${isg.uzman.sert !== '-' ? (isg.uzman.sert + (isg.uzman.bas && isg.uzman.bas !== '-' ? ' / ' + isg.uzman.bas + (isg.uzman.bit && isg.uzman.bit !== '-' ? ' - ' + isg.uzman.bit : '') : '')) : '-'}</td><td contenteditable="true">${isg.uzman.sure}</td>
 <td contenteditable="true">${isg.hekim.ad}</td><td contenteditable="true">${isg.hekim.sert !== '-' ? (isg.hekim.sert + (isg.hekim.bas && isg.hekim.bas !== '-' ? ' / ' + isg.hekim.bas + (isg.hekim.bit && isg.hekim.bit !== '-' ? ' - ' + isg.hekim.bit : '') : '')) : '-'}</td><td contenteditable="true">${isg.hekim.sure}</td>
-<td contenteditable="true">${isg.dsp.ad}</td> <td contenteditable="true">${isg.dsp.sert !== '-' ? (isg.dsp.sert + (isg.dsp.bas && isg.dsp.bas !== '-' ? ' / ' + isg.dsp.bas + (isg.dsp.bit && isg.dsp.bit !== '-' ? ' - ' + isg.dsp.bit : '') : '')) : '-'}</td> <td contenteditable="true">${isg.dsp.sure}</td>                    <td contenteditable="true" style="color:var(--danger);font-weight:bold">${tNo}</td><td contenteditable="true">${wp.tarih}</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+<td contenteditable="true">${isg.dsp.ad}</td> <td contenteditable="true">${isg.dsp.sert !== '-' ? (isg.dsp.sert + (isg.dsp.bas && isg.dsp.bas !== '-' ? ' / ' + isg.dsp.bas + (isg.dsp.bit && isg.dsp.bit !== '-' ? ' - ' + isg.dsp.bit : '') : '')) : '-'}</td> <td contenteditable="true">${isg.dsp.sure}</td>
+                    <td contenteditable="true" style="color:var(--danger);font-weight:bold">${tNo}</td><td contenteditable="true">${wp.tarih}</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
                 </tr>`; tb.insertAdjacentHTML('beforeend', html);
             }
         }
@@ -1571,9 +1576,109 @@
         targetRow.cells[startCol].innerText = sDateStr; targetRow.cells[endCol].innerText = eDateStr;
         document.getElementById('assignmentModal').style.display = 'none'; calendar.removeAllEvents(); calendar.addEventSource(getEventsFromTable()); window.currentEditingEvent = null;
     }
+    // ==========================================
+    // PROJE KAYDETME VE YÜKLEME (.hk FORMATI)
+    // ==========================================
+    function saveProject() {
+        const rows = document.querySelectorAll('#dataTable tbody tr');
+        if(rows.length === 0) { alert("Kaydedilecek bir tablo verisi bulunamadı."); return; }
+
+        let tableData = [];
+        // Tablodaki her satırı ve hücreyi içindeki tasarımla beraber dondur
+        rows.forEach(row => {
+            let rowData = [];
+            for(let i=0; i<row.cells.length; i++) {
+                rowData.push(row.cells[i].innerHTML);
+            }
+            tableData.push(rowData);
+        });
+
+        // Otomasyonun mevcut durumunu bir pakette topla
+        const projectState = {
+            version: "1.0",
+            teftisTuru: document.getElementById('teftisTuruSelect').value,
+            programliKonu: document.getElementById('programliKonuSelect') ? document.getElementById('programliKonuSelect').value : "",
+            kabulFormlariListesi: kabulFormlariListesi,
+            ddkVerileri: ddkVerileri,
+            tableData: tableData
+        };
+
+        // Bu paketi JSON formatında bir metne çevir ve .hk dosyası olarak indir
+        const jsonStr = JSON.stringify(projectState);
+        const blob = new Blob([jsonStr], { type: "text/plain;charset=utf-8" });
+
+        const date = new Date();
+        const pad = (n) => n.toString().padStart(2, '0');
+        const fileName = `HitosProje_${date.getFullYear()}${pad(date.getMonth()+1)}${pad(date.getDate())}_${pad(date.getHours())}${pad(date.getMinutes())}.hk`;
+
+        saveAs(blob, fileName);
+        showToast("✅ Proje tüm ayarlarıyla beraber kaydedildi!", "var(--success)");
+        setTimeout(hideToast, 4000);
+    }
+
+    function loadProject(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        showToast("⏳ Proje yükleniyor...", "var(--warning)");
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            try {
+                // Dosyayı çöz ve eski duruma dön
+                const projectState = JSON.parse(e.target.result);
+                
+                // 1. Ayarları ve Menüleri Geri Getir
+                if(projectState.teftisTuru) document.getElementById('teftisTuruSelect').value = projectState.teftisTuru;
+                if(projectState.programliKonu && document.getElementById('programliKonuSelect')) document.getElementById('programliKonuSelect').value = projectState.programliKonu;
+                toggleKonuUI();
+
+                // 2. Arka Plan PDF Listesini ve Eşleşmelerini Geri Getir
+                kabulFormlariListesi = projectState.kabulFormlariListesi || [];
+                ddkVerileri = projectState.ddkVerileri || {};
+
+                // 3. Tabloyu Tamamen Eski Haline Getir
+                const tbody = document.querySelector("#dataTable tbody");
+                tbody.innerHTML = ""; // Önce tabloyu temizle
+                
+                if (projectState.tableData) {
+                    projectState.tableData.forEach((rowData) => {
+                        let tr = `<tr tabindex="0" onclick="selRow(this)">`;
+                        rowData.forEach((cellHtml, cIdx) => {
+                            // Eski satırların tıklama ve yazma özelliklerini (JavaScript eventlerini) tekrar bağla
+                            let ev = "";
+                            if(cIdx===9) ev = `oninput="calcDates(this)"`; 
+                            if(cIdx===15) ev = `oninput="propagateTaskInfo(this)"`; 
+                            if(cIdx===20) ev = `oninput="propagateCity(this)"`; 
+                            if([9,10,11,12].includes(cIdx)) ev += ` onclick="handleCellQuadClick(this)"`; 
+                            
+                            if (cIdx === 0) {
+                                tr += `<td style="text-align:center">${cellHtml}</td>`;
+                            } else {
+                                tr += `<td contenteditable="true" ${ev}>${cellHtml}</td>`;
+                            }
+                        });
+                        tr += `</tr>`;
+                        tbody.insertAdjacentHTML('beforeend', tr);
+                    });
+                }
+
+                // 4. Arayüzü Tetikle ve Menüleri Aç
+                document.getElementById('excelSection').style.display='block'; 
+                document.getElementById('docButtons').style.display='block'; 
+                updateDocRowSelect();
+                
+                showToast("📂 Proje başarıyla yüklendi! Kaldığınız yerden devam edebilirsiniz.", "var(--success)");
+                setTimeout(hideToast, 4000);
+
+            } catch(err) {
+                alert("Hata: Dosya okunamadı. Bu geçerli bir HitosHK (.hk) proje dosyası olmayabilir.");
+                console.error(err);
+                hideToast();
+            }
+        };
+        reader.readAsText(file);
+    }
 </script>
 </body>
 </html>
-
-
-
