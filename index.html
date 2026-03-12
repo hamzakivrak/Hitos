@@ -1579,7 +1579,7 @@
     // ==========================================
     // PROJE KAYDETME VE YÜKLEME (.hk FORMATI)
     // ==========================================
-    function saveProject() {
+    async function saveProject() {
         const rows = document.querySelectorAll('#dataTable tbody tr');
         if(rows.length === 0) { alert("Kaydedilecek bir tablo verisi bulunamadı."); return; }
 
@@ -1603,17 +1603,41 @@
             tableData: tableData
         };
 
-        // Bu paketi JSON formatında bir metne çevir ve .hk dosyası olarak indir
         const jsonStr = JSON.stringify(projectState);
-        const blob = new Blob([jsonStr], { type: "text/plain;charset=utf-8" });
-
         const date = new Date();
         const pad = (n) => n.toString().padStart(2, '0');
         const fileName = `HitosProje_${date.getFullYear()}${pad(date.getMonth()+1)}${pad(date.getDate())}_${pad(date.getHours())}${pad(date.getMinutes())}.hk`;
 
-        saveAs(blob, fileName);
-        showToast("✅ Proje tüm ayarlarıyla beraber kaydedildi!", "var(--success)");
-        setTimeout(hideToast, 4000);
+        // Modern Tarayıcılar İçin "Farklı Kaydet" Penceresi
+        if (window.showSaveFilePicker) {
+            try {
+                const handle = await window.showSaveFilePicker({
+                    suggestedName: fileName,
+                    types: [{
+                        description: 'Hitos Proje Dosyası',
+                        accept: { 'text/plain': ['.hk'] }
+                    }]
+                });
+                const writable = await handle.createWritable();
+                await writable.write(jsonStr);
+                await writable.close();
+                
+                showToast("✅ Proje istediğiniz konuma başarıyla kaydedildi!", "var(--success)");
+                setTimeout(hideToast, 4000);
+            } catch (err) {
+                // Kullanıcı pencereyi "İptal" diyerek kapatırsa hata verme
+                if (err.name !== 'AbortError') {
+                    console.error(err);
+                    alert("Kaydetme sırasında bir hata oluştu.");
+                }
+            }
+        } else {
+            // Eski tarayıcılar veya Mobil cihazlar için klasik indirme (B Planı)
+            const blob = new Blob([jsonStr], { type: "text/plain;charset=utf-8" });
+            saveAs(blob, fileName);
+            showToast("✅ Proje indirildi!", "var(--success)");
+            setTimeout(hideToast, 4000);
+        }
     }
 
     function loadProject(event) {
