@@ -23,6 +23,20 @@
     <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
 
     <style>
+    
+    /* --- VMLOADER ENTEGRASYON STİLLERİ --- */
+        .vm-tab-btn { padding: 12px 20px; border: none; background: none; font-weight: 600; font-size: 0.9rem; color: var(--text-muted); cursor: pointer; white-space: nowrap; border-bottom: 3px solid transparent; transition: all 0.2s; }
+        .vm-tab-btn:hover { color: var(--primary); background: #f1f5f9; }
+        .vm-tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); background: #ffffff; }
+        .vm-tab-content { display: none; padding: 20px 30px; }
+        .vm-tab-content.active { display: block; animation: fadeIn 0.2s ease; }
+        .vm-data-row { display: grid; grid-template-columns: 280px 1fr auto; align-items: center; gap: 15px; padding: 8px 10px; border-bottom: 1px solid var(--border-color); transition: background 0.1s; }
+        .vm-data-row:hover { background: #f8fafc; border-radius: 4px; }
+        .vm-data-label { font-weight: 600; color: #475569; font-size: 0.85rem; }
+        .vm-data-value { font-weight: 500; color: #0f172a; font-size: 0.85rem; word-break: break-word; }
+        .vm-copy-btn { background: #e0e7ff; color: var(--primary); border: none; border-radius: 6px; padding: 4px 10px; font-size: 0.8rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s; }
+        .vm-copy-btn:hover { background: var(--primary); color: white; }
+        .vm-copy-btn.copied { background: var(--success); color: white; }
         /* ==========================================================================
            MODERN SAAS UI/UX TASARIM SİSTEMİ
            ========================================================================== */
@@ -419,9 +433,25 @@
             </div>
         </div>
         
-        <div id="excelSection" style="padding: 15px 20px; background: #f8fafc; border-top: 1px solid var(--border-color);">
+        <div id="excelSection" style="padding: 15px 20px; background: #f8fafc; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 10px;">
             <button class="btn btn-success" style="width: 100%; font-size: 1rem;" onclick="exportExcel()">📥 Mevcut Tabloyu Excel Olarak Kaydet</button>
+            <button class="btn btn-primary" style="width: 100%; font-size: 1rem; background: #4f46e5;" onclick="openVMLoaderModal()">📋 Sisteme Girilecek Verileri Çek (VMLoader)</button>
         </div>
+    </section>
+
+    <div id="vmLoaderModal" class="modal-overlay" style="z-index: 2300;">
+        <div class="modal-content-lg" style="background: var(--bg-color); padding: 20px; display: flex; flex-direction: column; width: 100%; height: 100%; border-radius: 0;">
+            <button class="modal-close modal-close-dark" onclick="document.getElementById('vmLoaderModal').style.display='none'">&times;</button>
+            <h2 style="margin-top:0; color:var(--text-main); display:flex; align-items:center; gap:10px;">
+                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+                Sisteme Girilecek Veriler
+            </h2>
+            <div class="tabs-container" style="display: flex; flex-direction: column; flex: 1; overflow: hidden; background: var(--card-bg); border-radius: var(--border-radius); box-shadow: var(--shadow-sm);">
+                <div class="tabs-header" id="vmTabsHeader" style="display: flex; overflow-x: auto; background: #f8fafc; border-bottom: 1px solid var(--border-color);"></div>
+                <div id="vmTabsContentArea" style="flex: 1; overflow-y: auto;"></div>
+            </div>
+        </div>
+    </div>
     </section>
 
     <section id="docButtons" class="doc-panel">
@@ -2257,6 +2287,134 @@
             }
         }
     });
+    
+    // ==========================================
+    // VMLOADERHK ENTEGRASYONU (Tablodan Veri Çekme)
+    // ==========================================
+    function openVMLoaderModal() {
+        const rows = document.querySelectorAll('#dataTable tbody tr');
+        if(rows.length === 0) {
+            alert("Tabloda veri bulunmuyor. Lütfen önce veri yükleyin veya analiz edin.");
+            return;
+        }
+
+        const tabsHeader = document.getElementById('vmTabsHeader');
+        const tabsContentArea = document.getElementById('vmTabsContentArea');
+        tabsHeader.innerHTML = '';
+        tabsContentArea.innerHTML = '';
+
+        rows.forEach((row, index) => {
+            // Hitos tablosundan hücre okuma yardımcı fonksiyonu
+            const d = (colIndex) => {
+                const cell = row.cells[colIndex];
+                return cell ? (cell.innerText.trim() || "-") : "-";
+            };
+
+            const isverenTam = d(17) !== "-" ? d(17) : (d(16) !== "-" ? d(16) : "İsimsiz İşyeri");
+            // Sekme adı için ilk 2 kelime + sıra numarası
+            const tabName = `${index + 1}. ${isverenTam.split(/\s+/).slice(0, 2).join(" ")}`;
+
+            let raporTam = d(32);
+            let raporTarihi = raporTam;
+            let raporNo = "-";
+            if (raporTam.includes("/")) {
+                const parts = raporTam.split("/");
+                raporTarihi = parts[0].trim();
+                raporNo = parts.slice(1).join("/").trim();
+            }
+
+            const formData = [
+                { label: "İŞYERİ ADI", value: isverenTam },
+                { label: "İŞYERİ ADRESİ", value: d(2) },
+                { label: "SGK NO", value: d(18) },
+                { label: "SİCİL NO", value: d(19) },
+                { label: "İLK TUTANAK TARİHİ", value: d(10) },
+                { label: "İLK TEFTİŞ TARİHLERİ", value: `${d(9)} - ${d(10)}` },
+                { label: "İKİNCİ TEFTİŞ TUTANAK TARİHİ", value: d(12) },
+                { label: "İKİNCİ TEFTİŞ EKSTRA TARİHLER", value: `${d(11)} - ${d(12)}` },
+                { label: "TELEFON", value: d(3) },
+                { label: "GÖRÜŞÜLEN KİŞİLER", value: d(5) },
+                { label: "TEHLİKE SINIFI", value: d(13) },
+                { label: "ÇALIŞAN SAYILARI", value: `${d(6)} Erkek ; ${d(7)} Kadın ; ${d(8)} Toplam` },
+                { label: "UZMAN İSMİ", value: d(21) },
+                { label: "HEKİM İSMİ", value: d(24) },
+                { label: "RAPOR TARİHİ", value: raporTarihi },
+                { label: "RAPOR NO", value: raporNo }
+            ];
+
+            createVMTab(tabName, formData, index);
+        });
+
+        document.getElementById('vmLoaderModal').style.display = 'flex';
+        // İlk sekmeyi otomatik aç
+        if(tabsHeader.firstChild) {
+            tabsHeader.firstChild.click();
+        }
+    }
+
+    function createVMTab(tabName, formData, index) {
+        const tabsHeader = document.getElementById('vmTabsHeader');
+        const tabsContentArea = document.getElementById('vmTabsContentArea');
+        const tabId = `vm-tab-${index}`;
+
+        const btn = document.createElement('button');
+        btn.className = 'vm-tab-btn';
+        btn.innerText = tabName;
+        btn.onclick = () => switchVMTab(btn, tabId);
+        tabsHeader.appendChild(btn);
+
+        const contentDiv = document.createElement('div');
+        contentDiv.id = tabId;
+        contentDiv.className = 'vm-tab-content';
+
+        formData.forEach((item, i) => {
+            const rowDiv = document.createElement('div');
+            rowDiv.className = 'vm-data-row';
+            
+            const valColor = (item.value === "-" || item.value === " - ") ? "color: #ef4444;" : "";
+
+            rowDiv.innerHTML = `
+                <div class="vm-data-label">${item.label}</div>
+                <div class="vm-data-value" style="${valColor}" id="vm-val-${index}-${i}">${item.value}</div>
+                <button class="vm-copy-btn" onclick="copyVMToClipboard('vm-val-${index}-${i}', this)">
+                    📋 Kopyala
+                </button>
+            `;
+            contentDiv.appendChild(rowDiv);
+        });
+
+        tabsContentArea.appendChild(contentDiv);
+    }
+
+    function switchVMTab(clickedBtn, targetId) {
+        document.querySelectorAll('.vm-tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.vm-tab-content').forEach(content => content.classList.remove('active'));
+
+        clickedBtn.classList.add('active');
+        document.getElementById(targetId).classList.add('active');
+    }
+
+    function copyVMToClipboard(elementId, btnElement) {
+        const textToCopy = document.getElementById(elementId).innerText;
+        
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            const originalText = btnElement.innerHTML;
+            btnElement.innerHTML = '✅ Alındı';
+            btnElement.classList.add('copied');
+            
+            // HitosHK'nın kendi hazır toast sistemini kullanıyoruz
+            showToast("✅ Kopyalandı!", "var(--success)");
+
+            setTimeout(() => {
+                btnElement.innerHTML = originalText;
+                btnElement.classList.remove('copied');
+                hideToast();
+            }, 1500);
+        }).catch(err => {
+            console.error('Kopyalama başarısız!', err);
+            alert('Kopyalama başarısız oldu.');
+        });
+    }
 </script>
 </body>
 </html>
