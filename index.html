@@ -9,7 +9,7 @@
     <meta name="theme-color" content="#1e293b">
     <meta name="application-name" content="HitosHK">
     <meta name="apple-mobile-web-app-title" content="HitosHK">
-    <title>İSGx Teftiş Otomasyonu v74.0 Pro + Dinamik Konu</title>
+    <title>İSGx Teftiş Otomasyonu v75.5 Pro Max + Zeki Asistan</title>
     
     <script src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -60,6 +60,20 @@
         .app-title { display: flex; align-items: center; gap: 12px; }
         .app-title h1 { margin: 0; font-size: 1.5rem; font-weight: 800; color: #0f172a; letter-spacing: -0.5px; }
         .badge-pro { background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* KULLANIM KILAVUZU STİLLERİ */
+        .user-guide { background: white; border: 1px solid var(--primary); border-radius: var(--border-radius); box-shadow: var(--shadow-md); overflow: hidden; transition: all 0.3s ease; }
+        .user-guide summary { background: linear-gradient(135deg, #eff6ff, #dbeafe); padding: 18px 25px; font-weight: 800; color: var(--primary); cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between; font-size: 1.1rem; user-select: none; }
+        .user-guide summary::-webkit-details-marker { display: none; }
+        .user-guide summary::after { content: '▼'; font-size: 1rem; transition: transform 0.3s; color: var(--primary); }
+        .user-guide[open] summary::after { transform: rotate(180deg); }
+        .guide-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; padding: 25px; background: #fff; }
+        .guide-card { background: var(--secondary); border: 1px solid var(--border-color); border-radius: 10px; padding: 20px; transition: 0.2s; }
+        .guide-card:hover { box-shadow: var(--shadow-sm); border-color: #cbd5e1; transform: translateY(-2px); }
+        .guide-card h4 { color: #0f172a; margin-top: 0; margin-bottom: 15px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; font-size: 1.05rem; display: flex; align-items: center; gap: 8px; }
+        .guide-card ul { padding-left: 20px; margin: 0; color: #475569; font-size: 0.9rem; line-height: 1.6; }
+        .guide-card li { margin-bottom: 8px; }
+        .guide-card strong { color: var(--primary); font-weight: 700; }
 
         .card { background: var(--card-bg); border-radius: var(--border-radius); box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); padding: 24px; position: relative; }
         .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--border-color); }
@@ -121,7 +135,7 @@
         .table-scroll::-webkit-scrollbar-track { background: #f8fafc; }
         .table-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 6px; border: 2px solid #f8fafc; }
         .table-scroll::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        #dataTable { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.85rem; min-width: 3500px; }
+        #dataTable { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.85rem; min-width: 4000px; } 
         th { background: #f1f5f9; color: #334155; padding: 14px 12px; font-weight: 700; border-bottom: 2px solid var(--border-color); text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.75rem; white-space: nowrap; position: sticky; top: 0; z-index: 10; }
         td { border-bottom: 1px solid var(--border-color); padding: 10px 12px; color: #475569; transition: background 0.1s; vertical-align: middle; }
         th:first-child, td:first-child { position: sticky; left: 0; z-index: 11; background-color: #f8fafc; border-right: 2px solid var(--border-color); text-align: center; min-width: 70px; max-width: 100px; font-weight: 600; }
@@ -131,7 +145,10 @@
         tr.selected td { background-color: #eff6ff !important; border-bottom: 1px solid #bfdbfe; color: #1e40af; }
         tr.selected td:first-child { background-color: #dbeafe !important; border-right-color: #93c5fd; }
         td[contenteditable="true"]:focus { outline: 2px solid var(--primary); outline-offset: -2px; background-color: #fff; border-radius: 4px; }
-        .table-actions { background: #f8fafc; padding: 12px 20px; border-top: 1px solid var(--border-color); display: flex; gap: 10px; align-items: center; border-radius: 0 0 var(--border-radius) var(--border-radius); justify-content: space-between; }
+        .table-actions { background: #f8fafc; padding: 12px 20px; border-top: 1px solid var(--border-color); display: flex; gap: 10px; align-items: center; border-radius: 0 0 var(--border-radius) var(--border-radius); justify-content: space-between; flex-wrap: wrap;}
+
+        /* Toplu Hücre Seçimi İçin */
+        td.multi-selected { background-color: #dbeafe !important; outline: 2px solid var(--primary); outline-offset: -2px; }
 
         .doc-panel { background: white; border-radius: var(--border-radius); border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); overflow: hidden; display: none; margin-top:24px; }
         .doc-panel-header { background: #1e293b; color: white; padding: 20px; text-align: center; }
@@ -165,6 +182,8 @@
         .card-nok { background: #ecfdf5; border-color: #a7f3d0; } .card-nok b { color: #047857; } .card-nok .action-btn { background: #10b981; color: white; border: none; } .card-nok .action-btn:hover { background: #059669; }
         .card-tdb { background: #fef2f2; border-color: #fecaca; } .card-tdb b { color: #b91c1c; } .card-tdb .action-btn { background: #ef4444; color: white; border: none; } .card-tdb .action-btn:hover { background: #dc2626; }
         .card-rn { background: #f3e8ff; border-color: #d8b4fe; } .card-rn b { color: #6b21a8; } .card-rn .action-btn { background: #9333ea; color: white; border: none; } .card-rn .action-btn:hover { background: #7e22ce; }
+        .card-teb { background: #e0f2fe; border-color: #bae6fd; } .card-teb b { color: #0284c7; } .card-teb .action-btn { background: #0ea5e9; color: white; border: none; } .card-teb .action-btn:hover { background: #0284c7; }
+        .card-bulk { background: #f0fdf4; border-color: #bbf7d0; } .card-bulk b { color: #16a34a; } .card-bulk .action-btn { background: #22c55e; color: white; border: none; } .card-bulk .action-btn:hover { background: #16a34a; }
 
         .modal-overlay { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px); align-items: center; justify-content: center; animation: fadeIn 0.2s; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -204,7 +223,7 @@
     <header class="app-header">
         <div class="app-title">
             <h1>📋 HitosHK</h1>
-            <span class="badge-pro">v74.0 Pro + Proje Yönetimi</span>
+            <span class="badge-pro">v75.3 Pro Max + Zeki Asistan</span>
         </div>
         <div style="display:flex; gap:10px; flex-wrap: wrap;">
             <button class="btn btn-success" style="background:#059669; border:none;" onclick="saveProject()">💾 Projeyi Kaydet (.hk)</button>
@@ -216,6 +235,41 @@
             <button id="clearBtn" class="btn btn-danger" onclick="clearAll()">🗑️ Temizle</button>
         </div>
     </header>
+
+    <details class="user-guide">
+        <summary>📖 HitosHK Akıllı Otomasyon - Kullanım Kılavuzu & Kısayollar (Tıklayın)</summary>
+        <div class="guide-content">
+            <div class="guide-grid">
+                <div class="guide-card">
+                    <h4>⚡ Tablo Kontrolleri ve Kısayollar</h4>
+                    <ul>
+                        <li><strong>Excel Tarzı Seçim:</strong> Farenizle hücreleri sürükleyerek çoklu (mavi) seçim yapabilirsiniz.</li>
+                        <li><strong>Kopyala / Yapıştır:</strong> Seçili hücreleri <code>CTRL+C</code> ile kopyalayabilir, tablodaki başka bir yere veya boş satırlara <code>CTRL+V</code> ile yapıştırabilirsiniz.</li>
+                        <li><strong>Toplu Silme:</strong> Seçili hücrelerin içeriğini tek tuşla (<code>Delete</code> veya <code>Backspace</code>) tabloyu bozmadan temizleyebilirsiniz.</li>
+                        <li><strong>Tarih Atama:</strong> Tarih hücrelerine peş peşe <strong>4 kez</strong> tıklayarak o işyeri için takvimden görsel atama yapabilirsiniz.</li>
+                        <li><strong>Satır Taşıma:</strong> İstediğiniz satırı seçip tablonun üstündeki ⬆️ Yukarı / ⬇️ Aşağı butonları ile sıralamayı değiştirebilirsiniz.</li>
+                    </ul>
+                </div>
+                <div class="guide-card">
+                    <h4>✉️ Akıllı Tebligat Sistemi</h4>
+                    <ul>
+                        <li><strong>Yapay Zeka Destekli Doldurma:</strong> Boş bir "Teb. Çıkış Tarihi" hücresine tıkladığınızda sistem en büyük sıra numaralı tebligatı bulur; <strong>saati 2 saat ileri veya tarihi 1 iş günü ileri atarak</strong> otomatik doldurur.</li>
+                        <li><strong>Davet Adresi Klonlama:</strong> Bir satıra davet adresi yazdığınızda, çıkış tarihi girilmiş diğer tüm tebligatlara otomatik kopyalanır.</li>
+                        <li><strong>Sıra Numarası (Esnek):</strong> "Teb. Sıra" numaralarını elle değiştirebilirsiniz, sistem yazdıklarınızı silmez ve yeni eklenenleri kaldığınız numaradan devam ettirir.</li>
+                        <li><strong>Kusursuz PTT Listesi:</strong> Tablodaki satırları istediğiniz kadar karıştırın, PTT Tevdi Listesi üretildiğinde arka planda her zaman <strong>Sıra Numarasına göre 1'den başlayarak</strong> nizami sıralanır.</li>
+                    </ul>
+                </div>
+                <div class="guide-card">
+                    <h4>🖨️ Belge Üretimi ve Güvenlik</h4>
+                    <ul>
+                        <li><strong>Otomatik Gün Tespiti:</strong> Girdiğiniz davet tarihinin hangi güne (Pazartesi, Cuma vb.) denk geldiği arka planda otomatik hesaplanıp tutanağa yansır.</li>
+                        <li><strong>Akıllı Tutanak:</strong> Satırda tebligat bilgisi yoksa Tutanak normal basılır; tebligat verisi varsa "Şu tarihli tebligatla şu adrese davet edilen..." gibi cümleler otomatik eklenir.</li>
+                        <li><strong>Rapor Güvenlik Kilidi:</strong> Hatalı evrak çıkmaması için rapor (IPC, Noksansız vb.) indirirken sistem "Teftiş Türü" ile "Rapor No" uyuşmazlığını kontrol eder (PRG/İNC hatası). Uyumsuzluk varsa indirmeyi durdurur.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </details>
 
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
         <section class="card">
@@ -253,6 +307,11 @@
                 <div id="st_konu_inceleme" class="status-item"><span class="icon missing">❌</span> <span class="text">Konu: İnceleme</span></div>
                 <div id="st_konu_maden" class="status-item"><span class="icon missing">❌</span> <span class="text">Konu: Maden</span></div>
                 <div id="st_konu_metal" class="status-item"><span class="icon missing">❌</span> <span class="text">Konu: Metal</span></div>
+                <div style="grid-column: 1 / -1; height: 1px; background: var(--border-color); margin: 5px 0;"></div>
+                <div id="st_teblig_bildirim" class="status-item"><span class="icon missing">❌</span> <span class="text">Tebliğ Bildirimi</span></div>
+                <div id="st_teblig_zarf" class="status-item"><span class="icon missing">❌</span> <span class="text">Tebliğ Zarfı</span></div>
+                <div id="st_teb_tutanak" class="status-item"><span class="icon missing">❌</span> <span class="text">Tebliğli Tutanak</span></div>
+                <div id="st_teblig_liste" class="status-item"><span class="icon missing">❌</span> <span class="text">Tevdi Listesi</span></div>
             </div>
         </section>
 
@@ -297,13 +356,15 @@
                 <div style="font-weight: 700; color: var(--text-main);">📊 Teftiş Veri Tablosu</div>
                 <button class="help-trigger" onclick="toggleHelp('help-table')" title="Bilgi">?</button>
             </div>
-            <div style="display: flex; gap: 8px;">
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button class="btn btn-outline" onclick="moveSelectedRowUp()" style="padding: 6px 12px; font-size: 0.8rem;" title="Seçili Satırı Yukarı Taşı">⬆️ Yukarı</button>
+                <button class="btn btn-outline" onclick="moveSelectedRowDown()" style="padding: 6px 12px; font-size: 0.8rem;" title="Seçili Satırı Aşağı Taşı">⬇️ Aşağı</button>
                 <button class="btn btn-outline" onclick="addManualRow()" style="padding: 6px 12px; font-size: 0.8rem;">➕ Boş Satır</button>
                 <button class="btn btn-outline" style="color:var(--danger); padding: 6px 12px; font-size: 0.8rem;" onclick="delSelectedRow()">🗑️ Seçiliyi Sil</button>
             </div>
         </div>
         <div id="help-table" class="help-box" style="margin: 0 20px 15px 20px;">
-            Tablodaki hücrelerin üzerine tıklayarak verileri manuel olarak değiştirebilirsiniz. Tarih hücrelerine peş peşe 4 kez tıklayarak takvimden tarih atama ekranını açabilirsiniz. Şehir sütunu kırmızı <strong>ŞEHİR</strong> olarak görünüyorsa adresten il çıkarılamamıştır, elle düzenleyebilirsiniz.
+            Tablodaki hücrelerin üzerine tıklayarak verileri manuel olarak değiştirebilirsiniz. Tarih hücrelerine peş peşe 4 kez tıklayarak takvimden tarih atama ekranını açabilirsiniz. Yukarı/Aşağı butonları ile satırların sırasını değiştirebilirsiniz. Tebligat sütunlarına veri girdiğinizde "Teb. Sıra" otomatik güncellenir. <strong>Teb.Çıkış Tarihi</strong> hücresine ilk tıkladığınızda (eğer boşsa) en büyük sıra numaralı tebligatı baz alarak tarih ve saatleri akıllı olarak atlar. Davet Adresi yazıldığında alt satırlardaki tebligatlara otomatik kopyalanır.
         </div>
         
         <div class="table-container" style="margin-top: 0; border: none; border-radius: 0;">
@@ -346,9 +407,14 @@
                             <th>RaporTarihiveNo</th>
                             <th>Çalışan Başına Uzman Süre</th>
                             <th>Çalışan Başına Hekim Süre</th>
+                            <th style="background:#e0f2fe; color:#0369a1;">Teb.Çıkış Tarihi</th>
+                            <th style="background:#e0f2fe; color:#0369a1;">Davet Tarihi</th>
+                            <th style="background:#e0f2fe; color:#0369a1;">Davet Saati</th>
+                            <th style="background:#e0f2fe; color:#0369a1;">Davet Adresi</th>
+                            <th style="background:#bae6fd; color:#0284c7;">Teb.Sıra (Oto)</th>
                         </tr>
                     </thead>
-                    <tbody></tbody>
+                    <tbody oninput="calculateTebSira()"></tbody>
                 </table>
             </div>
         </div>
@@ -438,6 +504,20 @@
             <div class="doc-card"><b>⚠️ Noksanlık Bildirimi</b><button class="action-btn" onclick="genDoc('noksanlik')">Üret ve İndir</button></div>
             <div class="doc-card"><b>📝 İfade Tutanağı</b><button class="action-btn" onclick="genDoc('ifade')">Üret ve İndir</button></div>
             
+            <div class="doc-card card-teb">
+                <b>✉️ Tebliğ Bildirimi</b>
+                <button class="action-btn" onclick="genDoc('teblig_bildirim')">Üret ve İndir</button>
+                <button class="action-btn" style="margin-top:5px; background: #0284c7; color: white;" onclick="genDocBulk('teblig_bildirim')">Toplu İndir (Zip)</button>
+            </div>
+            <div class="doc-card card-teb">
+                <b>✉️ Tebliğ Zarfı</b>
+                <button class="action-btn" onclick="genDoc('teblig_zarf')">Üret ve İndir</button>
+                <button class="action-btn" style="margin-top:5px; background: #0284c7; color: white;" onclick="genDocBulk('teblig_zarf')">Toplu İndir (Zip)</button>
+            </div>
+            <div class="doc-card card-teb"><b>📝 Tebliğli Tutanak</b><button class="action-btn" onclick="genDoc('teb_tutanak')">Üret ve İndir</button></div>
+            <div class="doc-card card-bulk"><b>📮 PTT Tevdi Listesi</b><button class="action-btn" onclick="genDoc('teblig_liste')">Toplu Üret ve İndir</button></div>
+            
+
             <div class="doc-card card-ipc"><b>💰 RAPOR IPC</b><button class="action-btn" onclick="genDoc('ipc')">Üret ve İndir</button></div>
             <div class="doc-card card-nok"><b>✅ RAPOR NOKSANSIZ</b><button class="action-btn" onclick="genDoc('noksansiz')">Üret ve İndir</button></div>
             <div class="doc-card card-tdb"><b>🚫 İDARİ TEDBİR</b><button class="action-btn" onclick="genDoc('tdb')">Üret ve İndir</button></div>
@@ -513,7 +593,8 @@
     let globalTaskData = [];
     let templateBuffers = {
         talep: null, davet: null, tanitim: null, tutanak: null, noksanlik: null, ifade: null, ipc: null, noksansiz: null, tdb: null, rapor_niteliginde: null,
-        konu_inceleme: null, konu_maden: null, konu_metal: null
+        konu_inceleme: null, konu_maden: null, konu_metal: null,
+        teblig_bildirim: null, teblig_zarf: null, teblig_liste: null, teb_tutanak: null
     };
     
     let templateSources = {};
@@ -635,10 +716,12 @@
         let loadedCount = 0;
         openDB().then(() => {
             Object.keys(zip.files).forEach(filename => {
-                if (filename.endsWith('.docx') && !filename.startsWith('__MACOSX') && !filename.startsWith('._')) {
-                    const content = zip.file(filename).asArrayBuffer();
-                    identifyAndSaveTemplate(filename.split('/').pop(), content, source);
-                    loadedCount++;
+                if (filename.endsWith('.docx') || filename.endsWith('.doc')) {
+                    if(!filename.startsWith('__MACOSX') && !filename.startsWith('._')){
+                        const content = zip.file(filename).asArrayBuffer();
+                        identifyAndSaveTemplate(filename.split('/').pop(), content, source);
+                        loadedCount++;
+                    }
                 }
             });
             afterTemplateLoad(loadedCount);
@@ -649,7 +732,7 @@
         let loadedCount = 0;
         openDB().then(() => {
             fileList.forEach(file => {
-                if (file.name.endsWith('.docx')) {
+                if (file.name.endsWith('.docx') || file.name.endsWith('.doc')) {
                     const reader = new FileReader();
                     reader.onload = function(e) { identifyAndSaveTemplate(file.name, e.target.result, source); };
                     reader.readAsArrayBuffer(file); loadedCount++;
@@ -667,6 +750,10 @@
         if (normalized.includes('konuinceleme')) mapKey = 'konu_inceleme';
         else if (normalized.includes('konumaden')) mapKey = 'konu_maden';
         else if (normalized.includes('konumetal')) mapKey = 'konu_metal';
+        else if (normalized.includes('tebligbildirim')) mapKey = 'teblig_bildirim';
+        else if (normalized.includes('tebligzarf')) mapKey = 'teblig_zarf';
+        else if (normalized.includes('tebtutanak')) mapKey = 'teb_tutanak';
+        else if (normalized.includes('tevdi') || normalized.includes('liste') || normalized.includes('ptt')) mapKey = 'teblig_liste';
         else {
             const map = {
                 'talep': 'talep', 'davet': 'davet', 'tanitim': 'tanitim', 'tutanak': 'tutanak',
@@ -926,69 +1013,137 @@
         renderKabulFormUI();
     }
 
-    // --- DOC SEÇİM VE SENKRONİZASYON ---
-    function updateDocRowSelect() {
-        const sel = document.getElementById('docRowSelect'); sel.innerHTML = '';
+    // --- TEBLİGAT SIRA HESAPLAMA VE AKILLI DOLDURMA ---
+    function calculateTebSira() {
         const rows = document.querySelectorAll('#dataTable tbody tr');
-        if(rows.length === 0) { sel.innerHTML = '<option value="">Lütfen tablodan veri analizi yapın...</option>'; return; }
-        rows.forEach((r, idx) => {
-            const siraNo = r.cells[0].innerText.split('\n')[0];
-            let isveren = r.cells[17].innerText || r.cells[16].innerText || "İsimsiz İşyeri"; if(isveren === '-') isveren = "İsimsiz İşyeri";
-            const opt = document.createElement("option"); opt.value = idx; opt.text = `${siraNo} - ${isveren.substring(0, 60)}`; sel.appendChild(opt);
+        
+        let maxExisting = 0;
+        rows.forEach(r => {
+            let s = parseInt(r.cells[39].innerText.trim());
+            if (!isNaN(s) && s > maxExisting) maxExisting = s;
         });
-        syncDropdownFromTable();
-        if(document.getElementById('teftisTuruSelect').value === 'İnceleme Teftişi') renderKabulFormUI();
-    }
 
-    function syncDropdownFromTable() {
-        const sel = document.getElementById('docRowSelect'); const rows = document.querySelectorAll('#dataTable tbody tr');
-        let found = false; rows.forEach((r, idx) => { if(r.classList.contains('selected')) { sel.value = idx; found = true; } });
-        if(!found && rows.length > 0) { selRow(rows[0], false); sel.value = 0; }
-    }
-
-    function syncTableSelection() { const sel = document.getElementById('docRowSelect'); const idx = sel.value; const rows = document.querySelectorAll('#dataTable tbody tr'); if(idx !== "" && rows[idx]) { selRow(rows[idx], false); } }
-    function nextDocRow() { const sel = document.getElementById('docRowSelect'); if(sel.options.length > 0 && sel.selectedIndex < sel.options.length - 1) { sel.selectedIndex++; syncTableSelection(); } }
-    function prevDocRow() { const sel = document.getElementById('docRowSelect'); if(sel.options.length > 0 && sel.selectedIndex > 0) { sel.selectedIndex--; syncTableSelection(); } }
-
-    // --- WORD ŞABLONU SAF XML AYIKLAMA (SİYAH ARKA PLANI ENGELLER) ---
-    function getBodyXmlFromXmlString(xml) {
-        let bodyMatch = xml.match(/<w:body[^>]*>([\s\S]*?)<\/w:body>/);
-        if (!bodyMatch) return "";
-        let bodyXml = bodyMatch[1];
+        let counter = maxExisting + 1;
         
-        bodyXml = bodyXml.replace(/<w:sectPr[^>]*>[\s\S]*?<\/w:sectPr>/g, '');
-        bodyXml = bodyXml.replace(/<w:shd[^>]*\/>/g, '');
-        bodyXml = bodyXml.replace(/<w:shd[^>]*>.*?<\/w:shd>/g, '');
-        bodyXml = bodyXml.replace(/<w:color[^>]*\/>/g, '');
-        bodyXml = bodyXml.replace(/<w:highlight[^>]*\/>/g, '');
-        return bodyXml;
-    }
-
-    // --- WORD ŞABLONU MADDELEME AYIKLAMA ---
-    function extractTextWithBullets(xmlStr) {
-        let textContent = "";
-        let bodyMatch = xmlStr.match(/<w:body[^>]*>([\s\S]*?)<\/w:body>/);
-        if (!bodyMatch) return "";
-        
-        let paragraphs = bodyMatch[1].match(/<w:p(?:\s|>)[\s\S]*?<\/w:p>/g) || [];
-        for(let p of paragraphs) {
-            let isList = p.includes('<w:numPr>'); 
-            let nodes = p.match(/(<w:t(?:\s|>[^>]*>)([\s\S]*?)<\/w:t>|<w:br\s*\/>|<w:br>)/g) || [];
-            let pText = nodes.map(n => {
-                if(n.startsWith('<w:br')) return '\n';
-                return n.replace(/<[^>]+>/g, '');
-            }).join('');
+        rows.forEach((r) => {
+            let tebCr = r.cells[35] ? r.cells[35].innerText.trim() : '';
+            let tebDav = r.cells[36] ? r.cells[36].innerText.trim() : '';
+            let mevcutSira = r.cells[39] ? r.cells[39].innerText.trim() : '';
             
-            if (pText.trim() !== '') {
-                if (isList) pText = "◼ " + pText.trim().replace(/\n/g, '\n  '); 
-                textContent += pText + "\n";
-            } else if (pText === '') {
-                textContent += "\n";
+            if (tebCr.length > 2 || tebDav.length > 2) {
+                if (mevcutSira === "") {
+                    r.cells[39].innerText = counter;
+                    counter++;
+                }
+            } else {
+                if (r.cells[39]) r.cells[39].innerText = "";
+            }
+        });
+    }
+
+    function handleTebligatAutoFill(cell) {
+        let row = cell.parentElement;
+        let c35 = row.cells[35].innerText.trim();
+        let c36 = row.cells[36].innerText.trim();
+        let c37 = row.cells[37].innerText.trim();
+        let c38 = row.cells[38].innerText.trim();
+
+        if (c35 === "" && c36 === "" && c37 === "" && c38 === "") {
+            let maxSira = 0;
+            let refRow = null;
+            const rows = document.querySelectorAll('#dataTable tbody tr');
+            
+            // Tablodaki EN BÜYÜK sıra numarasını bul
+            for (let i = 0; i < rows.length; i++) {
+                let r = rows[i];
+                if (r === row) continue; 
+                let siraVal = parseInt(r.cells[39].innerText.trim());
+                if (!isNaN(siraVal) && siraVal > maxSira) {
+                    maxSira = siraVal;
+                    refRow = r;
+                }
+            }
+
+            if (refRow) {
+                let baseCikis = refRow.cells[35].innerText.trim();
+                let baseDavetTarihi = refRow.cells[36].innerText.trim();
+                let baseDavetSaati = refRow.cells[37].innerText.trim();
+                let baseDavetAdresi = refRow.cells[38].innerText.trim();
+
+                let addTwoHours = (maxSira % 2 !== 0); // Tek sayıysa 2 saat ekle
+                let advanceDay = (maxSira % 2 === 0);  // Çift sayıysa gün atlat
+
+                let newDavetTarihi = baseDavetTarihi;
+                if (advanceDay && baseDavetTarihi && baseDavetTarihi.length >= 8) {
+                    let p = baseDavetTarihi.split('.');
+                    if (p.length === 3) {
+                        let d = new Date(p[2], p[1] - 1, p[0]);
+                        if (!isNaN(d)) {
+                            d.setDate(d.getDate() + 1);
+                            if (d.getDay() === 6) d.setDate(d.getDate() + 2); // Cmt -> Pzt
+                            else if (d.getDay() === 0) d.setDate(d.getDate() + 1); // Pzr -> Pzt
+
+                            let dd = d.getDate().toString().padStart(2, '0');
+                            let mm = (d.getMonth() + 1).toString().padStart(2, '0');
+                            let yyyy = d.getFullYear();
+                            newDavetTarihi = `${dd}.${mm}.${yyyy}`;
+                        }
+                    }
+                }
+
+                let newDavetSaati = baseDavetSaati;
+                if (baseDavetSaati) {
+                    let parts = baseDavetSaati.split(/[:.]/);
+                    let h = parseInt(parts[0]);
+                    let m = parts.length > 1 ? parts[1] : "00";
+                    if (!isNaN(h)) {
+                        if (addTwoHours) {
+                            h = (h + 2) % 24;
+                        } else if (advanceDay) {
+                            h = (h - 2 + 24) % 24; // Geri al
+                        }
+                    }
+                    newDavetSaati = (!isNaN(h) ? h.toString().padStart(2, '0') : parts[0]) + ':' + m;
+                }
+
+                row.cells[35].innerText = baseCikis;
+                row.cells[36].innerText = newDavetTarihi;
+                row.cells[37].innerText = newDavetSaati;
+                row.cells[38].innerText = baseDavetAdresi;
+
+                calculateTebSira();
+                
+                showToast("⚡ Tebligat verileri akıllı şekilde dolduruldu!", "var(--success)");
+                setTimeout(hideToast, 2500);
             }
         }
-        return textContent.replace(/\n{3,}/g, '\n\n').trim();
     }
 
+    // --- YARDIMCI FORMAT FONKSİYONLARI ---
+    function getGunIsmi(tarihStr) {
+        if(!tarihStr) return "";
+        let p = tarihStr.split('.');
+        if(p.length !== 3) return "";
+        let d = new Date(p[2], p[1]-1, p[0]);
+        return isNaN(d) ? "" : ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"][d.getDay()];
+    }
+
+    function propagateDavetAdresi(el) {
+        let val = el.innerText;
+        let rows = document.querySelectorAll('#dataTable tbody tr');
+        rows.forEach(r => {
+            let tebCr = r.cells[35] ? r.cells[35].innerText.trim() : '';
+            if (tebCr.length > 2 && r.cells[38] !== el) {
+                r.cells[38].innerText = val;
+            }
+        });
+    }
+
+    function toTitleCase(str) { if (!str || str === '-') return '-'; return str.toString().replace(/[\u200B-\u200D\uFEFF\u200C]/g, '').replace(/\s+/g, ' ').trim().toLocaleLowerCase('tr-TR').split(' ').map(w => w ? w.charAt(0).toLocaleUpperCase('tr-TR') + w.slice(1) : '').join(' '); }
+    function cleanName(s){return s?s.replace(/^\d+\s*/,'').replace(/^[\s•oO0e*·\-_]+|[\s•oO0e*·\-_]+$/g,'').trim():''}
+    function normalizeDate(d){ if(!d||d==='-')return null; d=d.trim(); let m=d.match(/(\d{4})[-/.](\d{2})[-/.](\d{2})/); if(m)return `${m[3]}.${m[2]}.${m[1]}`; m=d.match(/(\d{2})[-/.](\d{2})[-/.](\d{4})/); return m?`${m[1]}.${m[2]}.${m[3]}`:d; }
+    function formatSGK(r){ if(!r||r.length<15||r==='-')return r; let s=r.replace(/\D/g,''); if(s.length<20)return s; const p=(a,b)=>s.slice(a,b)||'?'; return `${p(0,1)}.${p(1,5)}.${p(5,7)}.${p(7,9)}.${p(9,16)}.${p(16,19)}.${p(19,21)}.${p(21,23)}`; }
+    
     // --- 81 İL TANIMA FONKSİYONU ---
     function extractCityFromAddress(adres) {
         if(!adres) return null;
@@ -1010,205 +1165,7 @@
         }
         return null;
     }
-
-    // --- WORD OLUŞTURMA (DOCXTEMPLATER) ---
-    async function genDoc(type) {
-        if (!templateBuffers[type]) { alert("Bu belge için şablon bulunamadı."); return; }
-
-        let dataToFill = {
-            "TeftisTuru": document.getElementById('teftisTuruSelect').value,
-            "IlkMufettis": document.getElementById('IlkMufettis').value,
-            "IlkMufettisUnvan": document.getElementById('IlkMufettisUnvan').value,
-            "IlkMufettisSicil": document.getElementById('IlkMufettisSicil').value,
-            "IkinciMufettis": document.getElementById('IkinciMufettis').value,
-            "IkinciMufettisUnvan": document.getElementById('IkinciMufettisUnvan').value,
-            "IkinciMufettisSicil": document.getElementById('IkinciMufettisSicil').value
-        };
-        
-        let kapakbaslik = document.getElementById('teftisTuruSelect').value === 'İnceleme Teftişi' ? "İNCELEME RAPORU" : "PROGRAMLI TEFTİŞ RAPORU";
-        dataToFill["kapakbaslik"] = kapakbaslik;
-
-        const d = (r, i) => r.cells[i] ? r.cells[i].innerText.trim() : '';
-        const rows = document.querySelectorAll('#dataTable tbody tr');
-
-        const now = new Date(); const yil = now.getFullYear(); const ay = (now.getMonth() + 1).toString().padStart(2, '0'); const gun = now.getDate().toString().padStart(2, '0');
-        const yilAyGun = `${yil}/${ay}${gun}`; 
-        
-        let activeRowIndexForKonu = 1; 
-
-        if(type === 'talep') {
-            if(rows.length === 0) { alert("Tabloda veri yok."); return; }
-            const r0 = rows[0]; activeRowIndexForKonu = 1;
-            const gorevInfoFull = d(r0, 15); 
-            
-            let ayIsmi = ".......";
-            try {
-                let datePart = gorevInfoFull.split('/')[0].trim(); let parts = datePart.split('.');
-                if(parts.length===3) { const dateObj = new Date(parts[2], parts[1]-1, parts[0]); const monthNames = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"]; ayIsmi = monthNames[dateObj.getMonth()] + " " + dateObj.getFullYear(); }
-            } catch(e){}
-
-            let sehir = d(r0, 20).trim();
-            if(!sehir || sehir === '-' || sehir.toUpperCase() === 'ŞEHİR') { 
-                const adres = d(r0, 2); 
-                sehir = extractCityFromAddress(adres) || "Şehir_Yazılmamış"; 
-            }
-            sehir = toTitleCase(sehir); // Şehrin sadece baş harfini büyük yapar
-
-            let talepListesi = [];
-            rows.forEach((row, idx) => {
-                const sira = idx + 1; const tamUnvan = d(row, 17); const kisaUnvan = d(row, 16); const sgk = d(row, 18); 
-                let finalUnvan = tamUnvan; if(!finalUnvan || finalUnvan === '-') return;
-                if(kisaUnvan && kisaUnvan !== '-' && kisaUnvan !== tamUnvan && kisaUnvan.length > 2) { finalUnvan += ` (${kisaUnvan})`; }
-                talepListesi.push({ "Sira": sira, "TalepUnvan": finalUnvan, "TalepSGK": sgk });
-            });
-
-            Object.assign(dataToFill, { 
-                "GorevAyGun": gorevInfoFull.split('/')[0].trim(), 
-                "Şehir": sehir, "şehir": sehir, "sehir": sehir, "Sehir": sehir, "ŞEHİR": sehir, "SEHİR": sehir, "İL": sehir, "İl": sehir, "il": sehir, 
-                "GörevEmriYılveAy": ayIsmi, "TalepListesi": talepListesi, "YIL-AY-GUN": yilAyGun 
-            });
-        } 
-        else {
-            const row = document.querySelector('#dataTable tbody tr.selected');
-            if(!row) { alert("Lütfen tablodan veya açılır menüden bir satır seçiniz."); return; }
-            activeRowIndexForKonu = row.rowIndex;
-            
-            const tamUnvan = d(row, 17); const kisaUnvan = d(row, 16); let raporNoFull = d(row, 32); let raporSadeceTarih = "";
-            let m = raporNoFull.match(/(\d{2}[./]\d{2}[./]\d{4})/); if(m) raporSadeceTarih = m[1];
-
-            let tehlikeStr = d(row, 13).toLowerCase(); let azTehlikeliX = "", tehlikeliX = "", cokTehlikeliX = "";
-            if (tehlikeStr.includes("çok") || tehlikeStr.includes("cok")) cokTehlikeliX = "X";
-            else if (tehlikeStr.includes("az")) azTehlikeliX = "X";
-            else if (tehlikeStr.includes("tehlikeli")) tehlikeliX = "X";
-
-            let sehir = d(row, 20).trim();
-            if(!sehir || sehir === '-' || sehir.toUpperCase() === 'ŞEHİR') { 
-                const adres = d(row, 2); 
-                sehir = extractCityFromAddress(adres) || "Şehir_Yazılmamış"; 
-            }
-            sehir = toTitleCase(sehir); // Şehrin sadece baş harfini büyük yapar
-
-            Object.assign(dataToFill, {
-                "DosyaSicil": d(row, 19), "SGK Sicil No": d(row, 18), "İşveren": tamUnvan, "Unvan": kisaUnvan && kisaUnvan!=='-' ? kisaUnvan : tamUnvan, 
-                "TebligatAdresi": d(row, 1), "Tebligat Adresi": d(row, 1), 
-                "Adres": d(row, 2), "Telefon": d(row, 3), "Ruhsat No": d(row, 4), "TehlikeSınıfı": d(row, 13), 
-                "GörüşülenKişiler": d(row, 5), "Görüşülen Kişiler": d(row, 5), 
-                "Şehir": sehir, "şehir": sehir, "sehir": sehir, "Sehir": sehir, "ŞEHİR": sehir, "SEHİR": sehir, "İL": sehir, "İl": sehir, "il": sehir,
-                "AzTehlikeliX": azTehlikeliX, "TehlikeliX": tehlikeliX, "CokTehlikeliX": cokTehlikeliX,
-                "İmzalayacakVekil": d(row, 14), "GörevTarihSayı": d(row, 15), "Erkek": d(row, 6), "Kadın": d(row, 7), "Toplam": d(row, 8), 
-                "İlkTeftişBaşlangıç": d(row, 9), "İlkTeftişBaslangıç": d(row, 9), "İlkTeftişBitiş": d(row, 10), 
-                "SonTeftişBaşlangıç": d(row, 11), "SonTeftişBaslangıç": d(row, 11), "SonTeftişBitiş": d(row, 12), 
-                "Uzman": d(row, 21), "UzmSertifika-Sözleşme": d(row, 22), "Hekim": d(row, 24), "HekimSertifika-Sözleşme": d(row, 25), 
-                "DSP": d(row, 27), "DSPSertifika-Sözleşme": d(row, 28), "K.Kap.Alınma": d(row, 31),
-                "RaporTarihiveNo": raporNoFull, "RaporTarihi": raporSadeceTarih, "OtomasyonNo": d(row, 30), "YIL-AY-GUN": yilAyGun 
-            });
-        }
-
-        // ==========================================
-        // RAPOR KONUSU DİNAMİK XML ENTEGRASYONU VE DDK VERİLERİ
-        // ==========================================
-        let konuTipiStr = document.getElementById('teftisTuruSelect').value;
-        let secilenKonuKey = "";
-        
-        if(konuTipiStr === 'İnceleme Teftişi') { 
-            secilenKonuKey = 'konu_inceleme'; 
-            
-            const formIdx = ddkVerileri[activeRowIndexForKonu];
-            const kabulData = formIdx !== undefined ? kabulFormlariListesi[formIdx] : null;
-            
-            if (kabulData) {
-                dataToFill["DDKtarih"] = kabulData.ddkTarih || '.......';
-                dataToFill["DDKno"] = kabulData.ddkNo || '.......';
-                dataToFill["DDKkonu"] = kabulData.ddkKonu || '.......';
-            } else {
-                dataToFill["DDKtarih"] = '.......'; dataToFill["DDKno"] = '.......'; dataToFill["DDKkonu"] = '.......';
-            }
-        } 
-        else { 
-            secilenKonuKey = document.getElementById('programliKonuSelect').value; 
-        } 
-        
-        let konuTemplateBuffer = templateBuffers[secilenKonuKey];
-        let rawRaporKonusuXml = "";
-
-        if (konuTemplateBuffer) {
-            let konuDataToFill = { ...dataToFill, "yıl": yil }; 
-
-            try {
-                let bufferClone = (konuTemplateBuffer instanceof ArrayBuffer) ? konuTemplateBuffer.slice(0) : konuTemplateBuffer;
-                const zipKonu = new PizZip(bufferClone);
-                const docKonu = new window.docxtemplater(zipKonu, { delimiters: {start: '[%', end: '%]'}, paragraphLoop: true, linebreaks: true, nullGetter: function() { return ""; } });
-                
-                const safeEscape = (str) => { if (typeof str !== 'string') return str; return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;'); };
-                let escapedKonuData = {}; for (let k in konuDataToFill) escapedKonuData[k] = safeEscape(konuDataToFill[k]);
-
-                docKonu.render(escapedKonuData);
-                
-                let renderedXml = docKonu.getZip().file("word/document.xml").asText();
-                rawRaporKonusuXml = getBodyXmlFromXmlString(renderedXml);
-                
-            } catch(e) {
-                console.error("Konu şablonu render hatası", e); 
-                let errMsg = e.message;
-                if(e.properties && e.properties.errors) {
-                    errMsg = e.properties.errors.map(err => err.properties.explanation).join('\n');
-                }
-                alert("Konu Şablonunda Hata Tespit Edildi!\nLütfen yüklediğiniz Konu şablonunu (İnceleme vb.) kontrol edin.\n\nHata Detayı: " + errMsg);
-                rawRaporKonusuXml = "<w:p><w:r><w:t>ŞABLON HATASI: " + errMsg + "</w:t></w:r></w:p>";
-            }
-        } else {
-            showToast("⚠️ Seçilen Konu Şablonu sisteme yüklü değil!", "var(--danger)");
-            rawRaporKonusuXml = "<w:p><w:r><w:t>Lütfen ilgili Konu Şablonunu sisteme yükleyiniz.</w:t></w:r></w:p>";
-        }
-
-        dataToFill["RaporKonusu"] = rawRaporKonusuXml;
-        // ==========================================
-
-        const escapeXml = (str) => {
-            if (typeof str !== 'string') return str;
-            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
-        };
-
-        const sanitizedData = {};
-        for (const key in dataToFill) {
-            if (key === 'RaporKonusu') {
-                sanitizedData[key] = dataToFill[key];
-            } else if (Array.isArray(dataToFill[key])) {
-                sanitizedData[key] = dataToFill[key].map(item => {
-                    const newItem = {};
-                    for(const subKey in item) { newItem[subKey] = escapeXml(item[subKey]); }
-                    return newItem;
-                });
-            } else {
-                sanitizedData[key] = escapeXml(dataToFill[key]);
-            }
-        }
-
-        try {
-            const zip = new PizZip(templateBuffers[type]);
-            const doc = new window.docxtemplater(zip, { delimiters: {start: '[%', end: '%]'}, paragraphLoop: true, linebreaks: true, nullGetter: function(part) { return ""; } });
-            doc.render(sanitizedData);
-            const out = doc.getZip().generate({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
-            
-            let dosyaBaslangic = type.toUpperCase();
-            let isverenText = (sanitizedData["İşveren"] || sanitizedData["TalepUnvan"] || "ISYERI").replace(/&amp;/g, '&');
-            let safeName = isverenText.replace(/[^a-zA-Z0-9ğüşıöçĞÜŞİÖÇ\s]/g, "").trim();
-            let firstTwoWords = safeName.split(/\s+/).slice(0, 2).join("_");
-            saveAs(out, `${firstTwoWords}_${dosyaBaslangic}.docx`);
-        } catch (error) {
-            console.error(error);
-            if (error.properties && error.properties.errors instanceof Array) {
-                const errorMessages = error.properties.errors.map(function (error) { return error.properties.explanation; }).join("\n");
-                alert("Şablon Hatası: " + errorMessages);
-            } else { alert("Hata: " + error); }
-        }
-    }
-
-    // --- YARDIMCI FORMAT FONKSİYONLARI ---
-    function toTitleCase(str) { if (!str || str === '-') return '-'; return str.toString().replace(/[\u200B-\u200D\uFEFF\u200C]/g, '').replace(/\s+/g, ' ').trim().toLocaleLowerCase('tr-TR').split(' ').map(w => w ? w.charAt(0).toLocaleUpperCase('tr-TR') + w.slice(1) : '').join(' '); }
-    function cleanName(s){return s?s.replace(/^\d+\s*/,'').replace(/^[\s•oO0e*·\-_]+|[\s•oO0e*·\-_]+$/g,'').trim():''}
-    function normalizeDate(d){ if(!d||d==='-')return null; d=d.trim(); let m=d.match(/(\d{4})[-/.](\d{2})[-/.](\d{2})/); if(m)return `${m[3]}.${m[2]}.${m[1]}`; m=d.match(/(\d{2})[-/.](\d{2})[-/.](\d{4})/); return m?`${m[1]}.${m[2]}.${m[3]}`:d; }
-    function formatSGK(r){ if(!r||r.length<15||r==='-')return r; let s=r.replace(/\D/g,''); if(s.length<20)return s; const p=(a,b)=>s.slice(a,b)||'?'; return `${p(0,1)}.${p(1,5)}.${p(5,7)}.${p(7,9)}.${p(9,16)}.${p(16,19)}.${p(19,21)}.${p(21,23)}`; }
+    
     
     // --- OCR PARSE FONKSİYONLARI ---
     function smartExtract(t,p){for(let x of p){try{let m=t.match(new RegExp(x,'i'));if(m&&m[1])return m[1].replace(/^[:;.\- ]+/,'').trim();}catch(e){}}return '-';}
@@ -1306,7 +1263,489 @@
         }); return { total, erkek: erkek || '-', kadin: kadin || '-' };
     }
 
-    // --- PDF OKUMA ---
+    // --- DOC SEÇİM VE SENKRONİZASYON ---
+    function updateDocRowSelect() {
+        const sel = document.getElementById('docRowSelect'); sel.innerHTML = '';
+        const rows = document.querySelectorAll('#dataTable tbody tr');
+        if(rows.length === 0) { sel.innerHTML = '<option value="">Lütfen tablodan veri analizi yapın...</option>'; return; }
+        rows.forEach((r, idx) => {
+            const siraNo = r.cells[0].innerText.split('\n')[0];
+            let isveren = r.cells[17].innerText || r.cells[16].innerText || "İsimsiz İşyeri"; if(isveren === '-') isveren = "İsimsiz İşyeri";
+            const opt = document.createElement("option"); opt.value = idx; opt.text = `${siraNo} - ${isveren.substring(0, 60)}`; sel.appendChild(opt);
+        });
+        syncDropdownFromTable();
+        if(document.getElementById('teftisTuruSelect').value === 'İnceleme Teftişi') renderKabulFormUI();
+    }
+
+    function syncDropdownFromTable() {
+        const sel = document.getElementById('docRowSelect'); const rows = document.querySelectorAll('#dataTable tbody tr');
+        let found = false; rows.forEach((r, idx) => { if(r.classList.contains('selected')) { sel.value = idx; found = true; } });
+        if(!found && rows.length > 0) { selRow(rows[0], false); sel.value = 0; }
+    }
+
+    function syncTableSelection() { const sel = document.getElementById('docRowSelect'); const idx = sel.value; const rows = document.querySelectorAll('#dataTable tbody tr'); if(idx !== "" && rows[idx]) { selRow(rows[idx], false); } }
+    function nextDocRow() { const sel = document.getElementById('docRowSelect'); if(sel.options.length > 0 && sel.selectedIndex < sel.options.length - 1) { sel.selectedIndex++; syncTableSelection(); } }
+    function prevDocRow() { const sel = document.getElementById('docRowSelect'); if(sel.options.length > 0 && sel.selectedIndex > 0) { sel.selectedIndex--; syncTableSelection(); } }
+
+    // --- SATIR TAŞIMA FONKSİYONLARI ---
+    function moveSelectedRowUp() {
+        const sel = document.querySelector('#dataTable tbody tr.selected');
+        if(!sel) return alert("Yukarı taşımak için bir satır seçiniz.");
+        if(sel.previousElementSibling) {
+            sel.parentNode.insertBefore(sel, sel.previousElementSibling);
+            reindexRows();
+            updateDocRowSelect();
+            sel.scrollIntoView({behavior: "smooth", block: "center"});
+        }
+    }
+
+    function moveSelectedRowDown() {
+        const sel = document.querySelector('#dataTable tbody tr.selected');
+        if(!sel) return alert("Aşağı taşımak için bir satır seçiniz.");
+        if(sel.nextElementSibling) {
+            sel.parentNode.insertBefore(sel.nextElementSibling, sel);
+            reindexRows();
+            updateDocRowSelect();
+            sel.scrollIntoView({behavior: "smooth", block: "center"});
+        }
+    }
+
+    function reindexRows() {
+        const rows = document.querySelectorAll('#dataTable tbody tr');
+        rows.forEach((r, i) => {
+            let firstWord = "...";
+            let span = r.querySelector('td:first-child span');
+            if (span) firstWord = span.innerText;
+            r.cells[0].innerHTML = `<strong>${i + 1}</strong><br><span style="font-size:10px;color:#777;display:block;margin-top:2px;">${firstWord}</span>`;
+        });
+        calculateTebSira();
+    }
+
+    // --- WORD ŞABLONU SAF XML AYIKLAMA (SİYAH ARKA PLANI ENGELLER) ---
+    function getBodyXmlFromXmlString(xml) {
+        let bodyMatch = xml.match(/<w:body[^>]*>([\s\S]*?)<\/w:body>/);
+        if (!bodyMatch) return "";
+        let bodyXml = bodyMatch[1];
+        
+        bodyXml = bodyXml.replace(/<w:sectPr[^>]*>[\s\S]*?<\/w:sectPr>/g, '');
+        bodyXml = bodyXml.replace(/<w:shd[^>]*\/>/g, '');
+        bodyXml = bodyXml.replace(/<w:shd[^>]*>.*?<\/w:shd>/g, '');
+        bodyXml = bodyXml.replace(/<w:color[^>]*\/>/g, '');
+        bodyXml = bodyXml.replace(/<w:highlight[^>]*\/>/g, '');
+        return bodyXml;
+    }
+
+    // --- WORD OLUŞTURMA (DOCXTEMPLATER) ---
+    async function genDoc(type) {
+        if (!templateBuffers[type]) { alert("Bu belge için şablon bulunamadı."); return; }
+
+        calculateTebSira(); 
+
+        const d = (r, i) => r ? (r.cells[i] ? r.cells[i].innerText.trim() : '') : '';
+        const rows = document.querySelectorAll('#dataTable tbody tr');
+        
+        // Satırı sadece bir kez en başta ve güvenli bir şekilde çağırıyoruz
+        const selectedRow = document.querySelector('#dataTable tbody tr.selected');
+
+        // --- RAPOR GÜVENLİK KİLİDİ (PRG / İNC UYUMSUZLUK KONTROLÜ) ---
+        const reportTypes = ['ipc', 'noksansiz', 'tdb', 'rapor_niteliginde'];
+        if (reportTypes.includes(type)) {
+            if(!selectedRow) {
+                alert("Lütfen tablodan işlem yapmak istediğiniz bir satırı seçiniz.");
+                return;
+            }
+            
+            let teftisTuruCheck = document.getElementById('teftisTuruSelect').value;
+            let raporNoRaw = d(selectedRow, 32) || "";
+            
+            // Türkçe karakterleri de kapsayacak şekilde güvenli büyük harfe çevirme
+            let raporNoCheck = raporNoRaw.toLocaleUpperCase('tr-TR');
+            
+            let isPRG = raporNoCheck.includes('PRG');
+            let isINC = raporNoCheck.includes('İNC') || raporNoCheck.includes('INC') || raporNoCheck.includes('İNCELEME') || raporNoCheck.includes('INCELEME');
+            
+            if (teftisTuruCheck === 'İnceleme Teftişi' && isPRG) {
+                alert("🛑 HATA: Seçilen Teftiş Türü (İnceleme) ile Rapor No alanındaki ifade (PRG) uyuşmuyor!\n\nLütfen tablodan Rapor No'yu veya yukarıdan Teftiş Türünü düzeltip tekrar indirmeyi deneyin.");
+                return;
+            }
+            if (teftisTuruCheck === 'Programlı Teftiş' && isINC) {
+                alert("🛑 HATA: Seçilen Teftiş Türü (Programlı) ile Rapor No alanındaki ifade (İNC) uyuşmuyor!\n\nLütfen tablodan Rapor No'yu veya yukarıdan Teftiş Türünü düzeltip tekrar indirmeyi deneyin.");
+                return;
+            }
+        }
+        // -------------------------------------------------------------
+
+        let dataToFill = {
+            "TeftisTuru": document.getElementById('teftisTuruSelect').value,
+            "IlkMufettis": document.getElementById('IlkMufettis').value,
+            "IlkMufettisUnvan": document.getElementById('IlkMufettisUnvan').value,
+            "IlkMufettisSicil": document.getElementById('IlkMufettisSicil').value,
+            "IkinciMufettis": document.getElementById('IkinciMufettis').value,
+            "IkinciMufettisUnvan": document.getElementById('IkinciMufettisUnvan').value,
+            "IkinciMufettisSicil": document.getElementById('IkinciMufettisSicil').value
+        };
+        
+        let kapakbaslik = document.getElementById('teftisTuruSelect').value === 'İnceleme Teftişi' ? "İNCELEME RAPORU" : "PROGRAMLI TEFTİŞ RAPORU";
+        dataToFill["kapakbaslik"] = kapakbaslik;
+
+        const now = new Date(); const yil = now.getFullYear(); const ay = (now.getMonth() + 1).toString().padStart(2, '0'); const gun = now.getDate().toString().padStart(2, '0');
+        const yilAyGun = `${yil}/${ay}${gun}`; 
+        
+        let activeRowIndexForKonu = 1; 
+
+        if(type === 'teblig_liste') {
+            let TebListesi = [];
+            rows.forEach((r) => {
+                let tebCr = d(r, 35);
+                let tebDav = d(r, 36);
+                let tebSira = parseInt(d(r, 39));
+
+                if((tebCr && tebCr.length > 2) || (tebDav && tebDav.length > 2)) {
+                    TebListesi.push({
+                        "TebSira": isNaN(tebSira) ? 9999 : tebSira, 
+                        "TebSiraDisplay": d(r, 39),
+                        "TebIsveren": d(r, 17) || d(r, 16) || "İşveren Bulunamadı", 
+                        "TebAdres": d(r, 1) || d(r, 2) || "Adres Bulunamadı"        
+                    });
+                }
+            });
+            
+            if(TebListesi.length === 0) {
+                alert("Tebligat bilgisi girilmiş hiçbir satır bulunamadı. Lütfen ilgili sütunları doldurun.");
+                return;
+            }
+
+            // PTT Listesi için Sıra Numarasına Göre Kusursuz Sıralama
+            TebListesi.sort((a, b) => a.TebSira - b.TebSira);
+            
+            Object.assign(dataToFill, {
+                "TebListesi": TebListesi,
+                "YIL-AY-GUN": yilAyGun 
+            });
+        }
+        else if(type === 'talep') {
+            if(rows.length === 0) { alert("Tabloda veri yok."); return; }
+            const r0 = rows[0]; activeRowIndexForKonu = 1;
+            const gorevInfoFull = d(r0, 15); 
+            
+            let ayIsmi = ".......";
+            try {
+                let datePart = gorevInfoFull.split('/')[0].trim(); let parts = datePart.split('.');
+                if(parts.length===3) { const dateObj = new Date(parts[2], parts[1]-1, parts[0]); const monthNames = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"]; ayIsmi = monthNames[dateObj.getMonth()] + " " + dateObj.getFullYear(); }
+            } catch(e){}
+
+            let sehir = d(r0, 20).trim();
+            if(!sehir || sehir === '-' || sehir.toUpperCase() === 'ŞEHİR') { 
+                const adres = d(r0, 2); 
+                sehir = extractCityFromAddress(adres) || "Şehir_Yazılmamış"; 
+            }
+            sehir = toTitleCase(sehir); 
+
+            let talepListesi = [];
+            rows.forEach((row, idx) => {
+                const sira = idx + 1; const tamUnvan = d(row, 17); const kisaUnvan = d(row, 16); const sgk = d(row, 18); 
+                let finalUnvan = tamUnvan; if(!finalUnvan || finalUnvan === '-') return;
+                if(kisaUnvan && kisaUnvan !== '-' && kisaUnvan !== tamUnvan && kisaUnvan.length > 2) { finalUnvan += ` (${kisaUnvan})`; }
+                talepListesi.push({ "Sira": sira, "TalepUnvan": finalUnvan, "TalepSGK": sgk });
+            });
+
+            Object.assign(dataToFill, { 
+                "GorevAyGun": gorevInfoFull.split('/')[0].trim(), 
+                "Şehir": sehir, "şehir": sehir, "sehir": sehir, "Sehir": sehir, "ŞEHİR": sehir, "SEHİR": sehir, "İL": sehir, "İl": sehir, "il": sehir, 
+                "GörevEmriYılveAy": ayIsmi, "TalepListesi": talepListesi, "YIL-AY-GUN": yilAyGun 
+            });
+        } 
+        else {
+            if(!selectedRow) { alert("Lütfen tablodan veya açılır menüden bir satır seçiniz."); return; }
+            activeRowIndexForKonu = selectedRow.rowIndex;
+            
+            const tamUnvan = d(selectedRow, 17); const kisaUnvan = d(selectedRow, 16); let raporNoFull = d(selectedRow, 32); let raporSadeceTarih = "";
+            let m = raporNoFull.match(/(\d{2}[./]\d{2}[./]\d{4})/); if(m) raporSadeceTarih = m[1];
+
+            let tehlikeStr = d(selectedRow, 13).toLowerCase(); let azTehlikeliX = "", tehlikeliX = "", cokTehlikeliX = "";
+            if (tehlikeStr.includes("çok") || tehlikeStr.includes("cok")) cokTehlikeliX = "X";
+            else if (tehlikeStr.includes("az")) azTehlikeliX = "X";
+            else if (tehlikeStr.includes("tehlikeli")) tehlikeliX = "X";
+
+            let sehir = d(selectedRow, 20).trim();
+            if(!sehir || sehir === '-' || sehir.toUpperCase() === 'ŞEHİR') { 
+                const adres = d(selectedRow, 2); 
+                sehir = extractCityFromAddress(adres) || "Şehir_Yazılmamış"; 
+            }
+            sehir = toTitleCase(sehir); 
+
+            let tebCrTarih = d(selectedRow, 35);
+            let tebDavTarih = d(selectedRow, 36);
+            let tebDavGun = getGunIsmi(tebDavTarih);
+            let tebDavAdres = d(selectedRow, 38);
+            
+            let tebligatMetin1 = "";
+            let tebligatMetin2 = "";
+            
+            if (tebCrTarih && tebCrTarih.length > 2) {
+                tebligatMetin1 = `${tebCrTarih} tarihli tebligatla ${tebDavGun} tarihinde ${tebDavAdres} adresine davet edilen `;
+                tebligatMetin2 = `İncelenen belgelere yönelik ${tebDavTarih} tarihli tespit tutanağı düzenlendi. Ayrıca, `;
+            }
+
+            Object.assign(dataToFill, {
+                "DosyaSicil": d(selectedRow, 19), "SGK Sicil No": d(selectedRow, 18), "İşveren": tamUnvan, "Unvan": kisaUnvan && kisaUnvan!=='-' ? kisaUnvan : tamUnvan, 
+                "TebligatAdresi": d(selectedRow, 1), "Tebligat Adresi": d(selectedRow, 1), 
+                "Adres": d(selectedRow, 2), "Telefon": d(selectedRow, 3), "Ruhsat No": d(selectedRow, 4), "TehlikeSınıfı": d(selectedRow, 13), 
+                "GörüşülenKişiler": d(selectedRow, 5), "Görüşülen Kişiler": d(selectedRow, 5), 
+                "Şehir": sehir, "şehir": sehir, "sehir": sehir, "Sehir": sehir, "ŞEHİR": sehir, "SEHİR": sehir, "İL": sehir, "İl": sehir, "il": sehir,
+                "AzTehlikeliX": azTehlikeliX, "TehlikeliX": tehlikeliX, "CokTehlikeliX": cokTehlikeliX,
+                "İmzalayacakVekil": d(selectedRow, 14), "GörevTarihSayı": d(selectedRow, 15), "Erkek": d(selectedRow, 6), "Kadın": d(selectedRow, 7), "Toplam": d(selectedRow, 8), 
+                "İlkTeftişBaşlangıç": d(selectedRow, 9), "İlkTeftişBaslangıç": d(selectedRow, 9), "İlkTeftişBitiş": d(selectedRow, 10), 
+                "SonTeftişBaşlangıç": d(selectedRow, 11), "SonTeftişBaslangıç": d(selectedRow, 11), "SonTeftişBitiş": d(selectedRow, 12), 
+                "Uzman": d(selectedRow, 21), "UzmSertifika-Sözleşme": d(selectedRow, 22), "İGUsüre dk": d(selectedRow, 23), "Hekim": d(selectedRow, 24), "HekimSertifika-Sözleşme": d(selectedRow, 25), 
+                "Hsüre": d(selectedRow, 26), "DSP": d(selectedRow, 27), "DSPSertifika-Sözleşme": d(selectedRow, 28), "DSPsüre": d(selectedRow, 29), "K.Kap.Alınma": d(selectedRow, 31),
+                "RaporTarihiveNo": raporNoFull, "RaporTarihi": raporSadeceTarih, "OtomasyonNo": d(selectedRow, 30), "YIL-AY-GUN": yilAyGun,
+
+                "TebCrTarih": tebCrTarih,
+                "TebDavTarih": tebDavTarih,
+                "TebDavGün": tebDavGun, 
+                "TebDavSaat": d(selectedRow, 37),
+                "TebDavAdres": tebDavAdres,
+                "TebIsveren": tamUnvan || kisaUnvan, 
+                "TebAdres": d(selectedRow, 1) || d(selectedRow, 2),  
+                "TebSira": d(selectedRow, 39),
+                "TebligatVarsaMetin1": tebligatMetin1,
+                "TebligatVarsaMetin2": tebligatMetin2
+            });
+        }
+
+        let konuTipiStr = document.getElementById('teftisTuruSelect').value;
+        let secilenKonuKey = "";
+        
+        if(konuTipiStr === 'İnceleme Teftişi') { 
+            secilenKonuKey = 'konu_inceleme'; 
+            
+            const formIdx = ddkVerileri[activeRowIndexForKonu];
+            const kabulData = formIdx !== undefined ? kabulFormlariListesi[formIdx] : null;
+            
+            if (kabulData) {
+                dataToFill["DDKtarih"] = kabulData.ddkTarih || '.......';
+                dataToFill["DDKno"] = kabulData.ddkNo || '.......';
+                dataToFill["DDKkonu"] = kabulData.ddkKonu || '.......';
+            } else {
+                dataToFill["DDKtarih"] = '.......'; dataToFill["DDKno"] = '.......'; dataToFill["DDKkonu"] = '.......';
+            }
+        } 
+        else { 
+            secilenKonuKey = document.getElementById('programliKonuSelect').value; 
+        } 
+        
+        let konuTemplateBuffer = templateBuffers[secilenKonuKey];
+        let rawRaporKonusuXml = "";
+
+        if (konuTemplateBuffer && type !== 'teblig_liste') {
+            let konuDataToFill = { ...dataToFill, "yıl": yil }; 
+
+            try {
+                let bufferClone = (konuTemplateBuffer instanceof ArrayBuffer) ? konuTemplateBuffer.slice(0) : konuTemplateBuffer;
+                const zipKonu = new PizZip(bufferClone);
+                const docKonu = new window.docxtemplater(zipKonu, { delimiters: {start: '[%', end: '%]'}, paragraphLoop: true, linebreaks: true, nullGetter: function() { return ""; } });
+                
+                const safeEscape = (str) => { if (typeof str !== 'string') return str; return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;'); };
+                let escapedKonuData = {}; for (let k in konuDataToFill) escapedKonuData[k] = safeEscape(konuDataToFill[k]);
+
+                docKonu.render(escapedKonuData);
+                
+                let renderedXml = docKonu.getZip().file("word/document.xml").asText();
+                rawRaporKonusuXml = getBodyXmlFromXmlString(renderedXml);
+                
+            } catch(e) {
+                console.error("Konu şablonu render hatası", e); 
+                let errMsg = e.message;
+                if(e.properties && e.properties.errors) {
+                    errMsg = e.properties.errors.map(err => err.properties.explanation).join('\n');
+                }
+                alert("Konu Şablonunda Hata Tespit Edildi!\nLütfen yüklediğiniz Konu şablonunu (İnceleme vb.) kontrol edin.\n\nHata Detayı: " + errMsg);
+                rawRaporKonusuXml = "<w:p><w:r><w:t>ŞABLON HATASI: " + errMsg + "</w:t></w:r></w:p>";
+            }
+        } else if(!konuTemplateBuffer && type !== 'teblig_liste' && !type.includes('teblig')) {
+            showToast("⚠️ Seçilen Konu Şablonu sisteme yüklü değil!", "var(--danger)");
+            rawRaporKonusuXml = "<w:p><w:r><w:t>Lütfen ilgili Konu Şablonunu sisteme yükleyiniz.</w:t></w:r></w:p>";
+        }
+
+        dataToFill["RaporKonusu"] = rawRaporKonusuXml;
+
+        const escapeXml = (str) => {
+            if (typeof str !== 'string') return str;
+            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+        };
+
+        const sanitizedData = {};
+        for (const key in dataToFill) {
+            if (key === 'RaporKonusu') {
+                sanitizedData[key] = dataToFill[key];
+            } else if (Array.isArray(dataToFill[key])) {
+                sanitizedData[key] = dataToFill[key].map(item => {
+                    const newItem = {};
+                    for(const subKey in item) { newItem[subKey] = escapeXml(item[subKey]); }
+                    return newItem;
+                });
+            } else {
+                sanitizedData[key] = escapeXml(dataToFill[key]);
+            }
+        }
+
+        try {
+            const zip = new PizZip(templateBuffers[type]);
+            const doc = new window.docxtemplater(zip, { delimiters: {start: '[%', end: '%]'}, paragraphLoop: true, linebreaks: true, nullGetter: function(part) { return ""; } });
+            doc.render(sanitizedData);
+            const out = doc.getZip().generate({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+            
+            let dosyaBaslangic = type.toUpperCase();
+            let isverenText = (sanitizedData["İşveren"] || sanitizedData["TalepUnvan"] || "ISYERI").replace(/&amp;/g, '&');
+            if (type === 'teblig_liste') isverenText = "TOPLU_TEBLIGAT_LISTESI";
+            
+            let safeName = isverenText.replace(/[^a-zA-Z0-9ğüşıöçĞÜŞİÖÇ\s]/g, "").trim();
+            let firstTwoWords = safeName.split(/\s+/).slice(0, 2).join("_");
+            saveAs(out, `${firstTwoWords}_${dosyaBaslangic}.docx`);
+        } catch (error) {
+            console.error(error);
+            if (error.properties && error.properties.errors instanceof Array) {
+                const errorMessages = error.properties.errors.map(function (error) { return error.properties.explanation; }).join("\n");
+                alert("Şablon Hatası: " + errorMessages);
+            } else { alert("Hata: " + error); }
+        }
+    }
+    
+    // ==========================================
+    // TOPLU BELGE ÜRETİMİ (ZİP İÇİNDE)
+    // ==========================================
+    async function genDocBulk(type) {
+        if (!templateBuffers[type]) { alert("Bu belge için şablon bulunamadı."); return; }
+
+        calculateTebSira(); 
+
+        const d = (r, i) => r ? (r.cells[i] ? r.cells[i].innerText.trim() : '') : '';
+        const rows = document.querySelectorAll('#dataTable tbody tr');
+        
+        let tebligatRows = [];
+        // Sadece tebligat çıkış tarihi veya davet tarihi dolu olan satırları filtrele
+        rows.forEach((r) => {
+            let tebCr = d(r, 35);
+            let tebDav = d(r, 36);
+            if ((tebCr && tebCr.length > 2) || (tebDav && tebDav.length > 2)) {
+                tebligatRows.push(r);
+            }
+        });
+
+        if (tebligatRows.length === 0) {
+            alert("Tebligat bilgisi girilmiş hiçbir satır bulunamadı. Lütfen ilgili sütunları doldurun.");
+            return;
+        }
+
+        showToast("⏳ Toplu belgeler hazırlanıyor, lütfen bekleyin...", "var(--warning)");
+
+        // JSZip kütüphanesi ile dışarı aktarılacak ana ZIP dosyasını oluşturuyoruz
+        let zipExport = new JSZip(); 
+        
+        const now = new Date(); const yil = now.getFullYear(); const ay = (now.getMonth() + 1).toString().padStart(2, '0'); const gun = now.getDate().toString().padStart(2, '0');
+        const yilAyGun = `${yil}/${ay}${gun}`; 
+
+        let baseDataToFill = {
+            "TeftisTuru": document.getElementById('teftisTuruSelect').value,
+            "IlkMufettis": document.getElementById('IlkMufettis').value,
+            "IlkMufettisUnvan": document.getElementById('IlkMufettisUnvan').value,
+            "IlkMufettisSicil": document.getElementById('IlkMufettisSicil').value,
+            "IkinciMufettis": document.getElementById('IkinciMufettis').value,
+            "IkinciMufettisUnvan": document.getElementById('IkinciMufettisUnvan').value,
+            "IkinciMufettisSicil": document.getElementById('IkinciMufettisSicil').value,
+            "kapakbaslik": document.getElementById('teftisTuruSelect').value === 'İnceleme Teftişi' ? "İNCELEME RAPORU" : "PROGRAMLI TEFTİŞ RAPORU"
+        };
+
+        const escapeXml = (str) => {
+            if (typeof str !== 'string') return str;
+            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+        };
+
+        for (let i = 0; i < tebligatRows.length; i++) {
+            let row = tebligatRows[i];
+            
+            const tamUnvan = d(row, 17); const kisaUnvan = d(row, 16); 
+            let raporNoFull = d(row, 32); let raporSadeceTarih = "";
+            let m = raporNoFull.match(/(\d{2}[./]\d{2}[./]\d{4})/); if(m) raporSadeceTarih = m[1];
+
+            let tehlikeStr = d(row, 13).toLowerCase(); let azTehlikeliX = "", tehlikeliX = "", cokTehlikeliX = "";
+            if (tehlikeStr.includes("çok") || tehlikeStr.includes("cok")) cokTehlikeliX = "X";
+            else if (tehlikeStr.includes("az")) azTehlikeliX = "X";
+            else if (tehlikeStr.includes("tehlikeli")) tehlikeliX = "X";
+
+            let sehir = d(row, 20).trim();
+            if(!sehir || sehir === '-' || sehir.toUpperCase() === 'ŞEHİR') { 
+                const adres = d(row, 2); 
+                sehir = extractCityFromAddress(adres) || "Şehir_Yazılmamış"; 
+            }
+            sehir = toTitleCase(sehir); 
+
+            let tebCrTarih = d(row, 35);
+            let tebDavTarih = d(row, 36);
+            let tebDavGun = getGunIsmi(tebDavTarih);
+            let tebDavAdres = d(row, 38);
+            let tebligatMetin1 = ""; let tebligatMetin2 = "";
+            
+            if (tebCrTarih && tebCrTarih.length > 2) {
+                tebligatMetin1 = `${tebCrTarih} tarihli tebligatla ${tebDavGun} tarihinde ${tebDavAdres} adresine davet edilen `;
+                tebligatMetin2 = `İncelenen belgelere yönelik ${tebDavTarih} tarihli tespit tutanağı düzenlendi. Ayrıca, `;
+            }
+
+            let rowData = Object.assign({}, baseDataToFill, {
+                "DosyaSicil": d(row, 19), "SGK Sicil No": d(row, 18), "İşveren": tamUnvan, "Unvan": kisaUnvan && kisaUnvan!=='-' ? kisaUnvan : tamUnvan, 
+                "TebligatAdresi": d(row, 1), "Tebligat Adresi": d(row, 1), 
+                "Adres": d(row, 2), "Telefon": d(row, 3), "Ruhsat No": d(row, 4), "TehlikeSınıfı": d(row, 13), 
+                "GörüşülenKişiler": d(row, 5), "Görüşülen Kişiler": d(row, 5), 
+                "Şehir": sehir, "şehir": sehir, "sehir": sehir, "Sehir": sehir, "ŞEHİR": sehir, "SEHİR": sehir, "İL": sehir, "İl": sehir, "il": sehir,
+                "AzTehlikeliX": azTehlikeliX, "TehlikeliX": tehlikeliX, "CokTehlikeliX": cokTehlikeliX,
+                "İmzalayacakVekil": d(row, 14), "GörevTarihSayı": d(row, 15), "Erkek": d(row, 6), "Kadın": d(row, 7), "Toplam": d(row, 8), 
+                "İlkTeftişBaşlangıç": d(row, 9), "İlkTeftişBaslangıç": d(row, 9), "İlkTeftişBitiş": d(row, 10), 
+                "SonTeftişBaşlangıç": d(row, 11), "SonTeftişBaslangıç": d(row, 11), "SonTeftişBitiş": d(row, 12), 
+                "Uzman": d(row, 21), "UzmSertifika-Sözleşme": d(row, 22), "İGUsüre dk": d(row, 23), "Hekim": d(row, 24), "HekimSertifika-Sözleşme": d(row, 25), 
+                "Hsüre": d(row, 26), "DSP": d(row, 27), "DSPSertifika-Sözleşme": d(row, 28), "DSPsüre": d(row, 29), "K.Kap.Alınma": d(row, 31),
+                "RaporTarihiveNo": raporNoFull, "RaporTarihi": raporSadeceTarih, "OtomasyonNo": d(row, 30), "YIL-AY-GUN": yilAyGun,
+                "TebCrTarih": tebCrTarih, "TebDavTarih": tebDavTarih, "TebDavGün": tebDavGun, "TebDavSaat": d(row, 37),
+                "TebDavAdres": tebDavAdres, "TebIsveren": tamUnvan || kisaUnvan, "TebAdres": d(row, 1) || d(row, 2),  
+                "TebSira": d(row, 39), "TebligatVarsaMetin1": tebligatMetin1, "TebligatVarsaMetin2": tebligatMetin2,
+                "RaporKonusu": "" // Zarf ve Bildirimlerde Rapor Konusu Dinamik XML basımına gerek yok.
+            });
+
+            // Karakterleri Güvenli Hale Getir
+            const sanitizedData = {};
+            for (const key in rowData) { sanitizedData[key] = escapeXml(rowData[key]); }
+
+            try {
+                // Word şablonunu işle
+                const zip = new PizZip(templateBuffers[type]);
+                const doc = new window.docxtemplater(zip, { delimiters: {start: '[%', end: '%]'}, paragraphLoop: true, linebreaks: true, nullGetter: function(part) { return ""; } });
+                doc.render(sanitizedData);
+                const outBlob = doc.getZip().generate({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+                
+                // Dosya Adını Sıra Numarasına Göre Oluştur (ZIP İçinde Sıralı Dursun)
+                let isverenText = (sanitizedData["İşveren"] || "ISYERI").replace(/&amp;/g, '&');
+                let safeName = isverenText.replace(/[^a-zA-Z0-9ğüşıöçĞÜŞİÖÇ\s]/g, "").trim();
+                let firstTwoWords = safeName.split(/\s+/).slice(0, 2).join("_");
+                let siraStr = sanitizedData["TebSira"] ? sanitizedData["TebSira"].toString().padStart(2, '0') + "_" : "";
+                
+                let docName = `${siraStr}${firstTwoWords}_${type.toUpperCase()}.docx`;
+                
+                // Oluşturulan dosyayı ZIP klasörünün içine ekle
+                zipExport.file(docName, outBlob);
+                
+            } catch (error) {
+                console.error("Satır " + (i+1) + " için hata:", error);
+            }
+        }
+        
+        // ZIP Dosyasını İndir
+        zipExport.generateAsync({type:"blob"}).then(function(content) {
+            saveAs(content, `TOPLU_${type.toUpperCase()}.zip`);
+            showToast("✅ Toplu belgeler ZIP olarak başarıyla indirildi!", "var(--success)");
+            setTimeout(hideToast, 3000);
+        });
+    }
+
     async function readPdfSimple(f){const p=await pdfjsLib.getDocument(await f.arrayBuffer()).promise; let t=""; for(let i=1;i<=p.numPages;i++)t+=(await (await p.getPage(i)).getTextContent()).items.map(x=>x.str).join(' ')+"\n"; return t;}
     
     async function analyzePDFGeometry(file) {
@@ -1422,6 +1861,7 @@
 <td contenteditable="true">${isg.hekim.ad}</td><td contenteditable="true">${isg.hekim.sert !== '-' ? (isg.hekim.sert + (isg.hekim.bas && isg.hekim.bas !== '-' ? ' / ' + isg.hekim.bas + (isg.hekim.bit && isg.hekim.bit !== '-' ? ' - ' + isg.hekim.bit : '') : '')) : '-'}</td><td contenteditable="true">${isg.hekim.sure}</td>
 <td contenteditable="true">${isg.dsp.ad}</td> <td contenteditable="true">${isg.dsp.sert !== '-' ? (isg.dsp.sert + (isg.dsp.bas && isg.dsp.bas !== '-' ? ' / ' + isg.dsp.bas + (isg.dsp.bit && isg.dsp.bit !== '-' ? ' - ' + isg.dsp.bit : '') : '')) : '-'}</td> <td contenteditable="true">${isg.dsp.sure}</td>
                     <td contenteditable="true" style="color:var(--danger);font-weight:bold">${tNo}</td><td contenteditable="true">${wp.tarih}</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+                    <td contenteditable="true" onclick="handleTebligatAutoFill(this)"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true" oninput="propagateDavetAdresi(this)"></td><td contenteditable="true" style="font-weight:bold; color:var(--primary);"></td>
                 </tr>`; tb.insertAdjacentHTML('beforeend', html);
             }
         }
@@ -1464,13 +1904,13 @@
     
     function addManualRow() { 
         const tb = document.querySelector('#dataTable tbody'); let rowIdx = tb.rows.length + 1; let tr = `<tr tabindex="0" onclick="selRow(this)"><td style="text-align:center"><strong>${rowIdx}</strong><br><span style="font-size:10px;color:#777">...</span></td>`; 
-        for(let j=0; j<34; j++) { let events = (j===8) ? `oninput="calcDates(this)"` : ""; if([9,10,11,12].includes(j+1)) events += ` onclick="handleCellQuadClick(this)"`; tr += `<td contenteditable="true" ${events}></td>`; } 
+        for(let j=0; j<39; j++) { let events = (j===8) ? `oninput="calcDates(this)"` : ""; if([9,10,11,12].includes(j+1)) events += ` onclick="handleCellQuadClick(this)"`; if(j===37) events += ` oninput="propagateDavetAdresi(this)"`; if(j===34) events += ` onclick="handleTebligatAutoFill(this)"`; let st = (j===38) ? ` style="font-weight:bold; color:var(--primary);"` : ""; tr += `<td contenteditable="true" ${events}${st}></td>`; } 
         tr += `</tr>`; tb.insertAdjacentHTML('beforeend', tr); const newRow = tb.lastElementChild; selRow(newRow); newRow.scrollIntoView({behavior: "smooth", block: "center"}); updateDocRowSelect();
     }
     
     function delSelectedRow() { 
         const sel = document.querySelector('#dataTable tbody tr.selected'); if(!sel) return alert("Seçili satır yok."); 
-        if(confirm("Silmek istediğinize emin misiniz?")) { sel.remove(); document.querySelectorAll('#dataTable tbody tr').forEach((r, i) => { r.cells[0].innerHTML = `<strong>${i + 1}</strong><br><span style="font-size:10px;color:#777">...</span>`; }); updateDocRowSelect(); } 
+        if(confirm("Silmek istediğinize emin misiniz?")) { sel.remove(); reindexRows(); updateDocRowSelect(); } 
     }
     
     function selRow(r, updateDrop = true){ document.querySelectorAll('#dataTable tbody tr.selected').forEach(x => x.classList.remove('selected')); if(r) r.classList.add('selected'); if(updateDrop) syncDropdownFromTable(); }
@@ -1486,14 +1926,16 @@
         reader.onload = function(e) {
             const data = new Uint8Array(e.target.result); const workbook = XLSX.read(data, {type: 'array'}); const firstSheet = workbook.Sheets[workbook.SheetNames[0]]; const jsonData = XLSX.utils.sheet_to_json(firstSheet, {header: 1});
             const tbody = document.querySelector("#dataTable tbody"); tbody.innerHTML = ""; let rowIndexCounter = 1;
+            const requiredCols = 39; 
+
             jsonData.slice(1).forEach((row, idx) => {
-                let hasContent = false; for(let c=1; c<35; c++) { if(row[c] !== undefined && row[c] !== null && row[c].toString().trim() !== "") { hasContent = true; break; } }
+                let hasContent = false; for(let c=1; c<=requiredCols; c++) { if(row[c] !== undefined && row[c] !== null && row[c].toString().trim() !== "") { hasContent = true; break; } }
                 if(!hasContent) return; 
                 let rawIsveren = row[17] || row[16] || ""; let firstWord = rawIsveren ? rawIsveren.toString().split(' ')[0] : "..."; let html = `<tr tabindex="0" onclick="selRow(this)">`; html += `<td style="text-align:center"><strong>${rowIndexCounter++}</strong><br><span style="font-size:10px;color:#777;display:block;margin-top:2px;">${firstWord}</span></td>`;
-                for(let c=1; c<35; c++) { let val = row[c] !== undefined ? row[c] : ""; let ev = ""; if(c===9) ev = `oninput="calcDates(this)"`; if(c===15) ev = `oninput="propagateTaskInfo(this)"`; if(c===20) ev = `oninput="propagateCity(this)"`; if([9,10,11,12].includes(c)) ev += ` onclick="handleCellQuadClick(this)"`; html += `<td contenteditable="true" ${ev}>${val}</td>`; }
+                for(let c=1; c<=requiredCols; c++) { let val = row[c] !== undefined ? row[c] : ""; let ev = ""; if(c===9) ev = `oninput="calcDates(this)"`; if(c===15) ev = `oninput="propagateTaskInfo(this)"`; if(c===20) ev = `oninput="propagateCity(this)"`; if(c===38) ev = `oninput="propagateDavetAdresi(this)"`; if(c===35) ev = `onclick="handleTebligatAutoFill(this)"`; if([9,10,11,12].includes(c)) ev += ` onclick="handleCellQuadClick(this)"`; let st = (c===39) ? ` style="font-weight:bold; color:var(--primary);"` : ""; html += `<td contenteditable="true" ${ev}${st}>${val}</td>`; }
                 html += `</tr>`; tbody.insertAdjacentHTML('beforeend', html);
             });
-            showToast("✅ Excel verileri yüklendi!", "var(--success)"); document.getElementById('excelSection').style.display='block'; document.getElementById('docButtons').style.display='block'; updateDocRowSelect();
+            showToast("✅ Excel verileri yüklendi!", "var(--success)"); document.getElementById('excelSection').style.display='block'; document.getElementById('docButtons').style.display='block'; updateDocRowSelect(); calculateTebSira();
         }; reader.readAsArrayBuffer(file);
     }
 
@@ -1576,6 +2018,7 @@
         targetRow.cells[startCol].innerText = sDateStr; targetRow.cells[endCol].innerText = eDateStr;
         document.getElementById('assignmentModal').style.display = 'none'; calendar.removeAllEvents(); calendar.addEventSource(getEventsFromTable()); window.currentEditingEvent = null;
     }
+
     // ==========================================
     // PROJE KAYDETME VE YÜKLEME (.hk FORMATI)
     // ==========================================
@@ -1584,7 +2027,6 @@
         if(rows.length === 0) { alert("Kaydedilecek bir tablo verisi bulunamadı."); return; }
 
         let tableData = [];
-        // Tablodaki her satırı ve hücreyi içindeki tasarımla beraber dondur
         rows.forEach(row => {
             let rowData = [];
             for(let i=0; i<row.cells.length; i++) {
@@ -1593,7 +2035,6 @@
             tableData.push(rowData);
         });
 
-        // Otomasyonun mevcut durumunu bir pakette topla
         const projectState = {
             version: "1.0",
             teftisTuru: document.getElementById('teftisTuruSelect').value,
@@ -1608,7 +2049,6 @@
         const pad = (n) => n.toString().padStart(2, '0');
         const fileName = `HitosProje_${date.getFullYear()}${pad(date.getMonth()+1)}${pad(date.getDate())}_${pad(date.getHours())}${pad(date.getMinutes())}.hk`;
 
-        // Modern Tarayıcılar İçin "Farklı Kaydet" Penceresi
         if (window.showSaveFilePicker) {
             try {
                 const handle = await window.showSaveFilePicker({
@@ -1625,14 +2065,12 @@
                 showToast("✅ Proje istediğiniz konuma başarıyla kaydedildi!", "var(--success)");
                 setTimeout(hideToast, 4000);
             } catch (err) {
-                // Kullanıcı pencereyi "İptal" diyerek kapatırsa hata verme
                 if (err.name !== 'AbortError') {
                     console.error(err);
                     alert("Kaydetme sırasında bir hata oluştu.");
                 }
             }
         } else {
-            // Eski tarayıcılar veya Mobil cihazlar için klasik indirme (B Planı)
             const blob = new Blob([jsonStr], { type: "text/plain;charset=utf-8" });
             saveAs(blob, fileName);
             showToast("✅ Proje indirildi!", "var(--success)");
@@ -1649,37 +2087,41 @@
         
         reader.onload = function(e) {
             try {
-                // Dosyayı çöz ve eski duruma dön
                 const projectState = JSON.parse(e.target.result);
                 
-                // 1. Ayarları ve Menüleri Geri Getir
                 if(projectState.teftisTuru) document.getElementById('teftisTuruSelect').value = projectState.teftisTuru;
                 if(projectState.programliKonu && document.getElementById('programliKonuSelect')) document.getElementById('programliKonuSelect').value = projectState.programliKonu;
                 toggleKonuUI();
 
-                // 2. Arka Plan PDF Listesini ve Eşleşmelerini Geri Getir
                 kabulFormlariListesi = projectState.kabulFormlariListesi || [];
                 ddkVerileri = projectState.ddkVerileri || {};
 
-                // 3. Tabloyu Tamamen Eski Haline Getir
                 const tbody = document.querySelector("#dataTable tbody");
-                tbody.innerHTML = ""; // Önce tabloyu temizle
+                tbody.innerHTML = ""; 
                 
                 if (projectState.tableData) {
                     projectState.tableData.forEach((rowData) => {
                         let tr = `<tr tabindex="0" onclick="selRow(this)">`;
+                            
+                        const requiredCols = 40; 
+                        while(rowData.length < requiredCols) {
+                            rowData.push(""); 
+                        }
+
                         rowData.forEach((cellHtml, cIdx) => {
-                            // Eski satırların tıklama ve yazma özelliklerini (JavaScript eventlerini) tekrar bağla
                             let ev = "";
                             if(cIdx===9) ev = `oninput="calcDates(this)"`; 
                             if(cIdx===15) ev = `oninput="propagateTaskInfo(this)"`; 
                             if(cIdx===20) ev = `oninput="propagateCity(this)"`; 
+                            if(cIdx===38) ev = `oninput="propagateDavetAdresi(this)"`; 
+                            if(cIdx===35) ev = `onclick="handleTebligatAutoFill(this)"`; 
                             if([9,10,11,12].includes(cIdx)) ev += ` onclick="handleCellQuadClick(this)"`; 
+                            let st = (cIdx===39) ? ` style="font-weight:bold; color:var(--primary);"` : "";
                             
                             if (cIdx === 0) {
                                 tr += `<td style="text-align:center">${cellHtml}</td>`;
                             } else {
-                                tr += `<td contenteditable="true" ${ev}>${cellHtml}</td>`;
+                                tr += `<td contenteditable="true" ${ev}${st}>${cellHtml}</td>`;
                             }
                         });
                         tr += `</tr>`;
@@ -1687,10 +2129,10 @@
                     });
                 }
 
-                // 4. Arayüzü Tetikle ve Menüleri Aç
                 document.getElementById('excelSection').style.display='block'; 
                 document.getElementById('docButtons').style.display='block'; 
                 updateDocRowSelect();
+                calculateTebSira(); 
                 
                 showToast("📂 Proje başarıyla yüklendi! Kaldığınız yerden devam edebilirsiniz.", "var(--success)");
                 setTimeout(hideToast, 4000);
@@ -1703,6 +2145,118 @@
         };
         reader.readAsText(file);
     }
+
+    // ==========================================
+    // EXCEL BENZERİ TOPLU HÜCRE SEÇME VE SİLME/YAPIŞTIRMA
+    // ==========================================
+    let isDraggingCell = false;
+
+    document.querySelector('#dataTable').addEventListener('mousedown', function(e) {
+        if (e.target.tagName === 'TD') {
+            isDraggingCell = true;
+            if (!e.ctrlKey && !e.metaKey) {
+                document.querySelectorAll('.multi-selected').forEach(c => c.classList.remove('multi-selected'));
+            }
+            e.target.classList.add('multi-selected');
+        }
+    });
+
+    document.querySelector('#dataTable').addEventListener('mouseover', function(e) {
+        if (isDraggingCell && e.target.tagName === 'TD') {
+            e.target.classList.add('multi-selected');
+            window.getSelection().removeAllRanges(); 
+        }
+    });
+
+    document.addEventListener('mouseup', function() {
+        isDraggingCell = false;
+    });
+
+    document.addEventListener('keydown', async function(e) {
+        const selectedCells = document.querySelectorAll('.multi-selected');
+        
+        // Toplu Silme
+        if ((e.key === 'Delete' || e.key === 'Backspace') && selectedCells.length > 1) {
+            e.preventDefault(); 
+            selectedCells.forEach(td => {
+                td.innerText = ''; 
+                td.dispatchEvent(new Event('input', { bubbles: true }));
+            });
+        }
+    });
+
+    // Toplu Kopyalama İşlemi
+    document.querySelector('#dataTable').addEventListener('copy', function(e) {
+        const selectedCells = document.querySelectorAll('.multi-selected');
+        if(selectedCells.length > 1) {
+            let minRow = Infinity, minCol = Infinity, maxRow = -1, maxCol = -1;
+            selectedCells.forEach(td => {
+                let r = td.parentElement.rowIndex;
+                let c = td.cellIndex;
+                if(r < minRow) minRow = r; if(r > maxRow) maxRow = r;
+                if(c < minCol) minCol = c; if(c > maxCol) maxCol = c;
+            });
+            let tsv = "";
+            const table = document.getElementById("dataTable");
+            for(let r = minRow; r <= maxRow; r++) {
+                let rowVals = [];
+                for(let c = minCol; c <= maxCol; c++) {
+                    let cell = table.rows[r].cells[c];
+                    if(cell && cell.classList.contains('multi-selected')) {
+                        rowVals.push(cell.innerText.replace(/\n/g, ' '));
+                    } else if(cell) {
+                        rowVals.push(""); 
+                    }
+                }
+                tsv += rowVals.join('\t') + '\n';
+            }
+            e.clipboardData.setData('text/plain', tsv);
+            e.preventDefault();
+            showToast("✅ Seçilen hücreler kopyalandı", "var(--success)");
+            setTimeout(hideToast, 2000);
+        }
+    });
+
+    // Toplu Yapıştırma İşlemi
+    document.querySelector('#dataTable').addEventListener('paste', function(e) {
+        let activeCell = document.activeElement;
+        if(activeCell.tagName !== 'TD') return;
+
+        let pasteData = (e.clipboardData || window.clipboardData).getData('text');
+        if(!pasteData || (!pasteData.includes('\t') && !pasteData.includes('\n'))) return; 
+
+        e.preventDefault();
+        let rows = pasteData.trimEnd().split('\n');
+        let startRowIdx = activeCell.parentElement.rowIndex;
+        let startColIdx = activeCell.cellIndex;
+        const table = document.getElementById("dataTable");
+
+        rows.forEach((rowText, rOffset) => {
+            let cols = rowText.split('\t');
+            cols.forEach((cellText, cOffset) => {
+                let targetRow = table.rows[startRowIdx + rOffset];
+                if(targetRow) {
+                    let targetCell = targetRow.cells[startColIdx + cOffset];
+                    if(targetCell && targetCell.contentEditable === "true") {
+                        targetCell.innerText = cellText;
+                        targetCell.dispatchEvent(new Event('input', { bubbles: true }));
+                    }
+                }
+            });
+        });
+        showToast("✅ Veriler tabloya yapıştırıldı", "var(--success)");
+        setTimeout(hideToast, 2000);
+        calculateTebSira();
+    });
+
+    document.querySelector('#dataTable').addEventListener('focusin', function(e) {
+        if (e.target.tagName === 'TD') {
+            const selectedCells = document.querySelectorAll('.multi-selected');
+            if (selectedCells.length <= 1) {
+                selectedCells.forEach(c => c.classList.remove('multi-selected'));
+            }
+        }
+    });
 </script>
 </body>
 </html>
