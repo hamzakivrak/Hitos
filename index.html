@@ -2032,16 +2032,72 @@
 
     function openCalendarModal() { const modal = document.getElementById('calendarModal'); modal.style.display = 'flex'; setTimeout(() => renderCalendar(), 100); }
 
-    function getEventsFromTable() {
-        const events = []; const rows = document.querySelectorAll('#dataTable tbody tr');
-        rows.forEach((row, index) => {
-            const siraNo = row.cells[0].innerText.split('\n')[0]; const isverenTam = row.cells[17].innerText || ("İşyeri " + siraNo); const isyeriAdi = isverenTam.split(' ').slice(0, 2).join(' ');
-            const color = getColorForRow(index); const ilkBas = parseDateToISO(row.cells[9].innerText); const ilkBit = parseDateToISO(row.cells[10].innerText); const sonBas = parseDateToISO(row.cells[11].innerText); const sonBit = parseDateToISO(row.cells[12].innerText);
-            if (ilkBas) { let endD; if(ilkBit) { endD = new Date(ilkBit); endD.setDate(endD.getDate() + 1); } else { endD = new Date(ilkBas); endD.setDate(endD.getDate() + 1); } events.push({ title: `1.Tef: ${isyeriAdi}`, start: ilkBas, end: endD.toISOString().split('T')[0], color: color, allDay: true, editable: true, extendedProps: { rowIndex: index + 1, startCol: 9, endCol: 10, type: 1 } }); }
-            if (sonBas) { let endD; if(sonBit) { endD = new Date(sonBit); endD.setDate(endD.getDate() + 1); } else { endD = new Date(sonBas); endD.setDate(endD.getDate() + 1); } events.push({ title: `2.Tef: ${isyeriAdi}`, start: sonBas, end: endD.toISOString().split('T')[0], color: color, allDay: true, editable: true, extendedProps: { rowIndex: index + 1, startCol: 11, endCol: 12, type: 2 } }); }
-        }); return events;
-    }
 
+    
+    function getEventsFromTable() {
+    const events = []; 
+    const rows = document.querySelectorAll('#dataTable tbody tr');
+    
+    rows.forEach((row, index) => {
+        const rowIndex = index + 1;
+        const siraNo = row.cells[0].innerText.split('\n')[0]; 
+        const isverenTam = row.cells[17].innerText || ("İşyeri " + siraNo); 
+        const isyeriAdi = isverenTam.split(' ').slice(0, 2).join(' ');
+        const color = getColorForRow(index); 
+        
+        // KABUL FORMU NOTUNU ÇEKME
+        let komisyonNotu = "";
+        const formIdx = ddkVerileri[rowIndex];
+        if (formIdx !== undefined && kabulFormlariListesi[formIdx]) {
+            const data = kabulFormlariListesi[formIdx];
+            komisyonNotu = `\n\nDilekçe Değerlendirme Komisyonu Tarafından Belirlenen Hususlar:\n${data.ddkKonu || 'Bilgi bulunamadı.'}`;
+        }
+
+        const ilkBas = parseDateToISO(row.cells[9].innerText); 
+        const ilkBit = parseDateToISO(row.cells[10].innerText); 
+        const sonBas = parseDateToISO(row.cells[11].innerText); 
+        const sonBit = parseDateToISO(row.cells[12].innerText); 
+        
+        if (ilkBas) { 
+            let endD; 
+            if(ilkBit) { endD = new Date(ilkBit); endD.setDate(endD.getDate() + 1); } 
+            else { endD = new Date(ilkBas); endD.setDate(endD.getDate() + 1); } 
+            
+            events.push({ 
+                title: `1.Tef: ${isyeriAdi}`, 
+                start: ilkBas, 
+                end: endD.toISOString().split('T')[0], 
+                color: color, 
+                allDay: true, 
+                editable: true, 
+                extendedProps: { rowIndex: rowIndex, startCol: 9, endCol: 10, type: 1 },
+                description: `HitosHK Otomatik Teftiş Programı - 1. Teftiş${komisyonNotu}` // Açıklama buraya eklendi
+            }); 
+        } 
+        
+        if (sonBas) { 
+            let endD; 
+            if(sonBit) { endD = new Date(sonBit); endD.setDate(endD.getDate() + 1); } 
+            else { endD = new Date(sonBas); endD.setDate(endD.getDate() + 1); } 
+            
+            events.push({ 
+                title: `2.Tef: ${isyeriAdi}`, 
+                start: sonBas, 
+                end: endD.toISOString().split('T')[0], 
+                color: color, 
+                allDay: true, 
+                editable: true, 
+                extendedProps: { rowIndex: rowIndex, startCol: 11, endCol: 12, type: 2 },
+                description: `HitosHK Otomatik Teftiş Programı - 2. Teftiş${komisyonNotu}` // Açıklama buraya eklendi
+            }); 
+        } 
+    }); 
+    return events; 
+}
+
+
+
+    
     function renderCalendar() {
         const calendarEl = document.getElementById('calendar'); if (calendar) { calendar.destroy(); }
         calendar = new FullCalendar.Calendar(calendarEl, {
@@ -2574,20 +2630,21 @@ function handleAuthClick() {
     }
 }
 
+
+
+    
 // Temizle ve Yeni Etkinlikleri Ekle Fonksiyonu
 async function syncHitosToGoogle() {
     try {
         const now = new Date();
-        // Sadece bulunduğumuz aydan itibaren 2 aylık penceredeki etkinlikleri sil-yaz yapar
         const timeMin = new Date(now.getFullYear(), now.getMonth(), 1).toISOString(); 
         const timeMax = new Date(now.getFullYear(), now.getMonth() + 2, 0).toISOString(); 
 
-        // 1. Mevcut HitosHK etkinliklerini bul ve sil
         const response = await gapi.client.calendar.events.list({
             'calendarId': 'primary',
             'timeMin': timeMin,
             'timeMax': timeMax,
-            'privateExtendedProperty': 'source=HitosHK' // SADECE BİZİM EKLENTİMİZİ SİLER
+            'privateExtendedProperty': 'source=HitosHK'
         });
 
         const existingEvents = response.result.items || [];
@@ -2598,19 +2655,16 @@ async function syncHitosToGoogle() {
             });
         }
 
-        // 2. Tablodaki güncel verileri Google Takvime ekle
         const eventsToInsert = getEventsFromTable(); 
         
         for (let ev of eventsToInsert) {
-            let googleEndDate = ev.end; 
-
             const resource = {
                 'summary': ev.title,
-                'description': 'HitosHK Otomatik Teftiş Programı Tarafından Oluşturuldu.',
+                'description': ev.description, // ARTIK STATİK METİN DEĞİL, DİNAMİK NOT GELİYOR
                 'start': { 'date': ev.start },
-                'end': { 'date': googleEndDate },
+                'end': { 'date': ev.end },
                 'extendedProperties': {
-                    'private': { 'source': 'HitosHK' } // İMZAMIZI EKLİYORUZ Kİ DAHA SONRA BULALIM
+                    'private': { 'source': 'HitosHK' }
                 },
                 'reminders': { 'useDefault': true }
             };
@@ -2621,15 +2675,16 @@ async function syncHitosToGoogle() {
             });
         }
 
-        showToast("✅ Takvim kusursuz bir şekilde eşitlendi!", "var(--success)");
+        showToast("✅ Takvim notlarla birlikte kusursuz eşitlendi!", "var(--success)");
         setTimeout(hideToast, 4000);
     } catch (err) {
         console.error(err);
-        showToast("❌ Eşitleme başarısız oldu! İnternet bağlantınızı kontrol edin.", "var(--danger)");
+        showToast("❌ Eşitleme başarısız oldu!", "var(--danger)");
     }
 }
 
 
+    
 
 
 // ==========================================
