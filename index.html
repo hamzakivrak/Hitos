@@ -963,64 +963,73 @@
     event.target.value = ''; 
 }
 
-    async function processKabulFormPDF(file) {
-        try {
-            const pdf = await pdfjsLib.getDocument(await file.arrayBuffer()).promise;
-            let fullText = "";
-            let items = [];
+   async function processKabulFormPDF(file) {
+    try {
+        const pdf = await pdfjsLib.getDocument(await file.arrayBuffer()).promise;
+        let fullText = "";
+        let items = [];
 
-            for (let i = 1; i <= pdf.numPages; i++) {
-                const page = await pdf.getPage(i);
-                const content = await page.getTextContent();
-                content.items.forEach(item => {
-                    items.push({ str: item.str, x: item.transform[4], y: item.transform[5], page: i });
-                    fullText += item.str + " ";
-                });
-                fullText += "\n";
-            }
-
-            let ddkNo = '-';
-            let formNoItem = items.find(it => it.str.includes("Form No") || it.str === "Form");
-            if (formNoItem) {
-                let candidates = items.filter(it => 
-                    it.page === formNoItem.page &&
-                    Math.abs(it.x - formNoItem.x) < 50 && 
-                    it.y < formNoItem.y &&                
-                    it.str.trim().match(/^\d+$/)          
-                );
-                candidates.sort((a, b) => b.y - a.y);
-                if (candidates.length >= 2) {
-                    ddkNo = `${candidates[0].str.trim()}-${candidates[1].str.trim()}`;
-                } else if (candidates.length === 1) {
-                    ddkNo = candidates[0].str.trim();
-                }
-            }
-
-            let ddkTarih = '-';
-            let tarihMatch = fullText.match(/Düzenlenme Tarihi[:;\s]*([\d/.]+)/i) || fullText.match(/(\d{2}[./]\d{2}[./]\d{4})/);
-            if(tarihMatch) ddkTarih = tarihMatch[1];
-
-            let ddkKonu = '-';
-            let konuRegex = /Değerlendirme Komisyonu Tarafından Belirlenen Hususlar\s*(?:1\))?\s*([\s\S]*?)(?:İNCELENMEYEN KONU|TEFTİŞ KAPSAMI|BÖLÜM\/ÇALIŞAN)/i;
-            let konuMatch = fullText.match(konuRegex);
-            if(konuMatch) {
-                ddkKonu = konuMatch[1].trim().replace(/^1\)\s*/, '');
-            }
-
-            let sgk = null;
-            let sgkMatch = fullText.match(/(\d{1,2}[\.\-]\d{4}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{7}[\.\-]\d{3}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{3})/);
-            if(sgkMatch) {
-                sgk = sgkMatch[1].replace(/\D/g, '');
-            } else {
-                let s2 = fullText.match(/(\d{23})/);
-                if(s2) sgk = s2[1];
-            }
-
-            return { sgk, ddkTarih, ddkNo, ddkKonu };
-        } catch(e) {
-            console.error(e); return null;
+        for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            const content = await page.getTextContent();
+            content.items.forEach(item => {
+                items.push({ str: item.str, x: item.transform[4], y: item.transform[5], page: i });
+                fullText += item.str + " ";
+            });
+            fullText += "\n";
         }
+
+        let ddkNo = '-';
+        let formNoItem = items.find(it => it.str.includes("Form No") || it.str === "Form");
+        if (formNoItem) {
+            let candidates = items.filter(it => 
+                it.page === formNoItem.page &&
+                Math.abs(it.x - formNoItem.x) < 50 && 
+                it.y < formNoItem.y &&                
+                it.str.trim().match(/^\d+$/)          
+            );
+            candidates.sort((a, b) => b.y - a.y);
+            if (candidates.length >= 2) {
+                ddkNo = `${candidates[0].str.trim()}-${candidates[1].str.trim()}`;
+            } else if (candidates.length === 1) {
+                ddkNo = candidates[0].str.trim();
+            }
+        }
+
+        let ddkTarih = '-';
+        let tarihMatch = fullText.match(/Düzenlenme Tarihi[:;\s]*([\d/.]+)/i) || fullText.match(/(\d{2}[./]\d{2}[./]\d{4})/);
+        if(tarihMatch) ddkTarih = tarihMatch[1];
+
+        let ddkKonu = '-';
+        
+        // DİKKAT: 2) kısıtlamasını tamamen kaldırdık! Bir sonraki ana başlığa veya sayfa sonuna kadar her şeyi okuyacak.
+        let konuRegex = /Değerlendirme Komisyonu Tarafından Belirlenen Hususlar\s*([\s\S]*?)(?:İNCELENMEYEN|TEFTİŞ KAPSAMI|BÖLÜM\/ÇALIŞAN|Sayfa|Form No|$)/i;
+        let konuMatch = fullText.match(konuRegex);
+        
+        if(konuMatch && konuMatch[1]) {
+            // PDF'ten gelen dağınık boşlukları tek bir boşluğa indirgiyoruz
+            let rawText = konuMatch[1].replace(/\s{2,}/g, ' ').trim();
+            
+            // Akıllı Formatlama: Bir harf veya noktalamadan sonra " 1)", " 2.", " •" veya " -" geliyorsa önüne alt satır (\n) koyar
+            ddkKonu = rawText
+                .replace(/([a-zğüşıöçA-ZĞÜŞİÖÇ\.,;!\)\]])\s+(?=\d+\)|\d+\.|•|-)/g, '$1\n') 
+                .trim();
+        }
+
+        let sgk = null;
+        let sgkMatch = fullText.match(/(\d{1,2}[\.\-]\d{4}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{7}[\.\-]\d{3}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{3})/);
+        if(sgkMatch) {
+            sgk = sgkMatch[1].replace(/\D/g, '');
+        } else {
+            let s2 = fullText.match(/(\d{23})/);
+            if(s2) sgk = s2[1];
+        }
+
+        return { sgk, ddkTarih, ddkNo, ddkKonu };
+    } catch(e) {
+        console.error(e); return null;
     }
+}
 
     function autoAssignForms() {
         const rows = document.querySelectorAll('#dataTable tbody tr');
