@@ -1002,15 +1002,16 @@
 
         let ddkKonu = '-';
         
-        // DİKKAT: 2) kısıtlamasını tamamen kaldırdık! Bir sonraki ana başlığa veya sayfa sonuna kadar her şeyi okuyacak.
-        let konuRegex = /Değerlendirme Komisyonu Tarafından Belirlenen Hususlar\s*([\s\S]*?)(?:İNCELENMEYEN|TEFTİŞ KAPSAMI|BÖLÜM\/ÇALIŞAN|Sayfa|Form No|$)/i;
+        // ORİJİNAL VE KUSURSUZ ÇALIŞAN KURALA DÖNDÜK
+        // İki başlık arasındaki tüm metni ne var ne yoksa alır
+        let konuRegex = /Değerlendirme Komisyonu Tarafından Belirlenen Hususlar\s*([\s\S]*?)İNCELENMEYEN KONU/i;
         let konuMatch = fullText.match(konuRegex);
         
         if(konuMatch && konuMatch[1]) {
-            // PDF'ten gelen dağınık boşlukları tek bir boşluğa indirgiyoruz
-            let rawText = konuMatch[1].replace(/\s{2,}/g, ' ').trim();
+            let rawText = konuMatch[1].trim();
             
-            // Akıllı Formatlama: Bir harf veya noktalamadan sonra " 1)", " 2.", " •" veya " -" geliyorsa önüne alt satır (\n) koyar
+            // Metinden hiçbir şey silmiyoruz (DDKkonu eksiksiz kalsın diye).
+            // Sadece Takvim'de maddeler alt alta güzel görünsün diye madde işaretlerinden önce alt satır (\n) ekliyoruz.
             ddkKonu = rawText
                 .replace(/([a-zğüşıöçA-ZĞÜŞİÖÇ\.,;!\)\]])\s+(?=\d+\)|\d+\.|•|-)/g, '$1\n') 
                 .trim();
