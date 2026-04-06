@@ -967,67 +967,67 @@
     try {
         const pdf = await pdfjsLib.getDocument(await file.arrayBuffer()).promise;
         let fullText = "";
-        let items = [];
-
         for (let i = 1; i <= pdf.numPages; i++) {
             const page = await pdf.getPage(i);
             const content = await page.getTextContent();
-            content.items.forEach(item => {
-                items.push({ str: item.str, x: item.transform[4], y: item.transform[5], page: i });
-                fullText += item.str + " ";
-            });
-            fullText += "\n";
+            fullText += content.items.map(item => item.str).join(" ") + "\n";
         }
 
-        let ddkNo = '-';
-        let formNoItem = items.find(it => it.str.includes("Form No") || it.str === "Form");
-        if (formNoItem) {
-            let candidates = items.filter(it => 
-                it.page === formNoItem.page &&
-                Math.abs(it.x - formNoItem.x) < 50 && 
-                it.y < formNoItem.y &&                
-                it.str.trim().match(/^\d+$/)          
-            );
-            candidates.sort((a, b) => b.y - a.y);
-            if (candidates.length >= 2) {
-                ddkNo = `${candidates[0].str.trim()}-${candidates[1].str.trim()}`;
-            } else if (candidates.length === 1) {
-                ddkNo = candidates[0].str.trim();
+        // --- RESTORASYON FONKSİYONU (Bozuk karakterleri düzeltir) ---
+        const repairText = (txt) => {
+            if (!txt) return "";
+            return txt
+                .replace(/൴/g, 'i')        // Garip Hint sembolünü düzelt
+                .replace(/\s6\s/g, 'i')    // Metin içine sızan " 6 " ları düzelt
+                .replace(/\s60\s/g, 'i')   // Metin içine sızan " 60 " ları düzelt
+                .replace(/([a-zA-Zğüşıöç])60/g, '$1i') // Bitişik 60'ları düzelt
+                .replace(/Sayfa\s*\d+\s*\/\s*\d+/ig, '') // Sayfa numaralarını temizle
+                .replace(/\s{2,}/g, ' ')   // Fazla boşlukları temizle
+                .trim();
+        };
+
+        let cleanedFullText = repairText(fullText);
+
+        // --- YÖNTEM 10: GERİYE DÖNÜK (BOTTOM-UP) MAKASLAMA ---
+        // Bitiş noktasını esnek (wildcard) arıyoruz
+        let endMatch = cleanedFullText.match(/.NCELENMEYEN KONU/i);
+        if (!endMatch) return { sgk: "-", ddkTarih: "-", ddkNo: "-", ddkKonu: "-" };
+
+        let textBeforeEnd = cleanedFullText.substring(0, endMatch.index);
+        
+        // Başlangıç noktasını bu metnin içinde "en son nerede geçiyor" diye arıyoruz
+        let startKeywords = ["Belirlenen Hususlar", "Bel.rlenen Hususlar", "Hususlar"];
+        let startIndex = -1;
+        let foundKeyword = "";
+
+        for (let kw of startKeywords) {
+            let lastIdx = textBeforeEnd.lastIndexOf(kw);
+            if (lastIdx > startIndex) {
+                startIndex = lastIdx;
+                foundKeyword = kw;
             }
         }
 
+        let ddkKonu = "-";
+        if (startIndex !== -1) {
+            ddkKonu = textBeforeEnd.substring(startIndex + foundKeyword.length).trim();
+            // Eğer başında "1)" gibi kalıntılar varsa temizle
+            ddkKonu = ddkKonu.replace(/^[1\)\.\s\-\•]+/, '');
+        }
+
+        // --- SGK ve TARİH AYIKLAMA ---
         let ddkTarih = '-';
-        let tarihMatch = fullText.match(/Düzenlenme Tarihi[:;\s]*([\d/.]+)/i) || fullText.match(/(\d{2}[./]\d{2}[./]\d{4})/);
+        let tarihMatch = cleanedFullText.match(/Düzenlenme Tarihi[:;\s]*([\d/.]+)/i) || cleanedFullText.match(/(\d{2}[./]\d{2}[./]\d{4})/);
         if(tarihMatch) ddkTarih = tarihMatch[1];
 
-        let ddkKonu = '-';
-        
-        // İŞTE BÜYÜ BURADA:
-        // 'i' harfleri PDF'te bozuk (൴) çıktığı için o harflerin yerine joker karakter (.) koyduk.
-        // İki ana başlık arasındaki her şeyi kusursuzca makaslayıp alacak!
-        let konuRegex = /De.erlend.rme Kom.syonu Taraf.ndan Bel.rlenen Hususlar\s*([\s\S]*?).NCELENMEYEN KONU/i;
-        let konuMatch = fullText.match(konuRegex);
-        
-        if(konuMatch && konuMatch[1]) {
-            // Araya sızmış olabilecek sayfa numaralarını sil, ama metnin orijinal dokusuna/satırlarına dokunma
-            ddkKonu = konuMatch[1]
-                .replace(/Sayfa\s*\d+\s*\/\s*\d+/ig, '') 
-                .trim()
-                .replace(/^1\)\s*/, '');
-        }
-
         let sgk = null;
-        let sgkMatch = fullText.match(/(\d{1,2}[\.\-]\d{4}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{7}[\.\-]\d{3}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{3})/);
-        if(sgkMatch) {
-            sgk = sgkMatch[1].replace(/\D/g, '');
-        } else {
-            let s2 = fullText.match(/(\d{23})/);
-            if(s2) sgk = s2[1];
-        }
+        let sgkMatch = cleanedFullText.match(/(\d{23})|(\d{1,2}[\.\-]\d{4}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{7}[\.\-]\d{3}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{3})/);
+        if(sgkMatch) sgk = sgkMatch[0].replace(/\D/g, '');
 
-        return { sgk, ddkTarih, ddkNo, ddkKonu };
+        return { sgk, ddkTarih, ddkNo: '-', ddkKonu };
     } catch(e) {
-        console.error(e); return null;
+        console.error("DDK Okuma Hatası:", e);
+        return null;
     }
 }
 
