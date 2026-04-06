@@ -1002,19 +1002,17 @@
 
         let ddkKonu = '-';
         
-        // ORİJİNAL VE KUSURSUZ ÇALIŞAN KURALA DÖNDÜK
-        // İki başlık arasındaki tüm metni ne var ne yoksa alır
-        let konuRegex = /Değerlendirme Komisyonu Tarafından Belirlenen Hususlar\s*([\s\S]*?)İNCELENMEYEN KONU/i;
+        // ORİJİNAL, TIKIR TIKIR ÇALIŞAN ARAMA KURALI (Word şablonun için en güvenlisi)
+        let konuRegex = /Değerlendirme Komisyonu Tarafından Belirlenen Hususlar\s*(?:1\))?\s*([\s\S]*?)(?:İNCELENMEYEN KONU|TEFTİŞ KAPSAMI|BÖLÜM\/ÇALIŞAN)/i;
         let konuMatch = fullText.match(konuRegex);
         
         if(konuMatch && konuMatch[1]) {
-            let rawText = konuMatch[1].trim();
-            
-            // Metinden hiçbir şey silmiyoruz (DDKkonu eksiksiz kalsın diye).
-            // Sadece Takvim'de maddeler alt alta güzel görünsün diye madde işaretlerinden önce alt satır (\n) ekliyoruz.
-            ddkKonu = rawText
-                .replace(/([a-zğüşıöçA-ZĞÜŞİÖÇ\.,;!\)\]])\s+(?=\d+\)|\d+\.|•|-)/g, '$1\n') 
-                .trim();
+            // Metni olduğu gibi saf haliyle alıyoruz, Word belgesini asla bozmayacak.
+            // Sadece araya sızma ihtimali olan sayfa numaralarını görünmez yapıyoruz.
+            ddkKonu = konuMatch[1]
+                .replace(/Sayfa\s*\d+\s*\/\s*\d+/ig, '') 
+                .trim()
+                .replace(/^1\)\s*/, '');
         }
 
         let sgk = null;
@@ -2055,12 +2053,17 @@
         const isyeriAdi = isverenTam.split(' ').slice(0, 2).join(' ');
         const color = getColorForRow(index); 
         
-        // KABUL FORMU NOTUNU ÇEKME
+        // KABUL FORMU NOTUNU ÇEKME VE SADECE TAKVİM İÇİN FORMATLAMA
         let komisyonNotu = "";
         const formIdx = ddkVerileri[rowIndex];
         if (formIdx !== undefined && kabulFormlariListesi[formIdx]) {
             const data = kabulFormlariListesi[formIdx];
-            komisyonNotu = `\n\nDilekçe Değerlendirme Komisyonu Tarafından Belirlenen Hususlar:\n${data.ddkKonu || 'Bilgi bulunamadı.'}`;
+            let rawKonu = data.ddkKonu || 'Bilgi bulunamadı.';
+            
+            // DİKKAT: Word belgesini bozmamak için metni sadece Google Takvim'e gönderirken alt alta bölüyoruz!
+            let formatliKonu = rawKonu.replace(/([a-zğüşıöçA-ZĞÜŞİÖÇ\.,;!\)\]])\s+(?=\d+\)|\d+\.|•|-)/g, '$1\n');
+            
+            komisyonNotu = `\n\nDilekçe Değerlendirme Komisyonu Tarafından Belirlenen Hususlar:\n${formatliKonu}`;
         }
 
         const ilkBas = parseDateToISO(row.cells[9].innerText); 
@@ -2081,7 +2084,7 @@
                 allDay: true, 
                 editable: true, 
                 extendedProps: { rowIndex: rowIndex, startCol: 9, endCol: 10, type: 1 },
-                description: `HitosHK Otomatik Teftiş Programı - 1. Teftiş${komisyonNotu}` // Açıklama buraya eklendi
+                description: `HitosHK Otomatik Teftiş Programı - 1. Teftiş${komisyonNotu}` 
             }); 
         } 
         
@@ -2098,7 +2101,7 @@
                 allDay: true, 
                 editable: true, 
                 extendedProps: { rowIndex: rowIndex, startCol: 11, endCol: 12, type: 2 },
-                description: `HitosHK Otomatik Teftiş Programı - 2. Teftiş${komisyonNotu}` // Açıklama buraya eklendi
+                description: `HitosHK Otomatik Teftiş Programı - 2. Teftiş${komisyonNotu}` 
             }); 
         } 
     }); 
