@@ -963,7 +963,11 @@
     event.target.value = ''; 
 }
 
-   async function processKabulFormPDF(file) {
+   
+    
+    
+    
+async function processKabulFormPDF(file) {
     try {
         const pdf = await pdfjsLib.getDocument(await file.arrayBuffer()).promise;
         let fullText = "";
@@ -973,49 +977,60 @@
             fullText += content.items.map(item => item.str).join(" ") + "\n";
         }
 
-        // --- RESTORASYON FONKSİYONU (Bozuk karakterleri düzeltir) ---
+        // --- RESTORASYON FONKSİYONU ---
         const repairText = (txt) => {
             if (!txt) return "";
             return txt
-                .replace(/൴/g, 'i')        // Garip Hint sembolünü düzelt
-                .replace(/\s6\s/g, 'i')    // Metin içine sızan " 6 " ları düzelt
-                .replace(/\s60\s/g, 'i')   // Metin içine sızan " 60 " ları düzelt
-                .replace(/([a-zA-Zğüşıöç])60/g, '$1i') // Bitişik 60'ları düzelt
-                .replace(/Sayfa\s*\d+\s*\/\s*\d+/ig, '') // Sayfa numaralarını temizle
-                .replace(/\s{2,}/g, ' ')   // Fazla boşlukları temizle
+                .replace(/൴/g, 'i')        
+                .replace(/\s6\s/g, 'i')    
+                .replace(/\s60\s/g, 'i')   
+                .replace(/([a-zA-Zğüşıöç])60/g, '$1i') 
+                .replace(/Sayfa\s*\d+\s*\/\s*\d+/ig, '') 
+                .replace(/\s{2,}/g, ' ')   
                 .trim();
         };
 
         let cleanedFullText = repairText(fullText);
 
-        // --- YÖNTEM 10: GERİYE DÖNÜK (BOTTOM-UP) MAKASLAMA ---
-        // Bitiş noktasını esnek (wildcard) arıyoruz
-        let endMatch = cleanedFullText.match(/.NCELENMEYEN KONU/i);
-        if (!endMatch) return { sgk: "-", ddkTarih: "-", ddkNo: "-", ddkKonu: "-" };
+        // --- YÖNTEM: ESNEK REGEX (İleri Yönlü Tarama) ---
+        // 1. Başlangıç kelimesini Regex ile Case-Insensitive (i) bul.
+        const startRegex = /(Belirlenen\s+Hususlar|Bel\w?rlenen\s+Hususlar|Hususlar)\s*[:\-\n]?/gi;
+        let startMatch;
+        let lastStartIndex = -1;
+        let foundStartLength = 0;
 
-        let textBeforeEnd = cleanedFullText.substring(0, endMatch.index);
-        
-        // Başlangıç noktasını bu metnin içinde "en son nerede geçiyor" diye arıyoruz
-        let startKeywords = ["Belirlenen Hususlar", "Bel.rlenen Hususlar", "Hususlar"];
-        let startIndex = -1;
-        let foundKeyword = "";
-
-        for (let kw of startKeywords) {
-            let lastIdx = textBeforeEnd.lastIndexOf(kw);
-            if (lastIdx > startIndex) {
-                startIndex = lastIdx;
-                foundKeyword = kw;
-            }
+        // Metin içindeki EN SON eşleşmeyi bul (Geriye dönük makaslama mantığını korumak için)
+        while ((startMatch = startRegex.exec(cleanedFullText)) !== null) {
+            lastStartIndex = startMatch.index;
+            foundStartLength = startMatch[0].length;
         }
 
         let ddkKonu = "-";
-        if (startIndex !== -1) {
-            ddkKonu = textBeforeEnd.substring(startIndex + foundKeyword.length).trim();
-            // Eğer başında "1)" gibi kalıntılar varsa temizle
-            ddkKonu = ddkKonu.replace(/^[1\)\.\s\-\•]+/, '');
+
+        // Eğer bir başlangıç noktası bulduysak:
+        if (lastStartIndex !== -1) {
+            // Başlangıç kelimesinden sonrasını kesip al
+            let textAfterStart = cleanedFullText.substring(lastStartIndex + foundStartLength);
+
+            // 2. Bitiş noktasını esnek bir Regex ile ara. 
+            // Yeni formattaki olası değişiklikleri (HUSUS, DEĞERLENDİRME vb.) kapsar.
+            const endRegex = /([İIıi]?NCELENMEYEN\s+KONU|[İIıi]?NCELENMEYEN\s+HUSUS|GENEL\s+DEĞERLENDİRME|İDARİ\s+YAPTIRIM)/i;
+            let endMatch = textAfterStart.match(endRegex);
+
+            if (endMatch) {
+                // Eğer bitişi bulursan, aradaki metni al
+                ddkKonu = textAfterStart.substring(0, endMatch.index).trim();
+            } else {
+                // EĞER BİTİŞ KELİMESİ YOKSA SİSTEMİ ÇÖKERTME! 
+                // Kalan tüm metni veya ilk 2000 karakteri al.
+                ddkKonu = textAfterStart.substring(0, 2000).trim(); 
+            }
+
+            // Başındaki "1)" veya "-" gibi kalıntıları temizle
+            ddkKonu = ddkKonu.replace(/^[1\)\.\s\-\•]+/g, '').trim();
         }
 
-        // --- SGK ve TARİH AYIKLAMA ---
+        // --- SGK ve TARİH AYIKLAMA (Orijinal Kod) ---
         let ddkTarih = '-';
         let tarihMatch = cleanedFullText.match(/Düzenlenme Tarihi[:;\s]*([\d/.]+)/i) || cleanedFullText.match(/(\d{2}[./]\d{2}[./]\d{4})/);
         if(tarihMatch) ddkTarih = tarihMatch[1];
@@ -1025,6 +1040,7 @@
         if(sgkMatch) sgk = sgkMatch[0].replace(/\D/g, '');
 
         return { sgk, ddkTarih, ddkNo: '-', ddkKonu };
+
     } catch(e) {
         console.error("DDK Okuma Hatası:", e);
         return null;
