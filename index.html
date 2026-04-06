@@ -567,10 +567,16 @@
 
 <div id="calendarModal" class="modal-overlay" style="z-index: 2100;">
     <div class="modal-content-cal">
-        <div id="calendarHeader">
-            <h3>📅 Teftiş Programı Takvimi</h3>
-            <p style="margin:5px 0 0 0; font-size:0.85rem; color:var(--text-muted);">ℹ️ Sürükle bırak ile tarihleri değiştirebilir, boş güne tıklayarak atama yapabilirsiniz.</p>
-        </div>
+          <div id="calendarHeader">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h3>📅 Teftiş Programı Takvimi</h3>
+                    <button class="btn btn-outline" style="padding: 6px 12px; font-size: 0.85rem;" onclick="document.getElementById('googleSettingsModal').style.display='flex'">⚙️ API Ayarları</button>
+                </div>
+                <p style="margin:5px 0 0 0; font-size:0.85rem; color:var(--text-muted);">ℹ️ Sürükle bırak ile tarihleri değiştirebilir, boş güne tıklayarak atama yapabilirsiniz.</p>
+                <button id="googleSyncBtn" class="btn btn-success" style="margin-top:15px; background:#4285F4; border:none;" onclick="handleAuthClick()">
+                    🔵 Google Takvimi Güncelle (Sync)
+                </button>
+            </div>
         <button class="modal-close modal-close-dark" onclick="document.getElementById('calendarModal').style.display='none'">&times;</button>
         <div id="calendarWrapper">
             <div id="calendar"></div>
@@ -613,6 +619,29 @@
     </div>
 </div>
 
+<div id="googleSettingsModal" class="modal-overlay" style="z-index: 3000;">
+    <div class="modal-content-cal" style="max-width: 500px; height: auto;">
+        <button class="modal-close modal-close-dark" onclick="document.getElementById('googleSettingsModal').style.display='none'">&times;</button>
+        <h3 style="margin-top:0; color:var(--text-main);">⚙️ Google Takvim API Ayarları</h3>
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom: 20px;">
+            Güvenliğiniz için API anahtarlarınız sunucuya gönderilmez, sadece bu tarayıcının hafızasında saklanır.
+        </p>
+        
+        <div class="form-group">
+            <label>Client ID (İstemci Kimliği):</label>
+            <input type="text" id="settingClientId" class="form-control" placeholder="Örn: 12345...apps.googleusercontent.com">
+        </div>
+        <div class="form-group" style="margin-top: 15px;">
+            <label>API Key (API Anahtarı):</label>
+            <input type="password" id="settingApiKey" class="form-control" placeholder="Örn: AIzaSyB...">
+        </div>
+        
+        <button class="btn btn-primary" style="width:100%; margin-top:20px; font-size: 1rem; padding: 12px;" onclick="saveGoogleSettings()">💾 Kaydet ve Başlat</button>
+    </div>
+</div>
+
+
+    
 <script>
     // --- SABİTLER ---
     const GITHUB_ZIP_URL = "https://raw.githubusercontent.com/hamzakivrak/hitossablonlar/main/Sablonlar.zip";
@@ -2415,6 +2444,172 @@
             alert('Kopyalama başarısız oldu.');
         });
     }
+// ==========================================
+// GOOGLE CALENDAR ENTEGRASYONU (GÜVENLİ & DİNAMİK YÖNTEM)
+// ==========================================
+const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest';
+const SCOPES = 'https://www.googleapis.com/auth/calendar.events';
+
+let tokenClient;
+let gapiInited = false;
+let gisInited = false;
+
+// Sayfa yüklendiğinde hafızadaki ayarları kutulara doldur
+window.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('settingClientId').value = localStorage.getItem('hitos_client_id') || '';
+    document.getElementById('settingApiKey').value = localStorage.getItem('hitos_api_key') || '';
+    
+    // Eğer anahtarlar önceden kaydedilmişse Google servislerini sessizce başlat
+    if (localStorage.getItem('hitos_api_key') && localStorage.getItem('hitos_client_id')) {
+        loadGoogleScripts();
+    }
+});
+
+// Ayarları kaydetme fonksiyonu
+function saveGoogleSettings() {
+    const clientId = document.getElementById('settingClientId').value.trim();
+    const apiKey = document.getElementById('settingApiKey').value.trim();
+    
+    if(!clientId || !apiKey) {
+        alert("Lütfen senkronizasyon için her iki alanı da doldurun.");
+        return;
+    }
+    
+    // Tarayıcı hafızasına kaydet (Şifreler kodda görünmez)
+    localStorage.setItem('hitos_client_id', clientId);
+    localStorage.setItem('hitos_api_key', apiKey);
+    
+    document.getElementById('googleSettingsModal').style.display = 'none';
+    showToast("✅ Ayarlar kaydedildi. Servisler başlatılıyor...", "var(--success)");
+    
+    loadGoogleScripts();
+}
+
+// Google kütüphanelerini HTML'e dinamik olarak yükleyen fonksiyon
+function loadGoogleScripts() {
+    if(!window.gapi) {
+        const script1 = document.createElement('script');
+        script1.src = "https://apis.google.com/js/api.js";
+        script1.onload = () => gapi.load('client', intializeGapiClient);
+        document.head.appendChild(script1);
+    } else {
+        gapi.load('client', intializeGapiClient);
+    }
+
+    if(!window.google || !window.google.accounts) {
+        const script2 = document.createElement('script');
+        script2.src = "https://accounts.google.com/gsi/client";
+        script2.onload = gisLoaded;
+        document.head.appendChild(script2);
+    } else {
+        gisLoaded();
+    }
+}
+
+async function intializeGapiClient() { 
+    const apiKey = localStorage.getItem('hitos_api_key');
+    if(!apiKey) return;
+    try {
+        await gapi.client.init({ apiKey: apiKey, discoveryDocs: [DISCOVERY_DOC] }); 
+        gapiInited = true; 
+    } catch(e) { console.error("Google API Başlatılma Hatası", e); }
+}
+
+function gisLoaded() { 
+    const clientId = localStorage.getItem('hitos_client_id');
+    if(!clientId) return;
+    tokenClient = google.accounts.oauth2.initTokenClient({ client_id: clientId, scope: SCOPES, callback: '' }); 
+    gisInited = true; 
+}
+
+// Güncelle Butonuna Tıklandığında Çalışacak Fonksiyon
+function handleAuthClick() {
+    const clientId = localStorage.getItem('hitos_client_id');
+    const apiKey = localStorage.getItem('hitos_api_key');
+    
+    // 1. Kontrol: Ayarlar boş mu?
+    if(!clientId || !apiKey) {
+        alert("Google Takvim ile eşitlemek için önce API ayarlarını girmelisiniz!");
+        document.getElementById('googleSettingsModal').style.display = 'flex';
+        return;
+    }
+
+    // 2. Kontrol: Servisler henüz yüklenmediyse bekle
+    if(!gapiInited || !gisInited) {
+        showToast("⏳ Google servisleri hazırlanıyor, lütfen bekleyin...", "var(--warning)");
+        loadGoogleScripts();
+        setTimeout(handleAuthClick, 2000); // 2 saniye sonra tekrar dene
+        return;
+    }
+
+    tokenClient.callback = async (resp) => {
+        if (resp.error !== undefined) throw (resp);
+        showToast("⏳ Senkronizasyon başladı, eski etkinlikler kontrol ediliyor...", "var(--warning)");
+        await syncHitosToGoogle();
+    };
+
+    if (gapi.client.getToken() === null) {
+        tokenClient.requestAccessToken({prompt: 'consent'});
+    } else {
+        tokenClient.requestAccessToken({prompt: ''});
+    }
+}
+
+// Temizle ve Yeni Etkinlikleri Ekle Fonksiyonu
+async function syncHitosToGoogle() {
+    try {
+        const now = new Date();
+        // Sadece bulunduğumuz aydan itibaren 2 aylık penceredeki etkinlikleri sil-yaz yapar
+        const timeMin = new Date(now.getFullYear(), now.getMonth(), 1).toISOString(); 
+        const timeMax = new Date(now.getFullYear(), now.getMonth() + 2, 0).toISOString(); 
+
+        // 1. Mevcut HitosHK etkinliklerini bul ve sil
+        const response = await gapi.client.calendar.events.list({
+            'calendarId': 'primary',
+            'timeMin': timeMin,
+            'timeMax': timeMax,
+            'privateExtendedProperty': 'source=HitosHK' // SADECE BİZİM EKLENTİMİZİ SİLER
+        });
+
+        const existingEvents = response.result.items || [];
+        for (let event of existingEvents) {
+            await gapi.client.calendar.events.delete({
+                'calendarId': 'primary',
+                'eventId': event.id
+            });
+        }
+
+        // 2. Tablodaki güncel verileri Google Takvime ekle
+        const eventsToInsert = getEventsFromTable(); 
+        
+        for (let ev of eventsToInsert) {
+            let googleEndDate = ev.end; 
+
+            const resource = {
+                'summary': ev.title,
+                'description': 'HitosHK Otomatik Teftiş Programı Tarafından Oluşturuldu.',
+                'start': { 'date': ev.start },
+                'end': { 'date': googleEndDate },
+                'extendedProperties': {
+                    'private': { 'source': 'HitosHK' } // İMZAMIZI EKLİYORUZ Kİ DAHA SONRA BULALIM
+                },
+                'reminders': { 'useDefault': true }
+            };
+
+            await gapi.client.calendar.events.insert({
+                'calendarId': 'primary',
+                'resource': resource
+            });
+        }
+
+        showToast("✅ Takvim kusursuz bir şekilde eşitlendi!", "var(--success)");
+        setTimeout(hideToast, 4000);
+    } catch (err) {
+        console.error(err);
+        showToast("❌ Eşitleme başarısız oldu! İnternet bağlantınızı kontrol edin.", "var(--danger)");
+    }
+}
+    
 </script>
 </body>
 </html>
