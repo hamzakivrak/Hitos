@@ -503,15 +503,18 @@
                 <div id="incelemeKabulFormuDiv" style="width: 100%; padding-top: 10px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 10px;">
                         <span class="scope-label" style="color: var(--primary);">📄 İnceleme Konuları (Kabul Formu Havuzu)</span>
-                        <div style="display:flex; gap:10px;">
-                            <button class="btn btn-outline" style="font-size: 0.8rem; padding: 6px 12px;" onclick="autoAssignForms()">🔄 Otomatik Eşleştir</button>
-                            <button class="btn btn-outline" style="font-size: 0.8rem; padding: 6px 12px; border-color: var(--accent); color: var(--accent);" onclick="openPdfPreviewTabs()">👁️ Yüklenenleri Önizle</button>
+                            <div style="display:flex; gap:10px;">
+                                <button class="btn btn-outline" style="font-size: 0.8rem; padding: 6px 12px;" onclick="autoAssignForms()">🔄 Otomatik Eşleştir</button>
     
-                            <label class="btn btn-primary" style="font-size: 0.8rem; padding: 6px 12px; cursor: pointer; box-shadow: var(--shadow-sm);">
-                                ➕ Toplu Form Yükle (PDF)
-                                <input type="file" multiple accept=".pdf" style="display:none" onchange="handleKabulFormUploadBulk(event)">
-                            </label>
-                        </div>
+                                <button class="btn btn-outline" style="font-size: 0.8rem; padding: 6px 12px; border-color: var(--danger); color: var(--danger);" onclick="clearKabulForms()">🗑️ Formları Temizle</button>
+    
+                                <button class="btn btn-outline" style="font-size: 0.8rem; padding: 6px 12px; border-color: var(--accent); color: var(--accent);" onclick="openPdfPreviewTabs()">👁️ Yüklenenleri Önizle</button>
+    
+                                    <label class="btn btn-primary" style="font-size: 0.8rem; padding: 6px 12px; cursor: pointer; box-shadow: var(--shadow-sm);">
+                                    ➕ Toplu Form Yükle (PDF)
+                                    <input type="file" multiple accept=".pdf" style="display:none" onchange="handleKabulFormUploadBulk(event)">
+                                </label>
+                            </div>
                     </div>
                     <div id="kabulFormuListesi" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; max-height: 250px; overflow-y: auto;">
                         <div style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 10px;">Lütfen önce tabloyu veri analizi ile doldurun.</div>
@@ -938,25 +941,27 @@
     }
 
     // --- KABUL FORMU LİSTESİ VE EŞLEŞTİRME SİSTEMİ ---
-    async function handleKabulFormUploadBulk(event) {
-        const files = event.target.files; if(!files.length) return;
-        showToast("⏳ Toplu formlar işleniyor...", "var(--warning)");
-        
-        let newCount = 0;
-        for(let file of files) {
-            const data = await processKabulFormPDF(file);
-            if(data) {
-                data.fileName = file.name;
-                // PDF'i önizleyebilmek için tarayıcı içinde geçici bir link oluşturup kaydediyoruz:
-                data.fileUrl = URL.createObjectURL(file); 
-                kabulFormlariListesi.push(data);
-                newCount++;
-            }
+  async function handleKabulFormUploadBulk(event) {
+    const files = event.target.files; if(!files.length) return;
+    showToast("⏳ Toplu formlar işleniyor ve projeye kalıcı olarak ekleniyor...", "var(--warning)");
+    
+    let newCount = 0;
+    for(let file of files) {
+        const data = await processKabulFormPDF(file);
+        if(data) {
+            data.fileName = file.name;
+            
+            // GEÇİCİ URL YERİNE, KALICI BASE64 KODUNA ÇEVİRİYORUZ
+            data.fileBase64 = await fileToBase64(file); 
+            
+            kabulFormlariListesi.push(data);
+            newCount++;
         }
-        showToast(`✅ ${newCount} form havuza eklendi!`, "var(--success)"); setTimeout(hideToast, 3000);
-        autoAssignForms(); 
-        event.target.value = ''; 
     }
+    showToast(`✅ ${newCount} form havuza eklendi!`, "var(--success)"); setTimeout(hideToast, 3000);
+    autoAssignForms(); 
+    event.target.value = ''; 
+}
 
     async function processKabulFormPDF(file) {
         try {
@@ -2644,14 +2649,11 @@ function openPdfPreviewTabs() {
     kabulFormlariListesi.forEach((form, index) => {
         const tabId = `pdf-tab-${index}`;
         
-        // 1. Sekme Butonunu Oluştur
         const btn = document.createElement('button');
         btn.className = 'vm-tab-btn';
-        // Dosya adı uzunsa keserek göster, hover yapınca tamamı görünsün
         btn.innerText = form.fileName.length > 25 ? form.fileName.substring(0, 25) + '...' : form.fileName;
         btn.title = form.fileName;
         
-        // Sekmeye tıklandığında aktif olanı değiştir
         btn.onclick = () => {
             document.querySelectorAll('#pdfTabsHeader .vm-tab-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('#pdfTabsContentArea .vm-tab-content').forEach(c => c.classList.remove('active'));
@@ -2660,29 +2662,50 @@ function openPdfPreviewTabs() {
         };
         header.appendChild(btn);
 
-        // 2. Sekme İçeriğini (PDF Iframe) Oluştur
         const contentDiv = document.createElement('div');
         contentDiv.id = tabId;
         contentDiv.className = 'vm-tab-content';
-        contentDiv.style.padding = '0'; // Iframe tam ekrana otursun diye padding sıfır
+        contentDiv.style.padding = '0'; 
         contentDiv.style.height = '100%';
         
-        if (form.fileUrl) {
-            contentDiv.innerHTML = `<iframe src="${form.fileUrl}" style="width: 100%; height: 100%; border: none;"></iframe>`;
+        // fileUrl yerine fileBase64 kullanıyoruz.
+        if (form.fileBase64) {
+            contentDiv.innerHTML = `<iframe src="${form.fileBase64}" style="width: 100%; height: 100%; border: none;"></iframe>`;
         } else {
-            contentDiv.innerHTML = `<div style="padding: 20px; text-align:center; color: var(--danger);">⚠️ Önizleme dosyası bulunamadı. (Projeyi daha önce kaydedip yeniden yüklediyseniz güvenlik gereği PDF önizlemeleri uçmuş olabilir, tekrar yüklemeniz gerekebilir.)</div>`;
+            contentDiv.innerHTML = `<div style="padding: 20px; text-align:center; color: var(--danger);">⚠️ Önizleme dosyası bulunamadı. Lütfen listeyi temizleyip formu tekrar yükleyin.</div>`;
         }
         
         contentArea.appendChild(contentDiv);
     });
 
-    // Pencereyi aç ve otomatik olarak ilk sekmeye tıkla
     document.getElementById('pdfPreviewModal').style.display = 'flex';
     if(header.firstChild) {
         header.firstChild.click();
     }
 }
 
+    // PDF Dosyasını Kalıcı Olarak Kaydetmek İçin Base64'e Çeviren Fonksiyon
+function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+}
+
+// Kabul Formlarını ve Eşleşmeleri Komple Silen Fonksiyon
+function clearKabulForms() {
+    if(confirm("Yüklenen tüm kabul formları ve tabloyla olan eşleşmeleri silinecek. Emin misiniz?")) {
+        kabulFormlariListesi = [];
+        ddkVerileri = {};
+        renderKabulFormUI();
+        showToast("🗑️ Kabul formları başarıyla temizlendi.", "var(--danger)");
+        setTimeout(hideToast, 2000);
+    }
+}
+
+    
 
     
 </script>
