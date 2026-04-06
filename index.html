@@ -1002,13 +1002,14 @@
 
         let ddkKonu = '-';
         
-        // ORİJİNAL, TIKIR TIKIR ÇALIŞAN ARAMA KURALI (Word şablonun için en güvenlisi)
-        let konuRegex = /Değerlendirme Komisyonu Tarafından Belirlenen Hususlar\s*(?:1\))?\s*([\s\S]*?)(?:İNCELENMEYEN KONU|TEFTİŞ KAPSAMI|BÖLÜM\/ÇALIŞAN)/i;
+        // İŞTE BÜYÜ BURADA:
+        // 'i' harfleri PDF'te bozuk (൴) çıktığı için o harflerin yerine joker karakter (.) koyduk.
+        // İki ana başlık arasındaki her şeyi kusursuzca makaslayıp alacak!
+        let konuRegex = /De.erlend.rme Kom.syonu Taraf.ndan Bel.rlenen Hususlar\s*([\s\S]*?).NCELENMEYEN KONU/i;
         let konuMatch = fullText.match(konuRegex);
         
         if(konuMatch && konuMatch[1]) {
-            // Metni olduğu gibi saf haliyle alıyoruz, Word belgesini asla bozmayacak.
-            // Sadece araya sızma ihtimali olan sayfa numaralarını görünmez yapıyoruz.
+            // Araya sızmış olabilecek sayfa numaralarını sil, ama metnin orijinal dokusuna/satırlarına dokunma
             ddkKonu = konuMatch[1]
                 .replace(/Sayfa\s*\d+\s*\/\s*\d+/ig, '') 
                 .trim()
