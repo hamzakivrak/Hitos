@@ -505,6 +505,8 @@
                         <span class="scope-label" style="color: var(--primary);">📄 İnceleme Konuları (Kabul Formu Havuzu)</span>
                         <div style="display:flex; gap:10px;">
                             <button class="btn btn-outline" style="font-size: 0.8rem; padding: 6px 12px;" onclick="autoAssignForms()">🔄 Otomatik Eşleştir</button>
+                            <button class="btn btn-outline" style="font-size: 0.8rem; padding: 6px 12px; border-color: var(--accent); color: var(--accent);" onclick="openPdfPreviewTabs()">👁️ Yüklenenleri Önizle</button>
+    
                             <label class="btn btn-primary" style="font-size: 0.8rem; padding: 6px 12px; cursor: pointer; box-shadow: var(--shadow-sm);">
                                 ➕ Toplu Form Yükle (PDF)
                                 <input type="file" multiple accept=".pdf" style="display:none" onchange="handleKabulFormUploadBulk(event)">
@@ -640,6 +642,16 @@
     </div>
 </div>
 
+<div id="pdfPreviewModal" class="modal-overlay" style="z-index: 2400;">
+    <div class="modal-content-lg" style="background: var(--bg-color); padding: 20px; display: flex; flex-direction: column; width: 95%; height: 95%; border-radius: 0;">
+        <button class="modal-close modal-close-dark" onclick="document.getElementById('pdfPreviewModal').style.display='none'">&times;</button>
+        <h2 style="margin-top:0; color:var(--text-main); font-size: 1.3rem;">👁️ Kabul Formları Önizleme Penceresi</h2>
+        <div class="tabs-container" style="display: flex; flex-direction: column; flex: 1; overflow: hidden; background: var(--card-bg); border-radius: var(--border-radius); box-shadow: var(--shadow-sm);">
+            <div id="pdfTabsHeader" style="display: flex; overflow-x: auto; background: #f8fafc; border-bottom: 1px solid var(--border-color);"></div>
+            <div id="pdfTabsContentArea" style="flex: 1; overflow-y: hidden; position: relative;"></div>
+        </div>
+    </div>
+</div>
 
     
 <script>
@@ -935,6 +947,8 @@
             const data = await processKabulFormPDF(file);
             if(data) {
                 data.fileName = file.name;
+                // PDF'i önizleyebilmek için tarayıcı içinde geçici bir link oluşturup kaydediyoruz:
+                data.fileUrl = URL.createObjectURL(file); 
                 kabulFormlariListesi.push(data);
                 newCount++;
             }
@@ -2609,6 +2623,67 @@ async function syncHitosToGoogle() {
         showToast("❌ Eşitleme başarısız oldu! İnternet bağlantınızı kontrol edin.", "var(--danger)");
     }
 }
+
+
+
+
+// ==========================================
+// PDF ÖNİZLEME (SEKMELİ YAPI) FONKSİYONU
+// ==========================================
+function openPdfPreviewTabs() {
+    if (kabulFormlariListesi.length === 0) {
+        alert("Henüz yüklenmiş bir kabul formu bulunmuyor.");
+        return;
+    }
+
+    const header = document.getElementById('pdfTabsHeader');
+    const contentArea = document.getElementById('pdfTabsContentArea');
+    header.innerHTML = '';
+    contentArea.innerHTML = '';
+
+    kabulFormlariListesi.forEach((form, index) => {
+        const tabId = `pdf-tab-${index}`;
+        
+        // 1. Sekme Butonunu Oluştur
+        const btn = document.createElement('button');
+        btn.className = 'vm-tab-btn';
+        // Dosya adı uzunsa keserek göster, hover yapınca tamamı görünsün
+        btn.innerText = form.fileName.length > 25 ? form.fileName.substring(0, 25) + '...' : form.fileName;
+        btn.title = form.fileName;
+        
+        // Sekmeye tıklandığında aktif olanı değiştir
+        btn.onclick = () => {
+            document.querySelectorAll('#pdfTabsHeader .vm-tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('#pdfTabsContentArea .vm-tab-content').forEach(c => c.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        };
+        header.appendChild(btn);
+
+        // 2. Sekme İçeriğini (PDF Iframe) Oluştur
+        const contentDiv = document.createElement('div');
+        contentDiv.id = tabId;
+        contentDiv.className = 'vm-tab-content';
+        contentDiv.style.padding = '0'; // Iframe tam ekrana otursun diye padding sıfır
+        contentDiv.style.height = '100%';
+        
+        if (form.fileUrl) {
+            contentDiv.innerHTML = `<iframe src="${form.fileUrl}" style="width: 100%; height: 100%; border: none;"></iframe>`;
+        } else {
+            contentDiv.innerHTML = `<div style="padding: 20px; text-align:center; color: var(--danger);">⚠️ Önizleme dosyası bulunamadı. (Projeyi daha önce kaydedip yeniden yüklediyseniz güvenlik gereği PDF önizlemeleri uçmuş olabilir, tekrar yüklemeniz gerekebilir.)</div>`;
+        }
+        
+        contentArea.appendChild(contentDiv);
+    });
+
+    // Pencereyi aç ve otomatik olarak ilk sekmeye tıkla
+    document.getElementById('pdfPreviewModal').style.display = 'flex';
+    if(header.firstChild) {
+        header.firstChild.click();
+    }
+}
+
+
     
 </script>
 </body>
