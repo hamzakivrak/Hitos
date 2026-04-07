@@ -978,21 +978,18 @@ async function processKabulFormPDF(file) {
             fullText += content.items.map(item => item.str).join(" ") + "\n";
         }
 
-        // 1. ZIRHLI METİN TEMİZLİĞİ VE 'i' HARFİ KURTARMA (YENİ EKLENDİ)
+        // --- 🛠️ ÇILGIN AMA KESİN ÇÖZÜM: KUTU DÜŞMANI REGEX ---
         let safeText = fullText
-            // PDF'in bozuk çıkardığı "Kutu" karakterlerini (PUA, Null,  vb.) 'i' harfine zorla çevirir
-            .replace(/[\uFFFD\uE000-\uF8FF\u25A1\u25A0\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, 'i') 
-            // Bazen PDF'ler i'yi "noktasız ı" + "nokta" olarak ikiye böler, onu da birleştirir
-            .replace(/ı\u0307/g, 'i') 
-            .replace(/I\u0307/g, 'İ')
-            .replace(/[\u200B-\u200D\uFEFF]/g, '') // Görünmez boşlukları temizler
+            .replace(/[\u200B-\u200D\uFEFF]/g, '') 
+            // DİKKAT: Alfabemiz, rakamlar ve temel noktalama işaretleri DIŞINDA kalan 
+            // tüm bozuk/kutu karakterlerini yakalayıp zorla "i" harfi yapar!
+            .replace(/[^A-Za-z0-9\s\.,;:\-\(\)\/\[\]"'\?!₺%&ğüşıöçĞÜŞİÖÇ•\+=\<\>\*@_\u2018-\u201D]/g, 'i')
             .replace(/([a-zA-ZğüşıöçĞÜŞİÖÇ])60/g, '$1i') 
             .replace(/ {2,}/g, ' ')
             .trim();
 
         let ddkKonu = "[HATA 1: PDF içinde 'Belirlenen Hususlar' veya 'Başvuru Konusu' kelimeleri bulunamadı. Form formatı farklı olabilir.]";
 
-        // 2. YENİ YÖNTEM: TEST EDİP ONAYLADIĞIMIZ ESNEK REGEX
         let extractRegex = /(?:(?:Komisyonu\s*Taraf[ıiİI]ndan\s*)?Bel[iıİI]rl[eE]n[eE]n\s*Hususlar|Ba[şsŞS]vuru\s*Konusu)\s*[:\-\.]?\s*([\s\S]*?)\s*(?:[İIıi]NCELENMEYEN|GENEL\s*DE[ĞG]ERLEND[İI]RME|TEFT[İI][ŞS]\s*KAPSAMI)/i;
         
         let match = safeText.match(extractRegex);
@@ -1019,7 +1016,6 @@ async function processKabulFormPDF(file) {
             }
         }
 
-        // 4. SGK VE TARİH (Tarih ve SGK regex'leri boşluksuz düz metinde daha stabil çalışır)
         let flatText = safeText.replace(/\s+/g, ' '); 
 
         let ddkTarih = '[HATA 3: Düzenlenme Tarihi Bulunamadı]';
