@@ -968,70 +968,68 @@
     
     
 async function processKabulFormPDF(file) {
-    try {
-        const pdf = await pdfjsLib.getDocument(await file.arrayBuffer()).promise;
-        let fullText = "";
-        
-        for (let i = 1; i <= pdf.numPages; i++) {
-            const page = await pdf.getPage(i);
-            const content = await page.getTextContent();
-            fullText += content.items.map(item => item.str).join(" ") + "\n";
-        }
+    try {
+        const pdf = await pdfjsLib.getDocument(await file.arrayBuffer()).promise;
+        let fullText = "";
+        
+        for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            const content = await page.getTextContent();
+            fullText += content.items.map(item => item.str).join(" ") + "\n";
+        }
 
-        // --- 🛠️ ÇILGIN AMA KESİN ÇÖZÜM: KUTU DÜŞMANI REGEX ---
-        let safeText = fullText
-            .replace(/[\u200B-\u200D\uFEFF]/g, '') 
-            // DİKKAT: Alfabemiz, rakamlar ve temel noktalama işaretleri DIŞINDA kalan 
-            // tüm bozuk/kutu karakterlerini yakalayıp zorla "i" harfi yapar!
-            .replace(/[^A-Za-z0-9\s\.,;:\-\(\)\/\[\]"'\?!₺%&ğüşıöçĞÜŞİÖÇ•\+=\<\>\*@_\u2018-\u201D]/g, 'i')
-            .replace(/([a-zA-ZğüşıöçĞÜŞİÖÇ])60/g, '$1i') 
-            .replace(/ {2,}/g, ' ')
-            .trim();
+        // --- 🛠️ ÇILGIN AMA KESİN ÇÖZÜM: KUTU DÜŞMANI REGEX ---
+        let safeText = fullText
+            .replace(/[\u200B-\u200D\uFEFF]/g, '') 
+            .replace(/[^A-Za-z0-9\s\.,;:\-\(\)\/\[\]"'\?!₺%&ğüşıöçĞÜŞİÖÇ•\+=\<\>\*@_\u2018-\u201D]/g, 'i')
+            .replace(/([a-zA-ZğüşıöçĞÜŞİÖÇ])60/g, '$1i') 
+            .replace(/ {2,}/g, ' ')
+            .trim();
 
-        let ddkKonu = "[HATA 1: PDF içinde 'Belirlenen Hususlar' veya 'Başvuru Konusu' kelimeleri bulunamadı. Form formatı farklı olabilir.]";
+        let ddkKonu = "[HATA 1: PDF içinde 'Belirlenen Hususlar' kelimeleri bulunamadı. Form formatı farklı olabilir.]";
 
-        let extractRegex = /(?:(?:Komisyonu\s*Taraf[ıiİI]ndan\s*)?Bel[iıİI]rl[eE]n[eE]n\s*Hususlar|Ba[şsŞS]vuru\s*Konusu)\s*[:\-\.]?\s*([\s\S]*?)\s*(?:[İIıi]NCELENMEYEN|GENEL\s*DE[ĞG]ERLEND[İI]RME|TEFT[İI][ŞS]\s*KAPSAMI)/i;
-        
-        let match = safeText.match(extractRegex);
+        let extractRegex = /(?:Komisyonu\s*Taraf[ıiİI]ndan\s*)?Bel[iıİI]rl[eE]n[eE]n\s*Hususlar\s*[:\-\.]?\s*([\s\S]*?)\s*(?:[İIıi]NCELENMEYEN|GENEL\s*DE[ĞG]ERLEND[İI]RME|TEFT[İI][ŞS]\s*KAPSAMI)/i;
+        
+        let match = safeText.match(extractRegex);
 
-        if (match && match[1]) {
-            let rawKonu = match[1].trim();
+        if (match && match[1]) {
+            let rawKonu = match[1].trim();
 
-            let lines = rawKonu.split('\n')
-                .map(line => line.trim().replace(/^[1-9][\)\.]\s*/g, '').replace(/^[\-\•]\s*/g, ''))
-                .filter(line => line.length > 3);
+            let lines = rawKonu.split('\n')
+                .map(line => line.trim().replace(/^[1-9][\)\.]\s*/g, '').replace(/^[\-\•]\s*/g, ''))
+                .filter(line => line.length > 3);
 
-            if (lines.length > 0) {
-                ddkKonu = lines.map(line => "• " + line).join('\n');
-            } else {
-                ddkKonu = "[HATA 2: Başlangıç kelimesi bulundu ama maddeler okunamadı veya içi BOŞ!]";
-            }
-        } else {
-            let startRegex = /(?:(?:Komisyonu\s*Taraf[ıiİI]ndan\s*)?Bel[iıİI]rl[eE]n[eE]n\s*Hususlar|Ba[şsŞS]vuru\s*Konusu)\s*[:\-\.]?/i;
-            let startMatch = safeText.match(startRegex);
-            if (startMatch) {
-                let afterStart = safeText.substring(startMatch.index + startMatch[0].length).trim();
-                let fallbackText = afterStart.substring(0, 800).trim();
-                ddkKonu = "• " + fallbackText;
-            }
-        }
+            if (lines.length > 0) {
+                ddkKonu = lines.map(line => "• " + line).join('\n');
+            } else {
+                ddkKonu = "[HATA 2: Başlangıç kelimesi bulundu ama maddeler okunamadı veya içi BOŞ!]";
+            }
+        } else {
+            let startRegex = /(?:Komisyonu\s*Taraf[ıiİI]ndan\s*)?Bel[iıİI]rl[eE]n[eE]n\s*Hususlar\s*[:\-\.]?/i;
+            let startMatch = safeText.match(startRegex);
+            if (startMatch) {
+                let afterStart = safeText.substring(startMatch.index + startMatch[0].length).trim();
+                let fallbackText = afterStart.substring(0, 800).trim();
+                ddkKonu = "• " + fallbackText;
+            }
+        }
 
-        let flatText = safeText.replace(/\s+/g, ' '); 
+        let flatText = safeText.replace(/\s+/g, ' '); 
 
-        let ddkTarih = '[HATA 3: Düzenlenme Tarihi Bulunamadı]';
-        let tarihMatch = flatText.match(/Düzenlenme Tarihi[:;\s]*([\d/.]+)/i) || flatText.match(/(\d{2}[./]\d{2}[./]\d{4})/);
-        if(tarihMatch) ddkTarih = tarihMatch[1];
+        let ddkTarih = '[HATA 3: Düzenlenme Tarihi Bulunamadı]';
+        let tarihMatch = flatText.match(/Düzenlenme Tarihi[:;\s]*([\d/.]+)/i) || flatText.match(/(\d{2}[./]\d{2}[./]\d{4})/);
+        if(tarihMatch) ddkTarih = tarihMatch[1];
 
-        let sgk = '[HATA 4: Formda 23 veya 26 haneli SGK numarası bulunamadı]';
-        let sgkMatch = flatText.match(/(\d{23})|(\d{1,2}[\.\-]\d{4}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{7}[\.\-]\d{3}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{3})/);
-        if(sgkMatch) sgk = sgkMatch[0].replace(/\D/g, '');
+        let sgk = '[HATA 4: Formda 23 veya 26 haneli SGK numarası bulunamadı]';
+        let sgkMatch = flatText.match(/(\d{23})|(\d{1,2}[\.\-]\d{4}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{7}[\.\-]\d{3}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{3})/);
+        if(sgkMatch) sgk = sgkMatch[0].replace(/\D/g, '');
 
-        return { sgk, ddkTarih, ddkNo: '-', ddkKonu };
+        return { sgk, ddkTarih, ddkNo: '-', ddkKonu };
 
-    } catch(e) {
-        console.error("DDK Okuma Hatası:", e);
-        return { sgk: "[HATA 5: Okuma Çöktü]", ddkTarih: "-", ddkNo: "-", ddkKonu: `[HATA 5: PDF okunamadı - ${e.message}]` };
-    }
+    } catch(e) {
+        console.error("DDK Okuma Hatası:", e);
+        return { sgk: "[HATA 5: Okuma Çöktü]", ddkTarih: "-", ddkNo: "-", ddkKonu: `[HATA 5: PDF okunamadı - ${e.message}]` };
+    }
 }
     function autoAssignForms() {
         const rows = document.querySelectorAll('#dataTable tbody tr');
