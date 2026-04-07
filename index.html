@@ -971,79 +971,64 @@ async function processKabulFormPDF(file) {
     try {
         const pdf = await pdfjsLib.getDocument(await file.arrayBuffer()).promise;
         let fullText = "";
+        
         for (let i = 1; i <= pdf.numPages; i++) {
             const page = await pdf.getPage(i);
             const content = await page.getTextContent();
             fullText += content.items.map(item => item.str).join(" ") + "\n";
         }
 
-        // --- RESTORASYON FONKSİYONU ---
-        const repairText = (txt) => {
-            if (!txt) return "";
-            return txt
-                .replace(/൴/g, 'i')        
-                .replace(/\s6\s/g, 'i')    
-                .replace(/\s60\s/g, 'i')   
-                .replace(/([a-zA-Zğüşıöç])60/g, '$1i') 
-                .replace(/Sayfa\s*\d+\s*\/\s*\d+/ig, '') 
-                .replace(/\s{2,}/g, ' ')   
-                .trim();
-        };
+        // 1. ZIRHLI METİN TEMİZLİĞİ
+        let safeText = fullText
+            .replace(/[\u200B-\u200D\uFEFF]/g, '')
+            .replace(/([a-zA-ZğüşıöçĞÜŞİÖÇ])60/g, '$1i')
+            .replace(/\s+/g, ' ')
+            .trim();
 
-        let cleanedFullText = repairText(fullText);
+        // DEĞİŞİKLİK BURADA: Eğer bulamazsa eksi değil, sebebi yazacak!
+        let ddkKonu = "[HATA 1: PDF içinde 'Belirlenen Hususlar' veya 'Başvuru Konusu' kelimeleri bulunamadı. Form formatı farklı olabilir.]";
 
-        // --- YÖNTEM: ESNEK REGEX (İleri Yönlü Tarama) ---
-        // 1. Başlangıç kelimesini Regex ile Case-Insensitive (i) bul.
-        const startRegex = /(Belirlenen\s+Hususlar|Bel\w?rlenen\s+Hususlar|Hususlar)\s*[:\-\n]?/gi;
-        let startMatch;
-        let lastStartIndex = -1;
-        let foundStartLength = 0;
+        // 2. BAŞLANGIÇ NOKTASI
+        let startRegex = /(?:Komisyonu\s*Taraf[ıiİI]ndan\s*)?Bel[iıİI]rl[eE]n[eE]n\s*Hususlar\s*[:\-\.]?/i;
+        let startMatch = safeText.match(startRegex);
 
-        // Metin içindeki EN SON eşleşmeyi bul (Geriye dönük makaslama mantığını korumak için)
-        while ((startMatch = startRegex.exec(cleanedFullText)) !== null) {
-            lastStartIndex = startMatch.index;
-            foundStartLength = startMatch[0].length;
+        if (!startMatch) {
+            startMatch = safeText.match(/Ba[şsŞS]vuru\s*Konusu\s*[:\-\.]?/i);
         }
 
-        let ddkKonu = "-";
+        if (startMatch) {
+            let afterStart = safeText.substring(startMatch.index + startMatch[0].length);
 
-        // Eğer bir başlangıç noktası bulduysak:
-        if (lastStartIndex !== -1) {
-            // Başlangıç kelimesinden sonrasını kesip al
-            let textAfterStart = cleanedFullText.substring(lastStartIndex + foundStartLength);
-
-            // 2. Bitiş noktasını esnek bir Regex ile ara. 
-            // Yeni formattaki olası değişiklikleri (HUSUS, DEĞERLENDİRME vb.) kapsar.
-            const endRegex = /([İIıi]?NCELENMEYEN\s+KONU|[İIıi]?NCELENMEYEN\s+HUSUS|GENEL\s+DEĞERLENDİRME|İDARİ\s+YAPTIRIM)/i;
-            let endMatch = textAfterStart.match(endRegex);
+            // 3. BİTİŞ NOKTASI
+            let endRegex = /([İIıi]NCELENMEYEN\s*(?:KONU|HUSUS)|GENEL\s*DE[ĞG]ERLEND[İI]RME|TEFT[İI][ŞS]\s*KAPSAMI)/i;
+            let endMatch = afterStart.match(endRegex);
 
             if (endMatch) {
-                // Eğer bitişi bulursan, aradaki metni al
-                ddkKonu = textAfterStart.substring(0, endMatch.index).trim();
+                ddkKonu = afterStart.substring(0, endMatch.index).trim();
             } else {
-                // EĞER BİTİŞ KELİMESİ YOKSA SİSTEMİ ÇÖKERTME! 
-                // Kalan tüm metni veya ilk 2000 karakteri al.
-                ddkKonu = textAfterStart.substring(0, 2000).trim(); 
+                ddkKonu = afterStart.substring(0, 2000).trim();
             }
 
-            // Başındaki "1)" veya "-" gibi kalıntıları temizle
-            ddkKonu = ddkKonu.replace(/^[1\)\.\s\-\•]+/g, '').trim();
+            // 4. BAŞTAKİ GEREKSİZ İŞARETLERİ TEMİZLE
+            ddkKonu = ddkKonu.replace(/^[1-9][\)\.]\s*/g, '').replace(/^[\-\•]\s*/g, '').trim();
+            
+            if (ddkKonu === "") ddkKonu = "[HATA 2: Başlangıç kelimesi bulundu ama içi tamamen BOŞ!]";
         }
 
-        // --- SGK ve TARİH AYIKLAMA (Orijinal Kod) ---
-        let ddkTarih = '-';
-        let tarihMatch = cleanedFullText.match(/Düzenlenme Tarihi[:;\s]*([\d/.]+)/i) || cleanedFullText.match(/(\d{2}[./]\d{2}[./]\d{4})/);
-        if(tarihMatch) ddkTarih = tarihMatch[1];
+        // 5. SGK VE TARİH (Hata uyarılarıyla)
+        let ddkTarih = '[HATA 3: Düzenlenme Tarihi Bulunamadı]';
+        let tarihMatch = safeText.match(/Düzenlenme Tarihi[:;\s]*([\d/.]+)/i) || safeText.match(/(\d{2}[./]\d{2}[./]\d{4})/);
+        if(tarihMatch) ddkTarih = tarihMatch[1]; 
 
-        let sgk = null;
-        let sgkMatch = cleanedFullText.match(/(\d{23})|(\d{1,2}[\.\-]\d{4}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{7}[\.\-]\d{3}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{3})/);
-        if(sgkMatch) sgk = sgkMatch[0].replace(/\D/g, '');
+        let sgk = '[HATA 4: Formda 23 veya 26 haneli SGK numarası bulunamadı]';
+        let sgkMatch = safeText.match(/(\d{23})|(\d{1,2}[\.\-]\d{4}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{7}[\.\-]\d{3}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{3})/);
+        if(sgkMatch) sgk = sgkMatch[0].replace(/\D/g, ''); 
 
         return { sgk, ddkTarih, ddkNo: '-', ddkKonu };
 
     } catch(e) {
         console.error("DDK Okuma Hatası:", e);
-        return null;
+        return { sgk: "[HATA 5: Okuma Çöktü]", ddkTarih: "-", ddkNo: "-", ddkKonu: `[HATA 5: PDF okunamadı - ${e.message}]` };
     }
 }
 
@@ -1626,12 +1611,15 @@ async function processKabulFormPDF(file) {
             const formIdx = ddkVerileri[activeRowIndexForKonu];
             const kabulData = formIdx !== undefined ? kabulFormlariListesi[formIdx] : null;
             
+            // YENİ KOD (BUNU YAPIŞTIR)
             if (kabulData) {
-                dataToFill["DDKtarih"] = kabulData.ddkTarih || '.......';
-                dataToFill["DDKno"] = kabulData.ddkNo || '.......';
-                dataToFill["DDKkonu"] = kabulData.ddkKonu || '.......';
-            } else {
-                dataToFill["DDKtarih"] = '.......'; dataToFill["DDKno"] = '.......'; dataToFill["DDKkonu"] = '.......';
+                dataToFill["DDKtarih"] = kabulData.ddkTarih || '[TARİH YOK]';
+                dataToFill["DDKno"] = kabulData.ddkNo || '[SAYI YOK]';
+                dataToFill["DDKkonu"] = kabulData.ddkKonu || '[KONU ALANI BOŞ]';
+                        } else {
+                dataToFill["DDKtarih"] = '[EŞLEŞEN FORM YOK]'; 
+                dataToFill["DDKno"] = '[EŞLEŞEN FORM YOK]'; 
+                dataToFill["DDKkonu"] = '[EŞLEŞTİRME HATASI: Bu işyeri için Kabul Formu yüklenmemiş veya SGK numaraları tablodaki ile aynı değil!]';
             }
         } 
         else { 
