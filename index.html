@@ -978,23 +978,90 @@ async function processKabulFormPDF(file) {
             fullText += content.items.map(item => item.str).join(" ") + "\n";
         }
 
-        // --- 🛠️ ÇILGIN AMA KESİN ÇÖZÜM: KUTU DÜŞMANI REGEX ---
-        let safeText = fullText
-            .replace(/[\u200B-\u200D\uFEFF]/g, '') 
-            .replace(/[^A-Za-z0-9\s\.,;:\-\(\)\/\[\]"'\?!₺%&ğüşıöçĞÜŞİÖÇ•\+=\<\>\*@_\u2018-\u201D]/g, 'i')
-            .replace(/([a-zA-ZğüşıöçĞÜŞİÖÇ])60/g, '$1i') 
-            .replace(/ {2,}/g, ' ')
-            .trim();
+        // Boşluk ve görünmez karakterleri temizle
+        let safeText = fullText.replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
 
-        let ddkKonu = "[HATA 1: PDF içinde 'Belirlenen Hususlar' kelimeleri bulunamadı. Form formatı farklı olabilir.]";
+        // --- YZ BENZERLİK (FUZZY) HESAPLAMA MOTORU ---
+        const calcSim = (s1, s2) => {
+            let l1 = s1.length, l2 = s2.length;
+            if(l1 === 0 || l2 === 0) return 0;
+            let longer = l1 > l2 ? s1 : s2;
+            let shorter = l1 > l2 ? s2 : s1;
+            let costs = [];
+            for(let i=0; i<=longer.length; i++) {
+                let lastValue = i;
+                for(let j=0; j<=shorter.length; j++) {
+                    if(i===0) costs[j] = j;
+                    else {
+                        if(j>0) {
+                            let val = costs[j-1];
+                            if(longer[i-1] !== shorter[j-1]) {
+                                val = Math.min(Math.min(val, lastValue), costs[j]) + 1;
+                            }
+                            costs[j-1] = lastValue;
+                            lastValue = val;
+                        }
+                    }
+                }
+                if(i>0) costs[shorter.length] = lastValue;
+            }
+            return (longer.length - costs[shorter.length]) / parseFloat(longer.length);
+        };
 
-        let extractRegex = /(?:Komisyonu\s*Taraf[ıiİI]ndan\s*)?Bel[iıİI]rl[eE]n[eE]n\s*Hususlar\s*[:\-\.]?\s*([\s\S]*?)\s*(?:[İIıi]NCELENMEYEN|GENEL\s*DE[ĞG]ERLEND[İI]RME|TEFT[İI][ŞS]\s*KAPSAMI)/i;
-        
-        let match = safeText.match(extractRegex);
+        // Metin İçinde Hedef Cümleyi Oransal Arayan Fonksiyon
+        const findPattern = (text, targetStr, wordCount) => {
+            let tNorm = targetStr.toLocaleLowerCase('tr-TR').replace(/[^a-z0-9ğüşıöç]/g, '');
+            let tokens = text.split(/(\s+)/);
+            let best = { score: 0, start: -1, end: -1 };
+            let charIdx = 0;
 
-        if (match && match[1]) {
-            let rawKonu = match[1].trim();
+            for(let i=0; i<tokens.length; i+=2) {
+                let cNorm = "";
+                let cEnd = charIdx;
+                let count = 0;
+                let j = i;
+                while(count < wordCount && j < tokens.length) {
+                    cNorm += tokens[j].toLocaleLowerCase('tr-TR').replace(/[^a-z0-9ğüşıöç]/g, '');
+                    cEnd += tokens[j].length;
+                    if(j+1 < tokens.length) cEnd += tokens[j+1].length;
+                    j += 2; count++;
+                }
+                let sim = calcSim(cNorm, tNorm);
+                if(sim > best.score) { best.score = sim; best.start = charIdx; best.end = cEnd; }
+                charIdx += tokens[i].length + (i+1 < tokens.length ? tokens[i+1].length : 0);
+            }
+            return best;
+        };
 
+        let ddkKonu = "[HATA 1: Başlıklar bulunamadı. Form formatı farklı olabilir.]";
+
+        // 1. BAŞLANGIÇ NOKTASINI BUL (Fuzzy Search %70 benzerlik kabulü)
+        let startMatch = findPattern(safeText, "Dilekçe Değerlendirme Komisyonu Tarafından Belirlenen Hususlar", 6);
+        if(startMatch.score < 0.70) {
+            let alt = findPattern(safeText, "Dilekçe Değerlendirme Komisyonu Belirlenen Hususlar", 5);
+            if (alt.score > startMatch.score) startMatch = alt;
+        }
+
+        if (startMatch.score >= 0.70) {
+            let startCut = startMatch.end; // Başlığın bittiği nokta
+            let remainingText = safeText.substring(startCut);
+
+            // 2. BİTİŞ NOKTASINI BUL
+            let endMatch = findPattern(remainingText, "İNCELENMEYEN KONU VE NEDENİ", 4);
+            let endCut = remainingText.length;
+
+            if (endMatch.score >= 0.75) {
+                endCut = endMatch.start; // Diğer başlığın başladığı nokta
+            } else {
+                // Alternatif güvenlik duvarı
+                let altEnd = findPattern(remainingText, "TEFTİŞ KAPSAMI", 2);
+                if(altEnd.score >= 0.75) endCut = altEnd.start;
+            }
+
+            // 3. ARADAKİ METNİ AL VE TEMİZLE
+            let rawKonu = remainingText.substring(0, endCut).trim();
+            rawKonu = rawKonu.replace(/^[\s:\.\-]+/, ''); // Başlığın sonundaki ":" veya boşlukları sil
+            
             let lines = rawKonu.split('\n')
                 .map(line => line.trim().replace(/^[1-9][\)\.]\s*/g, '').replace(/^[\-\•]\s*/g, ''))
                 .filter(line => line.length > 3);
@@ -1002,15 +1069,7 @@ async function processKabulFormPDF(file) {
             if (lines.length > 0) {
                 ddkKonu = lines.map(line => "• " + line).join('\n');
             } else {
-                ddkKonu = "[HATA 2: Başlangıç kelimesi bulundu ama maddeler okunamadı veya içi BOŞ!]";
-            }
-        } else {
-            let startRegex = /(?:Komisyonu\s*Taraf[ıiİI]ndan\s*)?Bel[iıİI]rl[eE]n[eE]n\s*Hususlar\s*[:\-\.]?/i;
-            let startMatch = safeText.match(startRegex);
-            if (startMatch) {
-                let afterStart = safeText.substring(startMatch.index + startMatch[0].length).trim();
-                let fallbackText = afterStart.substring(0, 800).trim();
-                ddkKonu = "• " + fallbackText;
+                ddkKonu = "[HATA 2: Başlıklar arası boş veya okunamadı]";
             }
         }
 
