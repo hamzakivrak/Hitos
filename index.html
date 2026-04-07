@@ -971,73 +971,64 @@ async function processKabulFormPDF(file) {
     try {
         const pdf = await pdfjsLib.getDocument(await file.arrayBuffer()).promise;
         let fullText = "";
+        
         for (let i = 1; i <= pdf.numPages; i++) {
             const page = await pdf.getPage(i);
             const content = await page.getTextContent();
             fullText += content.items.map(item => item.str).join(" ") + "\n";
         }
 
-        // --- RESTORASYON FONKSİYONU ---
-        const repairText = (txt) => {
-            if (!txt) return "";
-            return txt
-                .replace(/൴/g, 'i')        
-                .replace(/\s6\s/g, 'i')    
-                .replace(/\s60\s/g, 'i')   
-                .replace(/([a-zA-Zğüşıöç])60/g, '$1i') 
-                .replace(/Sayfa\s*\d+\s*\/\s*\d+/ig, '') 
-                .replace(/\s{2,}/g, ' ')   
-                .trim();
-        };
-
-        let cleanedFullText = repairText(fullText);
-
-        // --- YÖNTEM: ESNEK REGEX (İleri Yönlü Tarama) ---
-        // 1. Başlangıç kelimesini Regex ile Case-Insensitive (i) bul.
-        const startRegex = /(Belirlenen\s+Hususlar|Bel\w?rlenen\s+Hususlar|Hususlar)\s*[:\-\n]?/gi;
-        let startMatch;
-        let lastStartIndex = -1;
-        let foundStartLength = 0;
-
-        // Metin içindeki EN SON eşleşmeyi bul (Geriye dönük makaslama mantığını korumak için)
-        while ((startMatch = startRegex.exec(cleanedFullText)) !== null) {
-            lastStartIndex = startMatch.index;
-            foundStartLength = startMatch[0].length;
-        }
+        // 1. ZIRHLI METİN TEMİZLİĞİ (Hayalet karakterleri ve satır atlamalarını yok eder)
+        let safeText = fullText
+            .replace(/[\u200B-\u200D\uFEFF]/g, '') // Görünmez karakterleri (Zero-width) tamamen sil [cite: 6, 38]
+            .replace(/([a-zA-ZğüşıöçĞÜŞİÖÇ])60/g, '$1i') // Olası OCR harf birleşme hatalarını düzelt
+            .replace(/\s+/g, ' ') // Tüm alt satır (\n) ve fazla boşlukları tek boşluğa çevir (Tek parça metin yapar)
+            .trim();
 
         let ddkKonu = "-";
 
-        // Eğer bir başlangıç noktası bulduysak:
-        if (lastStartIndex !== -1) {
-            // Başlangıç kelimesinden sonrasını kesip al
-            let textAfterStart = cleanedFullText.substring(lastStartIndex + foundStartLength);
+        // 2. BAŞLANGIÇ NOKTASI (İleri yönlü, ilk kesin eşleşme)
+        // JavaScript'in Türkçe İ/I harfi bug'ına takılmamak için harfleri özel tanımladık: [iıİI]
+        let startRegex = /(?:Komisyonu\s*Taraf[ıiİI]ndan\s*)?Bel[iıİI]rl[eE]n[eE]n\s*Hususlar\s*[:\-\.]?/i;
+        let startMatch = safeText.match(startRegex);
 
-            // 2. Bitiş noktasını esnek bir Regex ile ara. 
-            // Yeni formattaki olası değişiklikleri (HUSUS, DEĞERLENDİRME vb.) kapsar.
-            const endRegex = /([İIıi]?NCELENMEYEN\s+KONU|[İIıi]?NCELENMEYEN\s+HUSUS|GENEL\s+DEĞERLENDİRME|İDARİ\s+YAPTIRIM)/i;
-            let endMatch = textAfterStart.match(endRegex);
-
-            if (endMatch) {
-                // Eğer bitişi bulursan, aradaki metni al
-                ddkKonu = textAfterStart.substring(0, endMatch.index).trim();
-            } else {
-                // EĞER BİTİŞ KELİMESİ YOKSA SİSTEMİ ÇÖKERTME! 
-                // Kalan tüm metni veya ilk 2000 karakteri al.
-                ddkKonu = textAfterStart.substring(0, 2000).trim(); 
-            }
-
-            // Başındaki "1)" veya "-" gibi kalıntıları temizle
-            ddkKonu = ddkKonu.replace(/^[1\)\.\s\-\•]+/g, '').trim();
+        if (!startMatch) {
+            // Bulamazsa B planı: Başvuru Konusu etiketi
+            startMatch = safeText.match(/Ba[şsŞS]vuru\s*Konusu\s*[:\-\.]?/i);
         }
 
-        // --- SGK ve TARİH AYIKLAMA (Orijinal Kod) ---
+        if (startMatch) {
+            // Başlangıcın bittiği yerden sonrasını kesip alıyoruz
+            let afterStart = safeText.substring(startMatch.index + startMatch[0].length);
+
+            // 3. BİTİŞ NOKTASI
+            // "İNCELENMEYEN KONU" veya yeni formattaki ihtimalleri arıyoruz [cite: 30, 59]
+            let endRegex = /([İIıi]NCELENMEYEN\s*(?:KONU|HUSUS)|GENEL\s*DE[ĞG]ERLEND[İI]RME|TEFT[İI][ŞS]\s*KAPSAMI)/i;
+            let endMatch = afterStart.match(endRegex);
+
+            if (endMatch) {
+                // Bitiş kelimesine kadar olan kısmı al
+                ddkKonu = afterStart.substring(0, endMatch.index).trim();
+            } else {
+                // Eğer formda bitiş kelimesi yoksa, güvenli limitte metni al
+                ddkKonu = afterStart.substring(0, 2000).trim();
+            }
+
+            // 4. BAŞTAKİ GEREKSİZ İŞARETLERİ TEMİZLE ("1)", "- ", "• " gibi) [cite: 26, 58]
+            // Bu sayede konunun başında sayı varsa raporda çirkin durmasını engelleriz
+            ddkKonu = ddkKonu.replace(/^[1-9][\)\.]\s*/g, '').replace(/^[\-\•]\s*/g, '').trim();
+            
+            if (ddkKonu === "") ddkKonu = "-";
+        }
+
+        // 5. SGK VE TARİH (Eski kusursuz yapı aynen korundu)
         let ddkTarih = '-';
-        let tarihMatch = cleanedFullText.match(/Düzenlenme Tarihi[:;\s]*([\d/.]+)/i) || cleanedFullText.match(/(\d{2}[./]\d{2}[./]\d{4})/);
-        if(tarihMatch) ddkTarih = tarihMatch[1];
+        let tarihMatch = safeText.match(/Düzenlenme Tarihi[:;\s]*([\d/.]+)/i) || safeText.match(/(\d{2}[./]\d{2}[./]\d{4})/);
+        if(tarihMatch) ddkTarih = tarihMatch[1]; [cite: 32, 61]
 
         let sgk = null;
-        let sgkMatch = cleanedFullText.match(/(\d{23})|(\d{1,2}[\.\-]\d{4}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{7}[\.\-]\d{3}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{3})/);
-        if(sgkMatch) sgk = sgkMatch[0].replace(/\D/g, '');
+        let sgkMatch = safeText.match(/(\d{23})|(\d{1,2}[\.\-]\d{4}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{7}[\.\-]\d{3}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{3})/);
+        if(sgkMatch) sgk = sgkMatch[0].replace(/\D/g, ''); [cite: 8, 11, 40, 44]
 
         return { sgk, ddkTarih, ddkNo: '-', ddkKonu };
 
