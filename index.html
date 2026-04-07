@@ -940,141 +940,129 @@
         }
     }
 
-    // --- KABUL FORMU LİSTESİ VE EŞLEŞTİRME SİSTEMİ ---
-  async function handleKabulFormUploadBulk(event) {
-    const files = event.target.files; if(!files.length) return;
-    showToast("⏳ Toplu formlar işleniyor ve projeye kalıcı olarak ekleniyor...", "var(--warning)");
+  // 1. GÜNCELLENMİŞ TOPLU YÜKLEME FONKSİYONU (OCR Motoru Optimizasyonu İçerir)
+async function handleKabulFormUploadBulk(event) {
+    const files = event.target.files; 
+    if(!files.length) return;
+    
+    showToast("⏳ Formlar Yapay Zeka (OCR) ile okunuyor, lütfen bekleyin (Bu işlem biraz sürebilir)...", "var(--warning)");
+    
+    // PERFORMANS: OCR motorunu her dosya için ayrı ayrı açmamak adına burada 1 kere başlatıyoruz
+    let worker;
+    try {
+        worker = await Tesseract.createWorker('tur');
+    } catch(e) {
+        showToast("❌ OCR Motoru başlatılamadı. İnternet bağlantınızı kontrol edin.", "var(--danger)");
+        return;
+    }
     
     let newCount = 0;
-    for(let file of files) {
-        const data = await processKabulFormPDF(file);
+    for(let i = 0; i < files.length; i++) {
+        let file = files[i];
+        showToast(`⏳ Okunuyor: ${file.name} (${i+1}/${files.length})`, "var(--warning)");
+        
+        const data = await processKabulFormPDF_OCR(file, worker);
         if(data) {
             data.fileName = file.name;
-            
-            // GEÇİCİ URL YERİNE, KALICI BASE64 KODUNA ÇEVİRİYORUZ
+            // PDF'i Base64'e çevirip önizleme için saklıyoruz
             data.fileBase64 = await fileToBase64(file); 
             
             kabulFormlariListesi.push(data);
             newCount++;
         }
     }
-    showToast(`✅ ${newCount} form havuza eklendi!`, "var(--success)"); setTimeout(hideToast, 3000);
+    
+    // İşlem bitince motoru kapatarak RAM'i temizliyoruz
+    await worker.terminate(); 
+
+    showToast(`✅ ${newCount} form OCR ile havuza eklendi!`, "var(--success)"); 
+    setTimeout(hideToast, 3000);
+    
     autoAssignForms(); 
     event.target.value = ''; 
 }
 
-   
-    
-    
-    
-async function processKabulFormPDF(file) {
+// 2. YENİ OCR (GÖRSEL ÇÖZÜMLEME) TABANLI PDF OKUMA FONKSİYONU
+async function processKabulFormPDF_OCR(file, worker) {
     try {
         const pdf = await pdfjsLib.getDocument(await file.arrayBuffer()).promise;
-        let allItems = [];
+        
+        let allLines = [];
+        let fullText = "";
 
-        // 1. Tüm sayfalardaki metinleri ve koordinatları topla
+        // PDF sayfalarını tek tek resme (canvas) çevirip OCR'a (Yapay Zekaya) veriyoruz
         for (let i = 1; i <= pdf.numPages; i++) {
             const page = await pdf.getPage(i);
-            const content = await page.getTextContent();
-            const viewport = page.getViewport({ scale: 1.0 });
-            const pageHeight = viewport.height;
+            
+            // Çözünürlük ayarı: 1.5, hız ve okuma doğruluğu için en ideal orandır
+            const viewport = page.getViewport({ scale: 1.5 }); 
+            
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
 
-            content.items.forEach(item => {
-                const str = item.str.trim();
-                if (str.length > 0) {
-                    // Sayfalar arası metinlerin karışmaması için her sayfaya 10000 birim ekliyoruz
-                    const globalY = (i * 10000) + (pageHeight - item.transform[5]);
-                    allItems.push({
-                        str: str,
-                        x: item.transform[4],
-                        y: globalY
-                    });
-                }
-            });
+            await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+
+            const { data } = await worker.recognize(canvas);
+            fullText += data.text + "\n";
+            
+            // OCR'ın fiziksel olarak tespit ettiği satırları diziye ekliyoruz
+            if(data.lines) {
+                data.lines.forEach(lineObj => {
+                    let text = lineObj.text.trim();
+                    if(text.length > 2) allLines.push(text);
+                });
+            }
         }
 
-        // 2. Önce yukarıdan aşağıya (Y), aynı hizada olanları soldan sağa (X) sırala
-        allItems.sort((a, b) => {
-            if (Math.abs(a.y - b.y) < 6) return a.x - b.x; // 6px toleransla aynı satır kabul et
-            return a.y - b.y;
-        });
-
-        // SGK ve Tarih için eski düz metin yöntemini kullan
-        let flatText = allItems.map(item => item.str).join(' ');
-
-        let ddkTarih = '[HATA 3: Düzenlenme Tarihi Bulunamadı]';
-        let tarihMatch = flatText.match(/Düzenlenme Tarihi[:;\s]*([\d/.]+)/i) || flatText.match(/(\d{2}[./]\d{2}[./]\d{4})/);
+        // --- TARİH VE SGK BULMA (Tam Metin Üzerinden) ---
+        let ddkTarih = '[TARİH BULUNAMADI]';
+        let tarihMatch = fullText.match(/Düzenlenme Tarihi[:;\s]*([\d/.]+)/i) || fullText.match(/(\d{2}[./]\d{2}[./]\d{4})/);
         if(tarihMatch) ddkTarih = tarihMatch[1];
 
-        let sgk = '[HATA 4: Formda 23 veya 26 haneli SGK numarası bulunamadı]';
-        let sgkMatch = flatText.match(/(\d{23})|(\d{1,2}[\.\-]\d{4}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{7}[\.\-]\d{3}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{3})/);
+        let sgk = '[SGK BULUNAMADI]';
+        let sgkMatch = fullText.match(/(\d{23})|(\d{1,2}[\.\-]\d{4}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{7}[\.\-]\d{3}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{3})/);
         if(sgkMatch) sgk = sgkMatch[0].replace(/\D/g, '');
 
-        // 3. KELİMELERİ FİZİKSEL SATIRLARA (LİNES) GRUPLA
-        let lines = [];
-        if (allItems.length > 0) {
-            let currentLine = [allItems[0]];
-            let currentY = allItems[0].y;
 
-            for (let i = 1; i < allItems.length; i++) {
-                if (Math.abs(allItems[i].y - currentY) < 6) {
-                    currentLine.push(allItems[i]);
-                } else {
-                    lines.push(currentLine);
-                    currentLine = [allItems[i]];
-                    currentY = allItems[i].y;
-                }
-            }
-            if (currentLine.length > 0) lines.push(currentLine);
-        }
+        // --- AKILLI METİN VE MADDE AYIKLAMA (Satırlar Üzerinden) ---
+        
+        // OCR okumalarındaki karakter hatalarını (ç->c, ş->s vb.) tolere etmek için normalize aracı
+        const normalize = (str) => {
+            return str.toLowerCase()
+                      .replace(/ğ/g, 'g').replace(/ü/g, 'u').replace(/ş/g, 's')
+                      .replace(/ı/g, 'i').replace(/ö/g, 'o').replace(/ç/g, 'c')
+                      .replace(/[^a-z0-9]/g, '');
+        };
 
-        // Satır objelerini düz metne (string) çevir
-        let textLines = lines.map(lineArr => {
-            lineArr.sort((a, b) => a.x - b.x); // Satır içindeki kelimeleri soldan sağa diz
-            return lineArr.map(item => item.str).join(' ').replace(/\s+/g, ' ').trim();
-        });
-
-        // 4. BAŞLANGIÇ VE BİTİŞ SATIRLARININ İNDEKSLERİNİ BUL
-        let startIndex = -1;
-        let endIndex = -1;
-
-        for (let i = 0; i < textLines.length; i++) {
-            let normLine = textLines[i].toLowerCase().replace(/[^a-zğüşıöç]/g, '');
+        let capture = false;
+        let processedLines = [];
+        
+        for (let i = 0; i < allLines.length; i++) {
+            let line = allLines[i];
+            let nLine = normalize(line);
             
-            // Başlangıç: "Dilekçe Değerlendirme Komisyonu" satırını bul
-            if (startIndex === -1 && (normLine.includes("dilekedeerlendirmekomi") || normLine.includes("belirlenenhususlar"))) {
-                startIndex = i;
+            // BİTİŞ KONTROLÜ
+            if (nLine.includes("incelenmeyenkonu") || nLine.includes("ncelenmeyen") || nLine.includes("teftikapsam")) {
+                break; 
             }
-            // Bitiş: "İncelenmeyen Konu" satırını bul
-            else if (startIndex !== -1 && endIndex === -1 && (normLine.includes("incelenmeyenkonu") || normLine.includes("teftikapsami") || normLine.includes("ncelenmeyen"))) {
-                endIndex = i;
-            }
-        }
 
-        let ddkKonu = "[HATA 1: Başlıklar bulunamadı. Form formatı farklı olabilir.]";
-
-        // 5. İLGİLİ SATIRLARI ÇEK VE AKILLI MADDELEME YAP
-        if (startIndex !== -1) {
-            if (endIndex === -1) endIndex = textLines.length;
-
-            // Sadece iki başlık arasındaki satırları kesip al
-            let extractedLines = textLines.slice(startIndex + 1, endIndex);
-            let processedLines = [];
-
-            for (let line of extractedLines) {
-                // Satır başındaki olası "1)", "1.", "-", "•" işaretlerini ve boşlukları temizle
-                let cleanLine = line.replace(/^[1-9][\)\.]\s*/g, '').replace(/^[\-\•]\s*/g, '').trim();
+            // METNİ ALMA VE BİRLEŞTİRME
+            if (capture) {
+                // Başlangıçtaki rakamları, parantezleri, noktaları ve tireleri temizle
+                let cleanLine = line.replace(/^[1-9][\)\.]\s*/g, '')
+                                    .replace(/^[\-\•]\s*/g, '')
+                                    .trim();
                 
-                // Çok kısa ve anlamsız kalan satırları atla
-                if (cleanLine.length < 2) continue; 
+                if(cleanLine.length < 2) continue;
 
-                // İlk karakteri kontrol et (Küçük harfle mi başlıyor?)
                 let firstChar = cleanLine.charAt(0);
-                let isLower = /^[a-zğüşıöç]$/.test(firstChar); // İlk harf küçük Türkçe/İngilizce karakter mi?
-                let isSpecial = /^[\(\)\,\.\-\/]$/.test(firstChar); // Veya parantez vb. bir işaretle mi başlıyor?
+                // OCR bazen ilk karakteri sembol veya küçük harf yapabilir
+                let isLowerOrSymbol = /^[a-zğüşıöç\(\)\,\.\-\/]$/.test(firstChar);
 
-                // Eğer satır küçük harfle veya işaretle başlıyorsa bu bir önceki cümlenin devamıdır
-                if ((isLower || isSpecial) && processedLines.length > 0) {
+                // Eğer küçük harf veya parantezle başlıyorsa, önceki cümlenin devamıdır
+                if (isLowerOrSymbol && processedLines.length > 0) {
                     processedLines[processedLines.length - 1] += " " + cleanLine;
                 } else {
                     // Büyük harfle başlıyorsa yeni bir maddedir
@@ -1082,18 +1070,20 @@ async function processKabulFormPDF(file) {
                 }
             }
 
-            if (processedLines.length > 0) {
-                ddkKonu = processedLines.join('\n');
-            } else {
-                ddkKonu = "[HATA 2: Başlıklar arası boş veya okunamadı]";
+            // BAŞLANGIÇ KONTROLÜ
+            // normalize fonksiyonu Türkçe karakterleri İngilizce'ye çevirdiği için arama terimlerini de ona göre yazdık
+            if (!capture && (nLine.includes("dilekcedegerlendir") || nLine.includes("belirlenenhususlar"))) {
+                capture = true;
             }
         }
+
+        let ddkKonu = processedLines.length > 0 ? processedLines.join('\n') : "[HATA: İlgili başlıklar OCR tarafından tam okunamadı veya araları boş.]";
 
         return { sgk, ddkTarih, ddkNo: '-', ddkKonu };
 
     } catch(e) {
-        console.error("DDK Okuma Hatası:", e);
-        return { sgk: "[HATA 5: Okuma Çöktü]", ddkTarih: "-", ddkNo: "-", ddkKonu: `[HATA 5: PDF okunamadı - ${e.message}]` };
+        console.error("OCR DDK Okuma Hatası:", e);
+        return { sgk: "-", ddkTarih: "-", ddkNo: "-", ddkKonu: `[HATA: PDF OCR ile okunamadı - ${e.message}]` };
     }
 }
     function autoAssignForms() {
