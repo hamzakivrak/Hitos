@@ -968,127 +968,124 @@
     
     
 async function processKabulFormPDF(file) {
-    try {
-        const pdf = await pdfjsLib.getDocument(await file.arrayBuffer()).promise;
-        let fullText = "";
-        
-        for (let i = 1; i <= pdf.numPages; i++) {
-            const page = await pdf.getPage(i);
-            const content = await page.getTextContent();
-            fullText += content.items.map(item => item.str).join(" ") + "\n";
-        }
+    try {
+        const pdf = await pdfjsLib.getDocument(await file.arrayBuffer()).promise;
+        let allItems = [];
 
-        // Boşluk ve görünmez karakterleri temizle
-        let safeText = fullText.replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
+        // 1. Tüm sayfalardaki metinleri ve koordinatları topla
+        for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            const content = await page.getTextContent();
+            
+            // Viewport yüksekliğini alarak Y koordinatını yukarıdan aşağıya doğru düzeltiyoruz
+            const viewport = page.getViewport({ scale: 1.0 });
+            const pageHeight = viewport.height;
 
-        // --- YZ BENZERLİK (FUZZY) HESAPLAMA MOTORU ---
-        const calcSim = (s1, s2) => {
-            let l1 = s1.length, l2 = s2.length;
-            if(l1 === 0 || l2 === 0) return 0;
-            let longer = l1 > l2 ? s1 : s2;
-            let shorter = l1 > l2 ? s2 : s1;
-            let costs = [];
-            for(let i=0; i<=longer.length; i++) {
-                let lastValue = i;
-                for(let j=0; j<=shorter.length; j++) {
-                    if(i===0) costs[j] = j;
-                    else {
-                        if(j>0) {
-                            let val = costs[j-1];
-                            if(longer[i-1] !== shorter[j-1]) {
-                                val = Math.min(Math.min(val, lastValue), costs[j]) + 1;
-                            }
-                            costs[j-1] = lastValue;
-                            lastValue = val;
-                        }
-                    }
-                }
-                if(i>0) costs[shorter.length] = lastValue;
-            }
-            return (longer.length - costs[shorter.length]) / parseFloat(longer.length);
-        };
+            content.items.forEach(item => {
+                const str = item.str.trim();
+                if (str.length > 0) {
+                    // PDF'de sayfa altı 0'dır, biz yukarıdan aşağıya Y artacak şekilde (globalY) çeviriyoruz
+                    // Her sayfaya 10000 piksel ekliyoruz ki sayfalar arası satırlar birbirine girmesin
+                    const globalY = (i * 10000) + (pageHeight - item.transform[5]);
+                    allItems.push({
+                        str: str,
+                        x: item.transform[4],
+                        y: globalY,
+                        page: i
+                    });
+                }
+            });
+        }
 
-        // Metin İçinde Hedef Cümleyi Oransal Arayan Fonksiyon
-        const findPattern = (text, targetStr, wordCount) => {
-            let tNorm = targetStr.toLocaleLowerCase('tr-TR').replace(/[^a-z0-9ğüşıöç]/g, '');
-            let tokens = text.split(/(\s+)/);
-            let best = { score: 0, start: -1, end: -1 };
-            let charIdx = 0;
+        // Yukarıdan aşağıya (Y ekseni) ve aynı satırda soldan sağa (X ekseni) okuma sırasına diz
+        allItems.sort((a, b) => {
+            if (Math.abs(a.y - b.y) < 6) { // Aynı satır toleransı (6 piksel)
+                return a.x - b.x;
+            }
+            return a.y - b.y;
+        });
 
-            for(let i=0; i<tokens.length; i+=2) {
-                let cNorm = "";
-                let cEnd = charIdx;
-                let count = 0;
-                let j = i;
-                while(count < wordCount && j < tokens.length) {
-                    cNorm += tokens[j].toLocaleLowerCase('tr-TR').replace(/[^a-z0-9ğüşıöç]/g, '');
-                    cEnd += tokens[j].length;
-                    if(j+1 < tokens.length) cEnd += tokens[j+1].length;
-                    j += 2; count++;
-                }
-                let sim = calcSim(cNorm, tNorm);
-                if(sim > best.score) { best.score = sim; best.start = charIdx; best.end = cEnd; }
-                charIdx += tokens[i].length + (i+1 < tokens.length ? tokens[i+1].length : 0);
-            }
-            return best;
-        };
+        // Tarih ve SGK bulmak için tüm metni tek satır yap (eski sağlam yöntem)
+        let flatText = allItems.map(item => item.str).join(' ');
 
-        let ddkKonu = "[HATA 1: Başlıklar bulunamadı. Form formatı farklı olabilir.]";
+        let ddkTarih = '[HATA 3: Düzenlenme Tarihi Bulunamadı]';
+        let tarihMatch = flatText.match(/Düzenlenme Tarihi[:;\s]*([\d/.]+)/i) || flatText.match(/(\d{2}[./]\d{2}[./]\d{4})/);
+        if(tarihMatch) ddkTarih = tarihMatch[1];
 
-        // 1. BAŞLANGIÇ NOKTASINI BUL (Fuzzy Search %70 benzerlik kabulü)
-        let startMatch = findPattern(safeText, "Dilekçe Değerlendirme Komisyonu Tarafından Belirlenen Hususlar", 6);
-        if(startMatch.score < 0.70) {
-            let alt = findPattern(safeText, "Dilekçe Değerlendirme Komisyonu Belirlenen Hususlar", 5);
-            if (alt.score > startMatch.score) startMatch = alt;
-        }
+        let sgk = '[HATA 4: Formda 23 veya 26 haneli SGK numarası bulunamadı]';
+        let sgkMatch = flatText.match(/(\d{23})|(\d{1,2}[\.\-]\d{4}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{7}[\.\-]\d{3}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{3})/);
+        if(sgkMatch) sgk = sgkMatch[0].replace(/\D/g, '');
 
-        if (startMatch.score >= 0.70) {
-            let startCut = startMatch.end; // Başlığın bittiği nokta
-            let remainingText = safeText.substring(startCut);
+        // 2. GEOMETRİK SINIRLARI BULMA (Y Koordinatları)
+        let startY = -1;
+        let endY = -1;
 
-            // 2. BİTİŞ NOKTASINI BUL
-            let endMatch = findPattern(remainingText, "İNCELENMEYEN KONU VE NEDENİ", 4);
-            let endCut = remainingText.length;
+        for (let i = 0; i < allItems.length; i++) {
+            // Karşılaştırma kolaylığı için boşluk ve noktalama işaretlerini atıyoruz
+            let currentStr = allItems[i].str.toLowerCase().replace(/[^a-zğüşıöç]/g, '');
+            
+            // ÜST SINIR: "Dilekçe Değerlendirme Komisyonu Tarafından Belirlenen Hususlar"
+            if (startY === -1 && (currentStr.includes("dilekedeerlendirmekomi") || currentStr.includes("belirlenenhususlar"))) {
+                startY = allItems[i].y;
+            }
+            
+            // ALT SINIR: "İNCELENMEYEN KONU VE NEDENİ" veya "TEFTİŞ KAPSAMI"
+            if (startY !== -1 && endY === -1 && (currentStr.includes("incelenmeyenkonu") || currentStr.includes("teftikapsami"))) {
+                // Alt sınırın, üst sınırdan en az 10 piksel aşağıda olmasını garanti edelim
+                if (allItems[i].y > startY + 10) {
+                    endY = allItems[i].y;
+                }
+            }
+        }
 
-            if (endMatch.score >= 0.75) {
-                endCut = endMatch.start; // Diğer başlığın başladığı nokta
-            } else {
-                // Alternatif güvenlik duvarı
-                let altEnd = findPattern(remainingText, "TEFTİŞ KAPSAMI", 2);
-                if(altEnd.score >= 0.75) endCut = altEnd.start;
-            }
+        let ddkKonu = "[HATA 1: Başlıklar bulunamadı. Form formatı farklı olabilir.]";
 
-            // 3. ARADAKİ METNİ AL VE TEMİZLE
-            let rawKonu = remainingText.substring(0, endCut).trim();
-            rawKonu = rawKonu.replace(/^[\s:\.\-]+/, ''); // Başlığın sonundaki ":" veya boşlukları sil
-            
-            let lines = rawKonu.split('\n')
-                .map(line => line.trim().replace(/^[1-9][\)\.]\s*/g, '').replace(/^[\-\•]\s*/g, ''))
-                .filter(line => line.length > 3);
+        // 3. SINIRLAR ARASINDAKİ METİNLERİ KUTUDAN (BBOX) ÇIKARMA
+        if (startY !== -1) {
+            // Eğer PDF'in sonunda alt başlık yoksa sayfanın en altına kadar alır
+            if (endY === -1) endY = Infinity;
 
-            if (lines.length > 0) {
-                ddkKonu = lines.map(line => "• " + line).join('\n');
-            } else {
-                ddkKonu = "[HATA 2: Başlıklar arası boş veya okunamadı]";
-            }
-        }
+            // Sadece başlangıç ve bitiş başlıkları arasındaki yazıları filtrele (±5 px tolerans payı ile)
+            let extractedItems = allItems.filter(item => item.y > startY + 5 && item.y < endY - 5);
+            
+            if (extractedItems.length > 0) {
+                // Aynı satırda yan yana olan kelimeleri birleştirip cümle/satır yapıyoruz
+                let lines = [];
+                let currentLine = [extractedItems[0]];
+                
+                for (let i = 1; i < extractedItems.length; i++) {
+                    if (Math.abs(extractedItems[i].y - extractedItems[i-1].y) < 6) {
+                        currentLine.push(extractedItems[i]);
+                    } else {
+                        lines.push(currentLine);
+                        currentLine = [extractedItems[i]];
+                    }
+                }
+                if (currentLine.length > 0) lines.push(currentLine);
 
-        let flatText = safeText.replace(/\s+/g, ' '); 
+                // Her satırı temizle ve madde yap
+                let processedLines = lines.map(lineArr => {
+                    let lineStr = lineArr.map(it => it.str).join(' ').trim();
+                    // Satır başındaki olası rakamlar (1., 2)), tireler (-) veya garip noktaları siler
+                    lineStr = lineStr.replace(/^[1-9][\)\.]\s*/g, '').replace(/^[\-\•]\s*/g, '').trim();
+                    return lineStr;
+                }).filter(line => line.length > 3);
 
-        let ddkTarih = '[HATA 3: Düzenlenme Tarihi Bulunamadı]';
-        let tarihMatch = flatText.match(/Düzenlenme Tarihi[:;\s]*([\d/.]+)/i) || flatText.match(/(\d{2}[./]\d{2}[./]\d{4})/);
-        if(tarihMatch) ddkTarih = tarihMatch[1];
+                if (processedLines.length > 0) {
+                    // Bulunan her temizlenmiş cümlenin başına kalın nokta koyup alt alta dizer
+                    ddkKonu = processedLines.map(line => "• " + line).join('\n');
+                } else {
+                    ddkKonu = "[HATA 2: Başlıklar arası boş veya okunamadı]";
+                }
+            }
+        }
 
-        let sgk = '[HATA 4: Formda 23 veya 26 haneli SGK numarası bulunamadı]';
-        let sgkMatch = flatText.match(/(\d{23})|(\d{1,2}[\.\-]\d{4}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{7}[\.\-]\d{3}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{3})/);
-        if(sgkMatch) sgk = sgkMatch[0].replace(/\D/g, '');
+        return { sgk, ddkTarih, ddkNo: '-', ddkKonu };
 
-        return { sgk, ddkTarih, ddkNo: '-', ddkKonu };
-
-    } catch(e) {
-        console.error("DDK Okuma Hatası:", e);
-        return { sgk: "[HATA 5: Okuma Çöktü]", ddkTarih: "-", ddkNo: "-", ddkKonu: `[HATA 5: PDF okunamadı - ${e.message}]` };
-    }
+    } catch(e) {
+        console.error("DDK Okuma Hatası:", e);
+        return { sgk: "[HATA 5: Okuma Çöktü]", ddkTarih: "-", ddkNo: "-", ddkKonu: `[HATA 5: PDF okunamadı - ${e.message}]` };
+    }
 }
     function autoAssignForms() {
         const rows = document.querySelectorAll('#dataTable tbody tr');
