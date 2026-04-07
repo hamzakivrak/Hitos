@@ -976,36 +976,30 @@ async function processKabulFormPDF(file) {
         for (let i = 1; i <= pdf.numPages; i++) {
             const page = await pdf.getPage(i);
             const content = await page.getTextContent();
-            
-            // Viewport yüksekliğini alarak Y koordinatını yukarıdan aşağıya doğru düzeltiyoruz
             const viewport = page.getViewport({ scale: 1.0 });
             const pageHeight = viewport.height;
 
             content.items.forEach(item => {
                 const str = item.str.trim();
                 if (str.length > 0) {
-                    // PDF'de sayfa altı 0'dır, biz yukarıdan aşağıya Y artacak şekilde (globalY) çeviriyoruz
-                    // Her sayfaya 10000 piksel ekliyoruz ki sayfalar arası satırlar birbirine girmesin
+                    // Sayfalar arası metinlerin karışmaması için her sayfaya 10000 birim ekliyoruz
                     const globalY = (i * 10000) + (pageHeight - item.transform[5]);
                     allItems.push({
                         str: str,
                         x: item.transform[4],
-                        y: globalY,
-                        page: i
+                        y: globalY
                     });
                 }
             });
         }
 
-        // Yukarıdan aşağıya (Y ekseni) ve aynı satırda soldan sağa (X ekseni) okuma sırasına diz
+        // 2. Önce yukarıdan aşağıya (Y), aynı hizada olanları soldan sağa (X) sırala
         allItems.sort((a, b) => {
-            if (Math.abs(a.y - b.y) < 6) { // Aynı satır toleransı (6 piksel)
-                return a.x - b.x;
-            }
+            if (Math.abs(a.y - b.y) < 6) return a.x - b.x; // 6px toleransla aynı satır kabul et
             return a.y - b.y;
         });
 
-        // Tarih ve SGK bulmak için tüm metni tek satır yap (eski sağlam yöntem)
+        // SGK ve Tarih için eski düz metin yöntemini kullan
         let flatText = allItems.map(item => item.str).join(' ');
 
         let ddkTarih = '[HATA 3: Düzenlenme Tarihi Bulunamadı]';
@@ -1016,67 +1010,82 @@ async function processKabulFormPDF(file) {
         let sgkMatch = flatText.match(/(\d{23})|(\d{1,2}[\.\-]\d{4}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{7}[\.\-]\d{3}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{3})/);
         if(sgkMatch) sgk = sgkMatch[0].replace(/\D/g, '');
 
-        // 2. GEOMETRİK SINIRLARI BULMA (Y Koordinatları)
-        let startY = -1;
-        let endY = -1;
+        // 3. KELİMELERİ FİZİKSEL SATIRLARA (LİNES) GRUPLA
+        let lines = [];
+        if (allItems.length > 0) {
+            let currentLine = [allItems[0]];
+            let currentY = allItems[0].y;
 
-        for (let i = 0; i < allItems.length; i++) {
-            // Karşılaştırma kolaylığı için boşluk ve noktalama işaretlerini atıyoruz
-            let currentStr = allItems[i].str.toLowerCase().replace(/[^a-zğüşıöç]/g, '');
-            
-            // ÜST SINIR: "Dilekçe Değerlendirme Komisyonu Tarafından Belirlenen Hususlar"
-            if (startY === -1 && (currentStr.includes("dilekedeerlendirmekomi") || currentStr.includes("belirlenenhususlar"))) {
-                startY = allItems[i].y;
-            }
-            
-            // ALT SINIR: "İNCELENMEYEN KONU VE NEDENİ" veya "TEFTİŞ KAPSAMI"
-            if (startY !== -1 && endY === -1 && (currentStr.includes("incelenmeyenkonu") || currentStr.includes("teftikapsami"))) {
-                // Alt sınırın, üst sınırdan en az 10 piksel aşağıda olmasını garanti edelim
-                if (allItems[i].y > startY + 10) {
-                    endY = allItems[i].y;
+            for (let i = 1; i < allItems.length; i++) {
+                if (Math.abs(allItems[i].y - currentY) < 6) {
+                    currentLine.push(allItems[i]);
+                } else {
+                    lines.push(currentLine);
+                    currentLine = [allItems[i]];
+                    currentY = allItems[i].y;
                 }
+            }
+            if (currentLine.length > 0) lines.push(currentLine);
+        }
+
+        // Satır objelerini düz metne (string) çevir
+        let textLines = lines.map(lineArr => {
+            lineArr.sort((a, b) => a.x - b.x); // Satır içindeki kelimeleri soldan sağa diz
+            return lineArr.map(item => item.str).join(' ').replace(/\s+/g, ' ').trim();
+        });
+
+        // 4. BAŞLANGIÇ VE BİTİŞ SATIRLARININ İNDEKSLERİNİ BUL
+        let startIndex = -1;
+        let endIndex = -1;
+
+        for (let i = 0; i < textLines.length; i++) {
+            let normLine = textLines[i].toLowerCase().replace(/[^a-zğüşıöç]/g, '');
+            
+            // Başlangıç: "Dilekçe Değerlendirme Komisyonu" satırını bul
+            if (startIndex === -1 && (normLine.includes("dilekedeerlendirmekomi") || normLine.includes("belirlenenhususlar"))) {
+                startIndex = i;
+            }
+            // Bitiş: "İncelenmeyen Konu" satırını bul
+            else if (startIndex !== -1 && endIndex === -1 && (normLine.includes("incelenmeyenkonu") || normLine.includes("teftikapsami") || normLine.includes("ncelenmeyen"))) {
+                endIndex = i;
             }
         }
 
         let ddkKonu = "[HATA 1: Başlıklar bulunamadı. Form formatı farklı olabilir.]";
 
-        // 3. SINIRLAR ARASINDAKİ METİNLERİ KUTUDAN (BBOX) ÇIKARMA
-        if (startY !== -1) {
-            // Eğer PDF'in sonunda alt başlık yoksa sayfanın en altına kadar alır
-            if (endY === -1) endY = Infinity;
+        // 5. İLGİLİ SATIRLARI ÇEK VE AKILLI MADDELEME YAP
+        if (startIndex !== -1) {
+            if (endIndex === -1) endIndex = textLines.length;
 
-            // Sadece başlangıç ve bitiş başlıkları arasındaki yazıları filtrele (±5 px tolerans payı ile)
-            let extractedItems = allItems.filter(item => item.y > startY + 5 && item.y < endY - 5);
-            
-            if (extractedItems.length > 0) {
-                // Aynı satırda yan yana olan kelimeleri birleştirip cümle/satır yapıyoruz
-                let lines = [];
-                let currentLine = [extractedItems[0]];
+            // Sadece iki başlık arasındaki satırları kesip al
+            let extractedLines = textLines.slice(startIndex + 1, endIndex);
+            let processedLines = [];
+
+            for (let line of extractedLines) {
+                // Satır başındaki olası "1)", "1.", "-", "•" işaretlerini ve boşlukları temizle
+                let cleanLine = line.replace(/^[1-9][\)\.]\s*/g, '').replace(/^[\-\•]\s*/g, '').trim();
                 
-                for (let i = 1; i < extractedItems.length; i++) {
-                    if (Math.abs(extractedItems[i].y - extractedItems[i-1].y) < 6) {
-                        currentLine.push(extractedItems[i]);
-                    } else {
-                        lines.push(currentLine);
-                        currentLine = [extractedItems[i]];
-                    }
-                }
-                if (currentLine.length > 0) lines.push(currentLine);
+                // Çok kısa ve anlamsız kalan satırları atla
+                if (cleanLine.length < 2) continue; 
 
-                // Her satırı temizle ve madde yap
-                let processedLines = lines.map(lineArr => {
-                    let lineStr = lineArr.map(it => it.str).join(' ').trim();
-                    // Satır başındaki olası rakamlar (1., 2)), tireler (-) veya garip noktaları siler
-                    lineStr = lineStr.replace(/^[1-9][\)\.]\s*/g, '').replace(/^[\-\•]\s*/g, '').trim();
-                    return lineStr;
-                }).filter(line => line.length > 3);
+                // İlk karakteri kontrol et (Küçük harfle mi başlıyor?)
+                let firstChar = cleanLine.charAt(0);
+                let isLower = /^[a-zğüşıöç]$/.test(firstChar); // İlk harf küçük Türkçe/İngilizce karakter mi?
+                let isSpecial = /^[\(\)\,\.\-\/]$/.test(firstChar); // Veya parantez vb. bir işaretle mi başlıyor?
 
-                if (processedLines.length > 0) {
-                    // Bulunan her temizlenmiş cümlenin başına kalın nokta koyup alt alta dizer
-                    ddkKonu = processedLines.map(line => "• " + line).join('\n');
+                // Eğer satır küçük harfle veya işaretle başlıyorsa bu bir önceki cümlenin devamıdır
+                if ((isLower || isSpecial) && processedLines.length > 0) {
+                    processedLines[processedLines.length - 1] += " " + cleanLine;
                 } else {
-                    ddkKonu = "[HATA 2: Başlıklar arası boş veya okunamadı]";
+                    // Büyük harfle başlıyorsa yeni bir maddedir
+                    processedLines.push("• " + cleanLine);
                 }
+            }
+
+            if (processedLines.length > 0) {
+                ddkKonu = processedLines.join('\n');
+            } else {
+                ddkKonu = "[HATA 2: Başlıklar arası boş veya okunamadı]";
             }
         }
 
