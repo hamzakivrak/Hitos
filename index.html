@@ -975,54 +975,59 @@ async function processKabulFormPDF(file) {
         for (let i = 1; i <= pdf.numPages; i++) {
             const page = await pdf.getPage(i);
             const content = await page.getTextContent();
+            // Satır sonlarını (enter) KORUYARAK metni birleştiriyoruz
             fullText += content.items.map(item => item.str).join(" ") + "\n";
         }
 
-        // 1. ZIRHLI METİN TEMİZLİĞİ
+        // 1. ZIRHLI METİN TEMİZLİĞİ (Tüm boşlukları ezmek yerine sadece fazla boşlukları alıyoruz)
         let safeText = fullText
             .replace(/[\u200B-\u200D\uFEFF]/g, '')
             .replace(/([a-zA-ZğüşıöçĞÜŞİÖÇ])60/g, '$1i')
-            .replace(/\s+/g, ' ')
+            .replace(/ {2,}/g, ' ') // Yan yana 2'den fazla boşluğu teke düşür (satır sonu \n korunur)
             .trim();
 
-        // DEĞİŞİKLİK BURADA: Eğer bulamazsa eksi değil, sebebi yazacak!
         let ddkKonu = "[HATA 1: PDF içinde 'Belirlenen Hususlar' veya 'Başvuru Konusu' kelimeleri bulunamadı. Form formatı farklı olabilir.]";
 
-        // 2. BAŞLANGIÇ NOKTASI
-        let startRegex = /(?:Komisyonu\s*Taraf[ıiİI]ndan\s*)?Bel[iıİI]rl[eE]n[eE]n\s*Hususlar\s*[:\-\.]?/i;
-        let startMatch = safeText.match(startRegex);
+        // 2. YENİ YÖNTEM: TEST EDİP ONAYLADIĞIMIZ ESNEK REGEX
+        // Başlangıç kelimelerinden Bitiş kelimelerine kadar olan tüm alanı yakalar (Görünmez karakterlere dayanıklıdır)
+        let extractRegex = /(?:(?:Komisyonu\s*Taraf[ıiİI]ndan\s*)?Bel[iıİI]rl[eE]n[eE]n\s*Hususlar|Ba[şsŞS]vuru\s*Konusu)\s*[:\-\.]?\s*([\s\S]*?)\s*(?:[İIıi]NCELENMEYEN|GENEL\s*DE[ĞG]ERLEND[İI]RME|TEFT[İI][ŞS]\s*KAPSAMI)/i;
+        
+        let match = safeText.match(extractRegex);
 
-        if (!startMatch) {
-            startMatch = safeText.match(/Ba[şsŞS]vuru\s*Konusu\s*[:\-\.]?/i);
-        }
+        if (match && match[1]) {
+            let rawKonu = match[1].trim();
 
-        if (startMatch) {
-            let afterStart = safeText.substring(startMatch.index + startMatch[0].length);
+            // 3. Yakalanan metni satır satır böl, gereksiz baştaki numaraları (1) vb.) temizle ve "•" ekle
+            let lines = rawKonu.split('\n')
+                .map(line => line.trim().replace(/^[1-9][\)\.]\s*/g, '').replace(/^[\-\•]\s*/g, ''))
+                .filter(line => line.length > 3); // Boş veya çok kısa çöp satırları ele
 
-            // 3. BİTİŞ NOKTASI
-            let endRegex = /([İIıi]NCELENMEYEN\s*(?:KONU|HUSUS)|GENEL\s*DE[ĞG]ERLEND[İI]RME|TEFT[İI][ŞS]\s*KAPSAMI)/i;
-            let endMatch = afterStart.match(endRegex);
-
-            if (endMatch) {
-                ddkKonu = afterStart.substring(0, endMatch.index).trim();
+            if (lines.length > 0) {
+                ddkKonu = lines.map(line => "• " + line).join('\n');
             } else {
-                ddkKonu = afterStart.substring(0, 2000).trim();
+                ddkKonu = "[HATA 2: Başlangıç kelimesi bulundu ama maddeler okunamadı veya içi BOŞ!]";
             }
-
-            // 4. BAŞTAKİ GEREKSİZ İŞARETLERİ TEMİZLE
-            ddkKonu = ddkKonu.replace(/^[1-9][\)\.]\s*/g, '').replace(/^[\-\•]\s*/g, '').trim();
-            
-            if (ddkKonu === "") ddkKonu = "[HATA 2: Başlangıç kelimesi bulundu ama içi tamamen BOŞ!]";
+        } else {
+            // FALLBACK: Eğer formda "İncelenmeyen Konu" gibi bitiş başlıkları yoksa
+            let startRegex = /(?:(?:Komisyonu\s*Taraf[ıiİI]ndan\s*)?Bel[iıİI]rl[eE]n[eE]n\s*Hususlar|Ba[şsŞS]vuru\s*Konusu)\s*[:\-\.]?/i;
+            let startMatch = safeText.match(startRegex);
+            if (startMatch) {
+                let afterStart = safeText.substring(startMatch.index + startMatch[0].length).trim();
+                let fallbackText = afterStart.substring(0, 800).trim(); // Max 800 karakter al
+                ddkKonu = "• " + fallbackText;
+            }
         }
 
-        // 5. SGK VE TARİH (Hata uyarılarıyla)
+        // 4. SGK VE TARİH (Tarih ve SGK regex'leri boşluksuz düz metinde daha stabil çalışır)
+        let flatText = safeText.replace(/\s+/g, ' '); 
+
         let ddkTarih = '[HATA 3: Düzenlenme Tarihi Bulunamadı]';
-        let tarihMatch = safeText.match(/Düzenlenme Tarihi[:;\s]*([\d/.]+)/i) || safeText.match(/(\d{2}[./]\d{2}[./]\d{4})/);
-        if(tarihMatch) ddkTarih = tarihMatch[1]; 
+        let tarihMatch = flatText.match(/Düzenlenme Tarihi[:;\s]*([\d/.]+)/i) || flatText.match(/(\d{2}[./]\d{2}[./]\d{4})/);
+        if(tarihMatch) ddkTarih = tarihMatch[1];
 
         let sgk = '[HATA 4: Formda 23 veya 26 haneli SGK numarası bulunamadı]';
-        let sgkMatch = safeText.match(/(\d{23})|(\d{1,2}[\.\-]\d{4}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{7}[\.\-]\d{3}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{3})/);
-        if(sgkMatch) sgk = sgkMatch[0].replace(/\D/g, ''); 
+        let sgkMatch = flatText.match(/(\d{23})|(\d{1,2}[\.\-]\d{4}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{7}[\.\-]\d{3}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{3})/);
+        if(sgkMatch) sgk = sgkMatch[0].replace(/\D/g, '');
 
         return { sgk, ddkTarih, ddkNo: '-', ddkKonu };
 
