@@ -10,6 +10,8 @@
     <meta name="application-name" content="HitosHK">
     <meta name="apple-mobile-web-app-title" content="HitosHK">
     <title>İSGx Teftiş Otomasyonu v75.5 Pro Max + Zeki Asistan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <script src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -40,7 +42,6 @@
         /* ==========================================================================
            MODERN SAAS UI/UX TASARIM SİSTEMİ
            ========================================================================== */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
         :root {
             --bg-color: #f1f5f9; 
@@ -229,7 +230,41 @@
         /* Kabul Formu Satırları */
         .kabul-form-row { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 8px 15px; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 5px; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
         .kabul-form-title { font-weight: 600; font-size: 0.9rem; color: var(--primary); }
-    </style>
+    
+/* ===== UX İYİLEŞTİRMELERİ ===== */
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+.step-nav{position:sticky;top:0;z-index:900;display:flex;gap:6px;overflow-x:auto;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border:1px solid var(--border-color);border-radius:12px;padding:8px;box-shadow:var(--shadow-sm)}
+.step-nav a{flex:1;min-width:max-content;text-align:center;padding:9px 14px;border-radius:8px;font-size:.85rem;font-weight:600;color:var(--text-muted);text-decoration:none;transition:var(--transition)}
+.step-nav a:hover,.step-nav a.on{background:#eff6ff;color:var(--primary)}
+#clearBtn{background:#fff;color:var(--danger);border:1px solid #fecaca}
+#clearBtn:hover{background:var(--danger-light)}
+.status-details>summary{cursor:pointer;font-weight:700;font-size:.9rem;list-style:none;padding:10px 14px;background:var(--secondary);border:1px solid var(--border-color);border-radius:8px}
+.status-details>summary::-webkit-details-marker{display:none}
+.tbl-search{padding:8px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:.85rem;min-width:190px;font-family:inherit}
+.tbl-search:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.sheet-overlay{position:fixed;inset:0;z-index:2600;background:rgba(15,23,42,.6);display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:#fff;width:100%;max-width:720px;max-height:92vh;overflow-y:auto;border-radius:16px 16px 0 0;padding:18px 20px 90px;position:relative;animation:popUp .25s ease}
+.sheet h3{margin:0 0 4px;font-size:1.1rem}
+.sheet h4{margin:18px 0 8px;font-size:.8rem;text-transform:uppercase;letter-spacing:.5px;color:var(--primary);border-bottom:1px solid var(--border-color);padding-bottom:4px}
+.sheet .sheet-bar{position:fixed;bottom:0;width:100%;max-width:720px;background:#fff;border-top:1px solid var(--border-color);padding:12px 20px;display:flex;gap:10px;box-sizing:border-box}
+.sheet .sheet-bar .btn{flex:1}
+@media (max-width:768px){
+ body{padding:10px}.container{gap:14px}
+ .app-header{padding:14px}.app-title h1{font-size:1.2rem}
+ .app-header>div:last-child{width:100%}.app-header .btn{flex:1;font-size:.8rem;padding:10px 8px}
+ .card{padding:16px}.btn{min-height:44px}
+ #processBtn{padding:16px;font-size:1rem}
+ .doc-cards-grid{grid-template-columns:repeat(2,1fr);padding:12px;gap:10px}
+ .doc-controls{padding:14px}.scope-selector,.company-navigator{max-width:100%}
+ .scope-selector>div{flex-wrap:wrap}
+ .table-actions{padding:10px}.tbl-search{width:100%}
+ .table-scroll{max-height:70vh}
+ #status{left:10px;right:10px;bottom:10px}
+ .modal-content-lg,.modal-content-cal{width:100%;height:100%;border-radius:0}
+ .vm-data-row{grid-template-columns:1fr auto}.vm-tab-content{padding:14px}
+ .guide-grid{grid-template-columns:1fr;padding:14px}
+}
+</style>
 </head>
 <body>
 
@@ -237,7 +272,7 @@
     <header class="app-header">
         <div class="app-title">
             <h1>📋 HitosHK</h1>
-            <span class="badge-pro">v75.3 Pro Max + Zeki Asistan</span>
+            <span class="badge-pro">v75.5 Pro Max + Zeki Asistan</span>
         </div>
         <div style="display:flex; gap:10px; flex-wrap: wrap;">
             <button class="btn btn-success" style="background:#059669; border:none;" onclick="saveProject()">💾 Projeyi Kaydet (.hk)</button>
@@ -2835,6 +2870,90 @@ function clearKabulForms() {
     
 
     
+</script>
+
+<script>
+(function(){
+ const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+ // Yönlendirme çubuğu
+ const c=$('.container'), h=c.querySelector('.app-header');
+ const g=c.querySelector(':scope > div[style*="grid-template-columns"]'); if(g) g.id='sec-template';
+ const u=$('#uploadArea'); if(u) u.closest('section').id='sec-upload';
+ const t=$('#dataTable'); if(t) t.closest('section').id='sec-table';
+ const nav=document.createElement('nav'); nav.className='step-nav';
+ [['sec-template','1 · 📁 Şablonlar'],['sec-upload','2 · 🚀 Veri Yükle'],['sec-table','3 · 📊 Tablo'],['docButtons','4 · 🖨️ Belgeler']].forEach(([id,l])=>{
+  const a=document.createElement('a'); a.href='#'+id; a.textContent=l; a.onclick=e=>{const el=document.getElementById(id); if(!el||getComputedStyle(el).display==='none'){e.preventDefault(); alert('Bu bölüm, tablo verisi oluşturulunca açılır.');}}; nav.appendChild(a);});
+ h.after(nav);
+ const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting) nav.querySelectorAll('a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+e.target.id));}),{rootMargin:'-30% 0px -60% 0px'});
+ ['sec-template','sec-upload','sec-table','docButtons'].forEach(id=>{const el=document.getElementById(id); if(el) io.observe(el);});
+
+ // Şablon durumlarını tek satıra topla
+ const sg=$('.status-grid');
+ if(sg){const d=document.createElement('details'); d.className='status-details'; const s=document.createElement('summary'); d.appendChild(s); sg.before(d); d.appendChild(sg);
+  const upd=()=>{const ok=sg.querySelectorAll('.icon.ok').length, n=sg.querySelectorAll('.status-item').length; s.textContent=(ok===n?'✅':'📁')+' Şablonlar: '+ok+'/'+n+' hazır — detay için tıklayın';};
+  new MutationObserver(upd).observe(sg,{subtree:true,childList:true,attributes:true,characterData:true}); upd();}
+
+ // Tablo araması + satır formu butonu
+ const ta=$('.table-actions');
+ if(ta&&ta.children.length>1){
+  const q=document.createElement('input'); q.type='search'; q.className='tbl-search'; q.placeholder='🔎 Tabloda ara...';
+  q.oninput=()=>{const v=q.value.toLocaleLowerCase('tr'); $$('#dataTable tbody tr').forEach(r=>r.style.display=(!v||r.textContent.toLocaleLowerCase('tr').includes(v))?'':'none');};
+  ta.children[0].appendChild(q);
+  const b=document.createElement('button'); b.className='btn btn-primary'; b.style.cssText='padding:6px 12px;font-size:.8rem'; b.textContent='📝 Satır Formu'; b.title='Seçili satırı form olarak düzenle'; b.onclick=openSheet;
+  ta.children[1].prepend(b);
+ }
+
+ // Satır form paneli (mobil dostu düzenleme)
+ function openSheet(){
+  const old=$('.sheet-overlay'); if(old) old.remove();
+  const tr=$('#dataTable tbody tr.selected');
+  if(!tr){alert('Önce tablodan bir satır seçin (soldaki Sıra No hücresine tıklayın).');return;}
+  const ths=$$('#dataTable thead th'), tds=[...tr.children];
+  const groups=[[1,8,'İşyeri Bilgileri'],[9,15,'Teftiş'],[16,20,'Firma'],[21,29,'İSG Kadrosu'],[30,34,'Diğer'],[35,39,'Tebligat']];
+  const ov=document.createElement('div'); ov.className='sheet-overlay';
+  const sh=document.createElement('div'); sh.className='sheet'; ov.appendChild(sh);
+  sh.innerHTML='<h3>📝 Satır '+(tds[0]?tds[0].innerText.trim():'')+' — Düzenle</h3>';
+  const fields=[];
+  groups.forEach(([a,z,name])=>{
+   const hd=document.createElement('h4'); hd.textContent=name; sh.appendChild(hd);
+   for(let i=a;i<=z&&i<tds.length;i++){
+    const td=tds[i], fg=document.createElement('div'); fg.className='form-group';
+    const lb=document.createElement('label'); lb.textContent=ths[i]?ths[i].innerText.trim():('Sütun '+(i+1)); fg.appendChild(lb);
+    const inp=document.createElement('textarea'); inp.className='form-control'; inp.rows=1; inp.style.resize='vertical';
+    inp.value=td.innerText.trim();
+    if(td.querySelector('input,select,button')||!td.isContentEditable){inp.readOnly=true; inp.style.background='#f8fafc';}
+    else fields.push([td,inp,inp.value]);
+    fg.appendChild(inp); sh.appendChild(fg);
+   }
+  });
+  const bar=document.createElement('div'); bar.className='sheet-bar';
+  bar.innerHTML='<button class="btn btn-outline">Vazgeç</button><button class="btn btn-success">💾 Kaydet</button>';
+  bar.children[0].onclick=()=>ov.remove();
+  bar.children[1].onclick=()=>{let n=0; fields.forEach(([td,inp,orig])=>{if(inp.value!==orig){td.innerText=inp.value; td.dispatchEvent(new Event('input',{bubbles:true})); n++;}}); ov.remove(); showToast('✅ '+n+' alan güncellendi','var(--success)'); setTimeout(hideToast,2500);};
+  sh.appendChild(bar);
+  ov.onclick=e=>{if(e.target===ov) ov.remove();};
+  document.body.appendChild(ov);
+ }
+
+ // Esc ile en üstteki pencereyi kapat
+ document.addEventListener('keydown',e=>{
+  if(e.key!=='Escape') return;
+  const open=$$('.modal-overlay,.sheet-overlay').filter(m=>getComputedStyle(m).display!=='none').sort((a,b)=>(+getComputedStyle(b).zIndex||0)-(+getComputedStyle(a).zIndex||0))[0];
+  if(open){ if(open.classList.contains('sheet-overlay')) open.remove(); else open.style.display='none'; }
+ });
+
+ // Kaydedilmemiş değişiklik uyarısı
+ let dirty=false; const tb=$('#dataTable tbody');
+ if(tb){tb.addEventListener('input',()=>dirty=true); new MutationObserver(()=>dirty=true).observe(tb,{childList:true});}
+ ['saveProject','exportExcel'].forEach(fn=>{const f=window[fn]; if(typeof f==='function') window[fn]=function(){dirty=false; return f.apply(this,arguments);};});
+ window.addEventListener('beforeunload',e=>{if(dirty&&$('#dataTable tbody tr')){e.preventDefault(); e.returnValue='';}});
+
+ // alert() -> engellemeyen bildirim (toast)
+ const _showToast=window.showToast;
+ if(typeof _showToast==='function'){
+  window.alert=function(m){_showToast('ℹ️ '+m,'var(--primary)'); setTimeout(window.hideToast,Math.min(9000,3000+String(m).length*40));};
+ }
+})();
 </script>
 </body>
 </html>
