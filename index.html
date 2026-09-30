@@ -889,7 +889,7 @@ html{scroll-behavior:smooth;scroll-padding-top:70px}
     function updateStatusIcon(type, success, source = 'github') {
         const el = document.getElementById(`st_${type}`);
         if(el) {
-            const baseText = el.innerText.replace(/❌/g, '').replace(/✅/g, '').trim();
+            const baseText = el.textContent.replace(/❌/g, '').replace(/✅/g, '').trim();
             if(success) {
                 const iconStr = source === 'manual' ? '✅✅' : '✅';
                 el.innerHTML = `<span class="icon ok">${iconStr}</span> <span class="text">${baseText}</span>`;
