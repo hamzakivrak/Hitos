@@ -9,7 +9,7 @@
     <meta name="theme-color" content="#1e293b">
     <meta name="application-name" content="HitosHK">
     <meta name="apple-mobile-web-app-title" content="HitosHK">
-    <title>İSGx Teftiş Otomasyonu v75.5 Pro Max + Zeki Asistan</title>
+    <title>HitosHK v76 – İSG Teftiş Otomasyonu</title>
     <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
@@ -265,6 +265,57 @@ html{scroll-behavior:smooth;scroll-padding-top:70px}
  .guide-grid{grid-template-columns:1fr;padding:14px}
 }
 </style>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style id="hk-modern">:root{--hk-r:16px}
+body{font-family:'Manrope','Inter',system-ui,sans-serif;background:radial-gradient(900px 380px at 8% -8%,rgba(37,99,235,.14),transparent 60%),radial-gradient(700px 300px at 100% 0,rgba(139,92,246,.10),transparent 60%),var(--bg-color);letter-spacing:-.005em}
+.app-header{background:linear-gradient(120deg,#0b1220 0%,#14295e 58%,#2748c9 100%)!important;border:0!important;border-radius:20px!important;box-shadow:0 18px 44px -18px rgba(20,41,94,.65)!important;padding:22px 26px!important}
+.app-header h1{color:#fff!important;letter-spacing:-.03em;font-weight:800}
+.app-header .badge-pro{background:rgba(255,255,255,.14)!important;color:#dbe6ff!important;border:1px solid rgba(255,255,255,.22)!important;backdrop-filter:blur(6px)}
+.app-header>div:last-child{display:none!important}
+.card,.doc-panel,section.card{border-radius:var(--hk-r)!important;border:1px solid var(--border-color)!important;box-shadow:0 1px 2px rgba(16,24,40,.04),0 16px 36px -22px rgba(16,24,40,.22)!important}
+.btn{border-radius:11px!important;font-weight:700;transition:transform .15s,box-shadow .15s,background .15s,filter .15s}
+.btn:hover{transform:translateY(-1px);box-shadow:0 8px 18px -10px rgba(16,24,40,.35)}
+.btn:focus-visible,.hk-ab:focus-visible,a:focus-visible{outline:3px solid color-mix(in srgb,var(--primary) 40%,transparent);outline-offset:2px}
+.form-control,input[type=text],input[type=search],select,textarea{border-radius:10px}
+.step-nav{top:8px!important;border-radius:16px!important;padding:7px!important;align-items:center;background:rgba(255,255,255,.82)!important;backdrop-filter:blur(14px) saturate(1.4);box-shadow:0 10px 30px -14px rgba(16,24,40,.35)!important;gap:4px!important}
+.step-nav>a{flex:0 1 auto!important;border-radius:11px!important}
+.step-nav>a.on{background:var(--primary)!important;color:#fff!important;box-shadow:0 6px 14px -6px var(--primary)}
+.hk-actions{display:flex;gap:4px;margin-left:auto;padding-left:8px;border-left:1px solid var(--border-color);flex-shrink:0}
+.hk-ab{border:0;background:transparent;color:var(--text-main);font:600 .82rem inherit;font-family:inherit;padding:8px 11px;border-radius:10px;cursor:pointer;white-space:nowrap;transition:background .15s}
+.hk-ab:hover{background:color-mix(in srgb,var(--primary) 12%,transparent);color:var(--primary)}
+.hk-ab.danger:hover{background:var(--danger-light);color:var(--danger)}
+#sec-template,#sec-upload,#sec-table,#docButtons{scroll-margin-top:84px}
+#docButtons{display:block!important}#excelSection{display:flex!important}
+th{background:#0f1b3d!important;color:#e8eefc!important;border-bottom:0!important}
+th:first-child{background:#0b1430!important}
+tbody tr:nth-child(even) td:not(:first-child){background:color-mix(in srgb,var(--primary) 3.5%,transparent)}
+td:focus{outline:2px solid var(--primary);outline-offset:-2px;background:color-mix(in srgb,var(--primary) 8%,#fff)}
+body.hk-compact td,body.hk-compact th{padding:6px 8px!important}
+.hk-ov{position:fixed;inset:0;z-index:3000;background:rgba(8,13,28,.62);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:18px}
+.hk-ov.open{display:flex}
+.hk-box{background:var(--card-bg);color:var(--text-main);width:min(980px,100%);max-height:92vh;border-radius:20px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 30px 80px -20px rgba(0,0,0,.5);animation:popUp .22s ease}
+.hk-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 22px;background:linear-gradient(120deg,#0b1220,#1c3a8f);color:#fff}
+.hk-hd h3{margin:0;font-size:1.05rem}.hk-x{background:rgba(255,255,255,.14);border:0;color:#fff;width:34px;height:34px;border-radius:50%;font-size:1.2rem;cursor:pointer}
+.hk-tabs{display:flex;gap:2px;padding:8px 14px 0;border-bottom:1px solid var(--border-color);overflow-x:auto}
+.hk-tab{border:0;background:none;padding:10px 14px;font:700 .85rem inherit;font-family:inherit;color:var(--text-muted);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
+.hk-tab.on{color:var(--primary);border-bottom-color:var(--primary)}
+.hk-body{padding:20px 24px;overflow:auto}.hk-pane{display:none}.hk-pane.on{display:block}
+.hk-row{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border-color)}
+.hk-row small{display:block;color:var(--text-muted);font-weight:500;margin-top:2px}
+.hk-sw{display:flex;gap:8px;flex-wrap:wrap}.hk-sw button{width:28px;height:28px;border-radius:50%;border:3px solid transparent;cursor:pointer}.hk-sw button.on{border-color:var(--text-main)}
+.hk-man h4{margin:18px 0 6px;color:var(--primary)}.hk-man p,.hk-man li{font-size:.88rem;line-height:1.6}.hk-man code{background:var(--secondary);padding:1px 6px;border-radius:5px;font-size:.8rem}
+.hk-diff{width:100%;border-collapse:collapse;font-size:.82rem}.hk-diff td,.hk-diff th{padding:8px;border-bottom:1px solid var(--border-color);text-align:left;position:static!important;background:none!important;color:var(--text-main)!important}
+.hk-diff .old{color:var(--danger)!important}.hk-diff .new{color:#059669!important;font-weight:700}
+[data-theme=dark]{--bg-color:#0a1020;--card-bg:#111a2e;--text-main:#e6ecf8;--text-muted:#93a1bd;--secondary:#16213a;--border-color:#243252;--success-light:#064e3b;--warning-light:#4a3708;--danger-light:#4c1d1d}
+[data-theme=dark] body{background:var(--bg-color)}
+[data-theme=dark] th:first-child,[data-theme=dark] td:first-child{background:#16213a!important;color:var(--text-main)}
+[data-theme=dark] td,[data-theme=dark] label,[data-theme=dark] h1,[data-theme=dark] h2,[data-theme=dark] h3{color:var(--text-main)}
+[data-theme=dark] input,[data-theme=dark] select,[data-theme=dark] textarea,[data-theme=dark] .form-control{background:#0d1630!important;color:var(--text-main)!important;border-color:var(--border-color)!important}
+[data-theme=dark] .step-nav{background:rgba(17,26,46,.85)!important}
+[data-theme=dark] #excelSection,[data-theme=dark] .doc-controls{background:var(--secondary)!important}
+@media(max-width:768px){.hk-ab span{display:none}.hk-ab{padding:9px}.step-nav>a{padding:8px 10px!important;font-size:.78rem!important}.hk-body{padding:14px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
 </head>
 <body>
 
@@ -272,7 +323,7 @@ html{scroll-behavior:smooth;scroll-padding-top:70px}
     <header class="app-header">
         <div class="app-title">
             <h1>📋 HitosHK</h1>
-            <span class="badge-pro">v75.5 Pro Max + Zeki Asistan</span>
+            <span class="badge-pro">v76 · Pro Max + Zeki Asistan</span>
         </div>
         <div style="display:flex; gap:10px; flex-wrap: wrap;">
             <button class="btn btn-success" style="background:#059669; border:none;" onclick="saveProject()">💾 Projeyi Kaydet (.hk)</button>
@@ -1018,128 +1069,81 @@ async function handleKabulFormUploadBulk(event) {
 }
 
 // 2. YENİ OCR (GÖRSEL ÇÖZÜMLEME) TABANLI PDF OKUMA FONKSİYONU
-async function processKabulFormPDF_OCR(file, worker) {
-    try {
-        const pdf = await pdfjsLib.getDocument(await file.arrayBuffer()).promise;
-        
-        let allLines = [];
-        let fullText = "";
 
-        // PDF sayfalarını tek tek resme (canvas) çevirip OCR'a (Yapay Zekaya) veriyoruz
-        for (let i = 1; i <= pdf.numPages; i++) {
-            const page = await pdf.getPage(i);
-            
-            // Çözünürlük ayarı: 1.5, hız ve okuma doğruluğu için en ideal orandır
-            const viewport = page.getViewport({ scale: 1.5 }); 
-            
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.height = viewport.height;
-            canvas.width = viewport.width;
-
-            await page.render({ canvasContext: ctx, viewport: viewport }).promise;
-
-            const { data } = await worker.recognize(canvas);
-            fullText += data.text + "\n";
-            
-            // OCR'ın fiziksel olarak tespit ettiği satırları diziye ekliyoruz
-            if(data.lines) {
-                data.lines.forEach(lineObj => {
-                    let text = lineObj.text.trim();
-                    if(text.length > 2) allLines.push(text);
-                });
-            }
-        }
-
-        // --- TARİH VE SGK BULMA (Tam Metin Üzerinden) ---
-        let ddkTarih = '[TARİH BULUNAMADI]';
-        let tarihMatch = fullText.match(/Düzenlenme Tarihi[:;\s]*([\d/.]+)/i) || fullText.match(/(\d{2}[./]\d{2}[./]\d{4})/);
-        if(tarihMatch) ddkTarih = tarihMatch[1];
-
-        let sgk = '[SGK BULUNAMADI]';
-        let sgkMatch = fullText.match(/(\d{23})|(\d{1,2}[\.\-]\d{4}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{7}[\.\-]\d{3}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{3})/);
-        if(sgkMatch) sgk = sgkMatch[0].replace(/\D/g, '');
-
-
-        // --- AKILLI METİN VE MADDE AYIKLAMA (Satırlar Üzerinden) ---
-        
-        // OCR okumalarındaki karakter hatalarını (ç->c, ş->s vb.) tolere etmek için normalize aracı
-        const normalize = (str) => {
-            return str.toLowerCase()
-                      .replace(/ğ/g, 'g').replace(/ü/g, 'u').replace(/ş/g, 's')
-                      .replace(/ı/g, 'i').replace(/ö/g, 'o').replace(/ç/g, 'c')
-                      .replace(/[^a-z0-9]/g, '');
-        };
-
-        let capture = false;
-        let processedLines = [];
-        
-        for (let i = 0; i < allLines.length; i++) {
-            let line = allLines[i];
-            let nLine = normalize(line);
-            
-            // BİTİŞ KONTROLÜ
-            if (nLine.includes("incelenmeyenkonu") || nLine.includes("ncelenmeyen") || nLine.includes("teftikapsam")) {
-                break; 
-            }
-
-            // METNİ ALMA VE BİRLEŞTİRME
-            if (capture) {
-                // Başlangıçtaki rakamları, parantezleri, noktaları ve tireleri temizle
-                let cleanLine = line.replace(/^[1-9][\)\.]\s*/g, '')
-                                    .replace(/^[\-\•]\s*/g, '')
-                                    .trim();
-                
-                if(cleanLine.length < 2) continue;
-
-                let firstChar = cleanLine.charAt(0);
-                // OCR bazen ilk karakteri sembol veya küçük harf yapabilir
-                let isLowerOrSymbol = /^[a-zğüşıöç\(\)\,\.\-\/]$/.test(firstChar);
-
-                // Eğer küçük harf veya parantezle başlıyorsa, önceki cümlenin devamıdır
-                if (isLowerOrSymbol && processedLines.length > 0) {
-                    processedLines[processedLines.length - 1] += " " + cleanLine;
-                } else {
-                    // Büyük harfle başlıyorsa yeni bir maddedir
-                    processedLines.push("• " + cleanLine);
-                }
-            }
-
-            // BAŞLANGIÇ KONTROLÜ
-            // normalize fonksiyonu Türkçe karakterleri İngilizce'ye çevirdiği için arama terimlerini de ona göre yazdık
-            if (!capture && (nLine.includes("dilekcedegerlendir") || nLine.includes("belirlenenhususlar"))) {
-                capture = true;
-            }
-        }
-
-        let ddkKonu = processedLines.length > 0 ? processedLines.join('\n') : "[HATA: İlgili başlıklar OCR tarafından tam okunamadı veya araları boş.]";
-
-        return { sgk, ddkTarih, ddkNo: '-', ddkKonu };
-
-    } catch(e) {
-        console.error("OCR DDK Okuma Hatası:", e);
-        return { sgk: "-", ddkTarih: "-", ddkNo: "-", ddkKonu: `[HATA: PDF OCR ile okunamadı - ${e.message}]` };
-    }
+// ===== v76: GÜÇLENDİRİLMİŞ DDK OKUMA (metin katmanı -> OCR + döndürme) =====
+function hkNorm(s){return (s||'').toLocaleLowerCase('tr').replace(/ğ/g,'g').replace(/ü/g,'u').replace(/ş/g,'s').replace(/ı/g,'i').replace(/ö/g,'o').replace(/ç/g,'c').replace(/[^a-z0-9]/g,'');}
+function hkHasHeading(L){const n=hkNorm(L.join(' '));return n.includes('belirlenenhususlar')&&n.includes('incelenmeyen');}
+async function hkTextLines(page){
+  const vp=page.getViewport({scale:1}), tc=await page.getTextContent(), U=pdfjsLib.Util; let its=[], w={};
+  tc.items.forEach(it=>{ if(!it.str||!it.str.trim()) return; const t=U.transform(vp.transform,it.transform); const a=(((Math.round(Math.atan2(t[1],t[0])/(Math.PI/2)))%4)+4)%4; w[a]=(w[a]||0)+it.str.length; its.push({s:it.str,t,a}); });
+  if(!its.length) return [];
+  const dom=+Object.keys(w).sort((x,y)=>w[y]-w[x])[0], th=dom*Math.PI/2, c=Math.cos(th), sn=Math.sin(th);
+  its=its.filter(i=>i.a===dom).map(i=>({s:i.s,x:i.t[4]*c+i.t[5]*sn,y:-i.t[4]*sn+i.t[5]*c,h:Math.hypot(i.t[2],i.t[3])||8})).sort((a,b)=>a.y-b.y||a.x-b.x);
+  const lines=[]; let cur=null;
+  its.forEach(i=>{ if(!cur||Math.abs(i.y-cur.y)>i.h*0.55){cur={y:i.y,p:[]};lines.push(cur);} cur.p.push(i); });
+  return lines.map(l=>l.p.sort((a,b)=>a.x-b.x).map(i=>i.s).join(' ').replace(/\s+/g,' ').trim()).filter(Boolean);
 }
-    function autoAssignForms() {
-        const rows = document.querySelectorAll('#dataTable tbody tr');
-        ddkVerileri = {}; 
-        
-        rows.forEach((row, idx) => {
-            const rowIndex = idx + 1;
-            const rowSgk = (row.cells[18].innerText || "").replace(/\D/g, ''); 
-            
-            let bestMatchIdx = -1;
-            for(let i=0; i<kabulFormlariListesi.length; i++) {
-                let form = kabulFormlariListesi[i];
-                if (form.sgk && rowSgk && (form.sgk.includes(rowSgk) || rowSgk.includes(form.sgk))) {
-                    bestMatchIdx = i; break;
-                }
-            }
-            if (bestMatchIdx !== -1) { ddkVerileri[rowIndex] = bestMatchIdx; }
-        });
-        renderKabulFormUI();
-    }
+function hkRotate(cv,deg){ if(!deg) return cv; const r=document.createElement('canvas'), sw=deg===90||deg===270; r.width=sw?cv.height:cv.width; r.height=sw?cv.width:cv.height; const x=r.getContext('2d'); x.translate(r.width/2,r.height/2); x.rotate(deg*Math.PI/180); x.drawImage(cv,-cv.width/2,-cv.height/2); return r; }
+async function hkOcrPage(page,worker){
+  if(!worker) throw new Error('OCR motoru yok (internet gerekli)');
+  const vp=page.getViewport({scale:2.2}), cv=document.createElement('canvas'); cv.width=vp.width; cv.height=vp.height;
+  await page.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise;
+  let best=null;
+  for(const deg of [0,90,270,180]){
+    const {data}=await worker.recognize(hkRotate(cv,deg)); const n=hkNorm(data.text);
+    const kh=n.includes('belirlenenhususlar'), ki=n.includes('incelenmeyen');
+    const sc=(kh?1000:0)+(ki?500:0)+(n.includes('ddkdegerlendirme')?300:0)+(data.confidence||0);
+    if(!best||sc>best.sc) best={sc,lines:data.text.split('\n').map(x=>x.trim()).filter(x=>x.length>1)};
+    if(kh&&ki) break;
+  }
+  return best.lines;
+}
+function hkParseForm(lines){
+  const full=lines.join('\n'); let ddkTarih='[TARİH BULUNAMADI]';
+  const tm=full.match(/D[uüÜ]zenlenme\s*Tarihi[:;\s]*(\d{2}[./]\d{2}[./]\d{4})/i);
+  if(tm) ddkTarih=tm[1]; else { const all=full.match(/\d{2}\/\d{2}\/\d{4}/g); if(all) ddkTarih=all[all.length-1]; }
+  let sgk='[SGK BULUNAMADI]'; const sm=full.match(/(\d{23})|(\d{1,2}[\.\-]\d{4}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{7}[\.\-]\d{3}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{3})/); if(sm) sgk=sm[0].replace(/\D/g,'');
+  // Dilekçe Değerlendirme Komisyonu maddeleri
+  let cap=false, items=[];
+  for(const line of lines){
+    const n=hkNorm(line);
+    if(cap&&(n.includes('incelenmeyenkonu')||n.includes('ncelenmeyen')||n.includes('teftiskapsam'))) break;
+    if(cap){ const m=line.match(/^\s*[1-9Il|]\s*[\)\.]\s*(.*)$/); const t=(m?m[1]:line).replace(/^[\-•]\s*/,'').trim(); if(t.length<2) continue; if(m||!items.length) items.push(t); else items[items.length-1]+=' '+t; }
+    else if(n.includes('belirlenenhususlar')||(n.includes('dilekce')&&n.includes('komisyon'))) cap=true;
+  }
+  const ddkKonu=items.length?items.map(x=>'• '+x).join('\n'):'[HATA: Komisyon maddeleri okunamadı. PDF çok bulanık olabilir; formu manuel kontrol edin.]';
+  // Unvan / adres (eşleştirme için)
+  let unvan='', adres=''; const a=lines.findIndex(l=>hkNorm(l).includes('teftisyapilacakunvan')), b=lines.findIndex(l=>hkNorm(l).includes('heyetdurumu'));
+  if(a>-1&&b>a){ let st=a; while(st>0&&!hkNorm(lines[st-1]).includes('sgksicil')&&a-st<4) st--; 
+    const c=lines.slice(st,b).map(l=>l.replace(/\d\)\s*Tefti[sşŞ]\s*Yap[ıil]lacak\s*Unvan\s*ve\s*Adres\s*:?/i,'').replace(/^\s*(\d\)|SGK.*)$/i,'').trim()).filter(x=>x.length>1&&!hkNorm(x).includes('sgksicil'));
+    unvan=c[0]||''; adres=c.slice(1).join(' '); }
+  return {sgk,ddkTarih,ddkNo:'-',ddkKonu,unvan,adres};
+}
+async function processKabulFormPDF_OCR(file, worker) {
+  try {
+    const pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer()}).promise; let lines=[], yontem='Metin katmanı';
+    for(let i=1;i<=pdf.numPages;i++) lines.push(...await hkTextLines(await pdf.getPage(i)));
+    if(!hkHasHeading(lines)){ yontem='OCR (otomatik döndürme)'; lines=[]; for(let i=1;i<=pdf.numPages;i++) lines.push(...await hkOcrPage(await pdf.getPage(i),worker)); }
+    const r=hkParseForm(lines); r.yontem=yontem; console.log('[HitosHK] DDK okundu:',file.name,yontem,r); return r;
+  } catch(e) { console.error('DDK okuma hatası:',e); return {sgk:'-',ddkTarih:'-',ddkNo:'-',ddkKonu:`[HATA: PDF okunamadı - ${e.message}]`,unvan:'',adres:''}; }
+}
+// --- Akıllı form-işyeri eşleştirme (SGK boşsa ünvan/dosya adı benzerliği) ---
+const hkMap=s=>(s||'').toLocaleLowerCase('tr').replace(/ğ/g,'g').replace(/ü/g,'u').replace(/ş/g,'s').replace(/ı/g,'i').replace(/ö/g,'o').replace(/ç/g,'c').replace(/c/g,'k').replace(/y/g,'i').replace(/w/g,'v');
+const HK_STOP=new Set(['anonim','sirketi','limited','ticaret','sanaii','sanai','insaat','turizm','gida','hizmetleri','istanbul','magaza','subesi','kabul','formu','form','merkezi','market','ataşehir'].map(hkMap));
+const hkTok=s=>hkMap(s).split(/[^a-z0-9]+/).filter(t=>t.length>=4&&!HK_STOP.has(t)&&!/^\d+$/.test(t));
+function hkLev(a,b){const d=Array.from({length:a.length+1},(_,i)=>[i]);for(let j=1;j<=b.length;j++)d[0][j]=j;for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[a.length][b.length];}
+function hkScore(ft,rt){let n=0;ft.forEach(f=>{if(rt.some(r=>hkLev(f,r)<=Math.max(1,Math.floor(Math.min(f.length,r.length)*0.3))))n++;});return n;}
+function autoAssignForms() {
+  const rows=document.querySelectorAll('#dataTable tbody tr'); ddkVerileri={};
+  rows.forEach((row,idx)=>{
+    const rowIndex=idx+1, rowSgk=(row.cells[18].innerText||'').replace(/\D/g,''); let best=-1;
+    for(let i=0;i<kabulFormlariListesi.length;i++){const f=kabulFormlariListesi[i]; if(f.sgk&&rowSgk&&rowSgk.length>5&&(f.sgk.includes(rowSgk)||rowSgk.includes(f.sgk))){best=i;break;}}
+    if(best===-1){ const rt=hkTok((row.cells[16].innerText||'')+' '+(row.cells[17].innerText||'')); let bs=0;
+      kabulFormlariListesi.forEach((f,i)=>{const sc=hkScore(hkTok((f.unvan||'')+' '+(f.fileName||'').split(/kabul/i)[0]),rt); if(sc>bs){bs=sc;best=i;}}); }
+    if(best!==-1) ddkVerileri[rowIndex]=best;
+  });
+  renderKabulFormUI();
+}
 
     function renderKabulFormUI() {
         const listDiv = document.getElementById('kabulFormuListesi');
@@ -2954,6 +2958,116 @@ function clearKabulForms() {
   window.alert=function(m){_showToast('ℹ️ '+m,'var(--primary)'); setTimeout(window.hideToast,Math.min(9000,3000+String(m).length*40));};
  }
 })();
+</script>
+<script>
+// ===== HitosHK v76: Ayarlar, Yapay Zekâ Doğrulama, Sabit Üst Çubuk, Kılavuz =====
+(function(){
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const DEF={theme:'light',accent:'#2563eb',font:15,compact:false,gkey:'',gmodel:'gemini-2.5-flash',gsearch:true};
+let P=Object.assign({},DEF); try{P=Object.assign(P,JSON.parse(localStorage.getItem('hk_prefs')||'{}'));}catch(e){}
+const save=()=>{try{localStorage.setItem('hk_prefs',JSON.stringify(P));}catch(e){}};
+function apply(){
+  const dark=P.theme==='dark'||(P.theme==='auto'&&matchMedia('(prefers-color-scheme:dark)').matches);
+  document.documentElement.dataset.theme=dark?'dark':'light';
+  document.documentElement.style.setProperty('--primary',P.accent);
+  document.documentElement.style.setProperty('--primary-hover',`color-mix(in srgb,${P.accent} 80%,#000)`);
+  document.documentElement.style.fontSize=P.font+'px'; document.body.classList.toggle('hk-compact',!!P.compact);
+}
+apply();
+const esc=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+// --- Sabit üst çubuk: kaydet / yükle / takvim / ayarlar / temizle ---
+const nav=$('.step-nav');
+if(nav){
+  nav.querySelectorAll('a').forEach(a=>{a.onclick=e=>{e.preventDefault();const el=document.getElementById(a.getAttribute('href').slice(1)); if(el) el.scrollIntoView({behavior:'smooth',block:'start'});};});
+  const box=document.createElement('div'); box.className='hk-actions';
+  [['💾','Kaydet','Projeyi kaydet (.hk)',()=>saveProject()],['📂','Yükle','Proje yükle (.hk)',()=>$('#hkImportInput').click()],['📅','Takvim','Takvim',()=>openCalendarModal()],['⚙️','Ayarlar','Ayarlar, kılavuz ve hakkında',()=>openSet()],['🗑️','Temizle','Tümünü temizle',()=>clearAll(),'danger']]
+   .forEach(([i,l,t,f,c])=>{const b=document.createElement('button'); b.className='hk-ab '+(c||''); b.title=t; b.innerHTML=i+' <span>'+l+'</span>'; b.onclick=f; box.appendChild(b);});
+  nav.appendChild(box);
+}
+
+// --- Ayarlar penceresi ---
+const MAN=`<div class="hk-man">
+<h4>1. Genel akış</h4><p>Sıra: <b>Şablonlar</b> (Word şablonları yüklenir) → <b>Veri Yükle</b> (UYAP/EBYS dosyaları analiz edilir) → <b>Tablo</b> (39 sütun, elle düzenlenebilir) → <b>Belgeler</b> (Word/PTT/UYAP çıktıları). Üst çubuktaki 4 sekme ve kaydet/yükle/takvim/ayarlar düğmeleri sayfa kaydırılsa da sabit kalır. Belgeler bölümü artık kilitli değildir; tabloya elle satır ekleyerek de kullanılabilir.</p>
+<h4>2. Tablo sütunları</h4><p>Sıra No · Tebligat Adresi · Adres · Telefon · Ruhsat No · Görüşülen Kişiler · Erkek/Kadın/Toplam · İlk/Son Teftiş başlangıç-bitiş tarihleri · Tehlike Sınıfı · İmzalayacak Vekil · Görev/Tarih/Sayı · Unvan · İşveren · SGK Sicil No · Dosya Sicil · Şehir · Uzman ve İSG kadrosu · Tebligat sütunları. Hücreye tıklayıp yazabilirsiniz. Tarih hücrelerine 4 kez tıklamak takvimden tarih atar; <code>📝 Satır Formu</code> seçili satırı form olarak açar.</p>
+<h4>3. DDK (Dilekçe Değerlendirme Komisyonu) formları</h4><p>Okuma sırası: <b>1)</b> PDF'in metin katmanı okunur (sayfa/metin yönü otomatik algılanır, döndürülmüş PDF'ler dahil). <b>2)</b> Metin yoksa (taranmış/fotoğraf PDF) sayfa görüntüye çevrilip OCR ile 0°, 90°, 270°, 180° denenir; başlıkları bulan yön seçilir. <b>3)</b> "Dilekçe Değerlendirme Komisyonu Tarafından Belirlenen Hususlar" ile "İNCELENMEYEN KONU" başlıkları arası maddeler çekilir. Eşleştirme: önce SGK sicil, SGK boşsa ünvan ve dosya adı benzerliği (yazım farkları tolere edilir). Eşleşmeyen satırı açılır listeden elle seçebilirsiniz. Tarayıcı konsolunda (F12) okuma yöntemi ve sonuç görünür.</p>
+<h4>4. Yapay zekâ doğrulama</h4><p>Ayarlar → Yapay Zekâ bölümüne Gemini API anahtarınızı girin (ücretsiz: aistudio.google.com). Tablo üstündeki <code>🤖 Yapay Zekâ ile Doğrula</code> işveren adını web'de arar, adres/telefon farklarını listeler; yalnızca onayladıklarınız tabloya yazılır. Anahtar yalnızca bu tarayıcıda saklanır. Sonuçlar tahmindir, işlem öncesi mutlaka kontrol edin.</p>
+<h4>5. Kayıt ve yedek</h4><p><code>.hk</code> proje dosyası tablo, dosyalar, DDK eşleşmeleri ve ayarları içerir. Tarayıcıyı kapatmadan önce kaydedin; kaydedilmemiş değişiklikte uyarı çıkar. Excel dışa/içe aktarma ve VMLoader (sisteme girilecek verileri çekme) tablo altındadır.</p>
+<h4>6. Takvim</h4><p>Takvim penceresinde sürükle-bırak ile tarih değiştirilir; Google Takvim eşitlemesi için Ayarlar → Takvim'den Client ID ve API anahtarı girilir.</p>
+<h4>7. Kodun yapısı (geliştirici notu)</h4><ul><li><code>processKabulFormPDF_OCR</code> → <code>hkTextLines / hkOcrPage / hkParseForm</code>: DDK okuma hattı.</li><li><code>autoAssignForms</code>: SGK ve bulanık ünvan eşleştirme (<code>hkTok, hkLev, hkScore</code>).</li><li><code>addManualRow, calcDates, handleCellQuadClick, handleTebligatAutoFill</code>: tablo mantığı.</li><li><code>saveProject / loadProject</code>: .hk yedeği · <code>exportExcel</code>: Excel · <code>openCalendarModal</code>: takvim.</li><li>Docxtemplater+PizZip Word şablonlarını doldurur; pdf.js PDF okur; Tesseract.js OCR yapar; FullCalendar takvimi çizer.</li><li>Bu sürümde eklenenler dosya sonundaki <code>HitosHK v76</code> betiğindedir (ayarlar, AI, üst çubuk); tüm görünüm kuralları <code>#hk-modern</code> stil bloğundadır.</li></ul>
+<h4>8. Sorun giderme</h4><p>Form çekilmiyorsa: internet bağlantısını (OCR ve kütüphaneler CDN'den gelir), PDF'in şifresiz olduğunu ve F12 konsolundaki mesajı kontrol edin. Çok bulanık taramalarda maddeler elle yazılmalıdır.</p></div>`;
+const ov=document.createElement('div'); ov.className='hk-ov'; ov.id='hkSet';
+ov.innerHTML=`<div class="hk-box"><div class="hk-hd"><h3>⚙️ Ayarlar</h3><button class="hk-x" aria-label="Kapat">&times;</button></div>
+<div class="hk-tabs"><button class="hk-tab on" data-p="g">Görünüm</button><button class="hk-tab" data-p="a">Yapay Zekâ</button><button class="hk-tab" data-p="c">Takvim</button><button class="hk-tab" data-p="m">Kılavuz</button><button class="hk-tab" data-p="h">Hakkında</button></div>
+<div class="hk-body">
+<div class="hk-pane on" data-p="g">
+<div class="hk-row"><div>Tema<small>Açık, koyu veya cihaza göre</small></div><select id="hkTheme" class="form-control" style="width:150px"><option value="light">Açık</option><option value="dark">Koyu (beta)</option><option value="auto">Otomatik</option></select></div>
+<div class="hk-row"><div>Vurgu rengi<small>Düğmeler ve seçili sekme</small></div><div class="hk-sw" id="hkSw"></div></div>
+<div class="hk-row"><div>Yazı boyutu<small id="hkFv"></small></div><input type="range" id="hkFont" min="13" max="18" step="1"></div>
+<div class="hk-row"><div>Sıkışık tablo<small>Daha fazla satır görünür</small></div><input type="checkbox" id="hkComp" style="width:20px;height:20px"></div>
+<div class="hk-row"><div>Ayarları sıfırla</div><button class="btn btn-outline" id="hkReset">Varsayılana dön</button></div></div>
+<div class="hk-pane" data-p="a"><p style="font-size:.88rem;line-height:1.6">Gemini API anahtarı, tablodaki <b>🤖 Yapay Zekâ ile Doğrula</b> düğmesi için gerekir. Anahtar yalnızca bu tarayıcıda saklanır.</p>
+<div class="hk-row"><div>Gemini API anahtarı</div><input type="password" id="hkKey" class="form-control" style="width:260px" placeholder="AIza..."></div>
+<div class="hk-row"><div>Model<small>Hata alırsanız başka bir Gemini modeli yazın</small></div><input id="hkModel" class="form-control" style="width:260px"></div>
+<div class="hk-row"><div>Web aramasını kullan<small>Google Search ile güncel bilgi</small></div><input type="checkbox" id="hkSearch" style="width:20px;height:20px"></div></div>
+<div class="hk-pane" data-p="c"><div class="hk-row"><div>Google Takvim API ayarları<small>Client ID ve API anahtarı</small></div><button class="btn btn-primary" id="hkCal">Aç</button></div></div>
+<div class="hk-pane" data-p="m">${MAN}</div>
+<div class="hk-pane" data-p="h"><div class="hk-man"><h4>HitosHK v76 · Pro Max + Zeki Asistan</h4><p>İş sağlığı ve güvenliği teftiş dosyalarını tek sayfada hazırlayan, internetsiz çalışabilen (kütüphaneler CDN'den yüklenir) otomasyon aracı. Tüm veriler yalnızca bu cihazda işlenir; Yapay Zekâ özelliği kullanıldığında yalnızca işveren adı, adres ve telefon Google'a gönderilir.</p><p>Tek dosya: <code>index.html</code>. Tarayıcıda açmanız yeterlidir.</p></div></div>
+</div></div>`;
+document.body.appendChild(ov);
+const g=id=>document.getElementById(id);
+function openSet(tab){ov.classList.add('open'); if(tab) sel(tab);} window.hkOpenSettings=openSet;
+const close=()=>ov.classList.remove('open');
+function sel(p){$$('#hkSet .hk-tab').forEach(t=>t.classList.toggle('on',t.dataset.p===p)); $$('#hkSet .hk-pane').forEach(t=>t.classList.toggle('on',t.dataset.p===p));}
+ov.querySelector('.hk-x').onclick=close; ov.onclick=e=>{if(e.target===ov)close();};
+$$('#hkSet .hk-tab').forEach(t=>t.onclick=()=>sel(t.dataset.p));
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){$$('.hk-ov.open').forEach(o=>o.classList.remove('open'));}});
+['#2563eb','#7c3aed','#0d9488','#e11d48','#ea580c','#0f172a'].forEach(c=>{const b=document.createElement('button'); b.style.background=c; b.title=c; b.onclick=()=>{P.accent=c;save();apply();sync();}; g('hkSw').appendChild(b);});
+function sync(){g('hkTheme').value=P.theme; g('hkFont').value=P.font; g('hkFv').textContent=P.font+' px'; g('hkComp').checked=P.compact; g('hkKey').value=P.gkey; g('hkModel').value=P.gmodel; g('hkSearch').checked=P.gsearch; $$('#hkSw button').forEach(b=>b.classList.toggle('on',b.title===P.accent));}
+g('hkTheme').onchange=e=>{P.theme=e.target.value;save();apply();};
+g('hkFont').oninput=e=>{P.font=+e.target.value;save();apply();sync();};
+g('hkComp').onchange=e=>{P.compact=e.target.checked;save();apply();};
+g('hkKey').oninput=e=>{P.gkey=e.target.value.trim();save();}; g('hkModel').oninput=e=>{P.gmodel=e.target.value.trim()||DEF.gmodel;save();}; g('hkSearch').onchange=e=>{P.gsearch=e.target.checked;save();};
+g('hkReset').onclick=()=>{const k=P.gkey; P=Object.assign({},DEF,{gkey:k});save();apply();sync();};
+g('hkCal').onclick=()=>{close(); g('googleSettingsModal').style.display='flex';};
+sync();
+
+// --- Yapay zekâ ile işveren doğrulama ---
+const ta=$('.table-actions');
+if(ta&&ta.children.length>1){ const b=document.createElement('button'); b.className='btn btn-primary'; b.style.cssText='padding:6px 12px;font-size:.8rem;background:#7c3aed;border:0'; b.textContent='🤖 Yapay Zekâ ile Doğrula'; b.title='İşvereni web\'de arar, adres/telefon farklarını gösterir'; b.onclick=aiVerify; ta.children[1].prepend(b); }
+const cell=(tr,i)=>(tr.cells[i]?tr.cells[i].innerText:'').trim().replace(/^-$/,'');
+async function ask(tr){
+  const ad=cell(tr,16)||cell(tr,17), sehir=cell(tr,20);
+  const prompt=`Türkiye'deki şu işyerini web'de ara: "${ad}" ${sehir?'('+sehir+')':''}. Mevcut kayıt adres: "${cell(tr,2)}", telefon: "${cell(tr,3)}". Yalnızca şu JSON'u döndür, başka metin yazma: {"bulundu":true/false,"adres":"güncel açık adres","telefon":"güncel telefon","not":"kısa gerekçe"}. Emin değilsen bulundu:false yaz.`;
+  const body={contents:[{parts:[{text:prompt}]}]}; if(P.gsearch) body.tools=[{google_search:{}}];
+  const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(P.gmodel)}:generateContent?key=${encodeURIComponent(P.gkey)}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  const j=await r.json(); if(!r.ok) throw new Error(j.error&&j.error.message||('HTTP '+r.status));
+  const txt=((j.candidates||[])[0]?.content?.parts||[]).map(p=>p.text||'').join(''); const m=txt.match(/\{[\s\S]*\}/); if(!m) throw new Error('Yanıt okunamadı');
+  const o=JSON.parse(m[0]); o.kaynak=((j.candidates[0].groundingMetadata||{}).groundingChunks||[]).map(c=>c.web&&c.web.uri).filter(Boolean).slice(0,2); return o;
+}
+const nz=s=>(s||'').toLocaleLowerCase('tr').replace(/[^a-z0-9ğüşıöç]/g,'');
+async function aiVerify(){
+  if(!P.gkey){openSet('a'); showToast('ℹ️ Önce Gemini API anahtarınızı girin','var(--primary)'); return;}
+  let rows=$$('#dataTable tbody tr'); if(!rows.length){showToast('ℹ️ Tabloda satır yok','var(--primary)');return;}
+  const selRow=$('#dataTable tbody tr.selected'); if(selRow&&confirm('Yalnızca seçili satır doğrulansın mı? (İptal = tüm satırlar)')) rows=[selRow];
+  rows=rows.slice(0,20); const out=[]; let i=0;
+  for(const tr of rows){ i++; showToast(`🤖 Aranıyor ${i}/${rows.length}: ${cell(tr,16)||cell(tr,17)}`,'var(--warning)');
+    try{ const o=await ask(tr); if(o.bulundu){ [['Adres',2,o.adres],['Telefon',3,o.telefon]].forEach(([f,c,v])=>{ if(v&&nz(v)!==nz(cell(tr,c))) out.push({tr,f,c,old:cell(tr,c),nw:v,ad:cell(tr,16)||cell(tr,17),src:o.kaynak,note:o.not}); }); } }
+    catch(e){ out.push({err:e.message,ad:cell(tr,16)||cell(tr,17)}); if(/API key|quota|403|400/i.test(e.message)) break; } }
+  hideToast(); showDiff(out);
+}
+function showDiff(out){
+  let d=document.getElementById('hkDiff'); if(d) d.remove(); d=document.createElement('div'); d.className='hk-ov open'; d.id='hkDiff';
+  const ch=out.filter(x=>!x.err), er=out.filter(x=>x.err);
+  d.innerHTML=`<div class="hk-box"><div class="hk-hd"><h3>🤖 Yapay Zekâ Önerileri</h3><button class="hk-x">&times;</button></div><div class="hk-body">
+  ${ch.length?`<p style="font-size:.85rem">Web'de bulunan farklar. Uygulamak istediklerinizi işaretleyin; işaretlemedikleriniz değişmez.</p><table class="hk-diff"><tr><th></th><th>İşyeri</th><th>Alan</th><th>Tablodaki</th><th>Önerilen</th></tr>${ch.map((x,k)=>`<tr><td><input type="checkbox" checked data-k="${k}"></td><td>${esc(x.ad)}</td><td>${x.f}</td><td class="old">${esc(x.old)||'—'}</td><td class="new">${esc(x.nw)}<br><small>${(x.src||[]).map(u=>`<a href="${esc(u)}" target="_blank" rel="noopener">kaynak</a>`).join(' ')}</small></td></tr>`).join('')}</table>`:'<p>Fark bulunamadı: adres ve telefon bilgileri web ile uyumlu veya işyeri web\'de güvenle bulunamadı.</p>'}
+  ${er.map(x=>`<p style="color:var(--danger);font-size:.82rem">⚠️ ${esc(x.ad)}: ${esc(x.err)}</p>`).join('')}
+  <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px"><button class="btn btn-outline" id="hkDc">Kapat</button>${ch.length?'<button class="btn btn-success" id="hkDa">✅ Seçilenleri Tabloya Uygula</button>':''}</div></div></div>`;
+  document.body.appendChild(d); const cl=()=>d.remove(); d.querySelector('.hk-x').onclick=cl; d.querySelector('#hkDc').onclick=cl; d.onclick=e=>{if(e.target===d)cl();};
+  const a=d.querySelector('#hkDa'); if(a) a.onclick=()=>{let n=0; d.querySelectorAll('input[data-k]:checked').forEach(c=>{const x=ch[+c.dataset.k]; x.tr.cells[x.c].innerText=x.nw; x.tr.cells[x.c].dispatchEvent(new Event('input',{bubbles:true})); n++;}); cl(); showToast(`✅ ${n} alan güncellendi`,'var(--success)'); setTimeout(hideToast,2500);};
+}
+})();
+
 </script>
 </body>
 </html>
