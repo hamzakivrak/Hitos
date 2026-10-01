@@ -3007,7 +3007,7 @@ ov.innerHTML=`<div class="hk-box"><div class="hk-hd"><h3>⚙️ Ayarlar</h3><but
 <div class="hk-row"><div>Sıkışık tablo<small>Daha fazla satır görünür</small></div><input type="checkbox" id="hkComp" style="width:20px;height:20px"></div>
 <div class="hk-row"><div>Ayarları sıfırla</div><button class="btn btn-outline" id="hkReset">Varsayılana dön</button></div></div>
 <div class="hk-pane" data-p="a"><p style="font-size:.88rem;line-height:1.6">Gemini API anahtarı, tablodaki <b>🤖 Yapay Zekâ ile Doğrula</b> düğmesi için gerekir. Anahtar yalnızca bu tarayıcıda saklanır.</p>
-<div class="hk-row"><div>Gemini API anahtarı</div><input type="password" id="hkKey" class="form-control" style="width:260px" placeholder="AIza..."></div>
+<div class="hk-row"><div>Gemini API anahtarı<small>Birden fazla ise virgülle ayırın</small></div><input type="password" id="hkKey" class="form-control" style="width:260px" placeholder="AIza1..., AIza2..."></div>
 <div class="hk-row"><div>Model<small>Hata alırsanız başka bir Gemini modeli yazın</small></div><input id="hkModel" class="form-control" style="width:260px"></div>
 <div class="hk-row"><div>Web aramasını kullan<small>Google Search ile güncel bilgi</small></div><input type="checkbox" id="hkSearch" style="width:20px;height:20px"></div></div>
 <div class="hk-pane" data-p="c"><div class="hk-row"><div>Google Takvim API ayarları<small>Client ID ve API anahtarı</small></div><button class="btn btn-primary" id="hkCal">Aç</button></div></div>
@@ -3040,10 +3040,41 @@ async function ask(tr){
   const ad=cell(tr,16)||cell(tr,17), sehir=cell(tr,20);
   const prompt=`Türkiye'deki şu işyerini web'de ara: "${ad}" ${sehir?'('+sehir+')':''}. Mevcut kayıt adres: "${cell(tr,2)}", telefon: "${cell(tr,3)}". Yalnızca şu JSON'u döndür, başka metin yazma: {"bulundu":true/false,"adres":"güncel açık adres","telefon":"güncel telefon","not":"kısa gerekçe"}. Emin değilsen bulundu:false yaz.`;
   const body={contents:[{parts:[{text:prompt}]}]}; if(P.gsearch) body.tools=[{google_search:{}}];
-  const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(P.gmodel)}:generateContent?key=${encodeURIComponent(P.gkey)}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-  const j=await r.json(); if(!r.ok) throw new Error(j.error&&j.error.message||('HTTP '+r.status));
-  const txt=((j.candidates||[])[0]?.content?.parts||[]).map(p=>p.text||'').join(''); const m=txt.match(/\{[\s\S]*\}/); if(!m) throw new Error('Yanıt okunamadı');
-  const o=JSON.parse(m[0]); o.kaynak=((j.candidates[0].groundingMetadata||{}).groundingChunks||[]).map(c=>c.web&&c.web.uri).filter(Boolean).slice(0,2); return o;
+  
+  // Anahtarları virgülle ayırıp temizle
+  const keys = P.gkey.split(',').map(k => k.trim()).filter(k => k.length > 0);
+  if(keys.length === 0) throw new Error('API Anahtarı bulunamadı.');
+
+  let lastError = null;
+
+  for (let i = 0; i < keys.length; i++) {
+    try {
+      const currentKey = keys[i];
+      const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(P.gmodel)}:generateContent?key=${encodeURIComponent(currentKey)}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+      const j=await r.json(); 
+      
+      if(!r.ok) {
+        // Kota sınırı (429) veya sunucu hatası (5xx) ise diğer anahtara geç
+        if(r.status === 429 || r.status >= 500) {
+            lastError = new Error(j.error&&j.error.message||('HTTP '+r.status));
+            continue; 
+        }
+        // Yetki hatası (400, 403) ise doğrudan fırlat
+        throw new Error(j.error&&j.error.message||('HTTP '+r.status));
+      }
+      
+      const txt=((j.candidates||[])[0]?.content?.parts||[]).map(p=>p.text||'').join(''); 
+      const m=txt.match(/\{[\s\S]*\}/); if(!m) throw new Error('Yanıt JSON formatında okunamadı');
+      const o=JSON.parse(m[0]); 
+      o.kaynak=((j.candidates[0].groundingMetadata||{}).groundingChunks||[]).map(c=>c.web&&c.web.uri).filter(Boolean).slice(0,2); 
+      
+      return o; // Başarılıysa döngüden çık
+    } catch(e) {
+      lastError = e; // Diğer anahtarı denemek üzere hatayı sakla
+    }
+  }
+  // Tüm anahtarlar tükendiyse son hatayı fırlat
+  throw lastError;
 }
 const nz=s=>(s||'').toLocaleLowerCase('tr').replace(/[^a-z0-9ğüşıöç]/g,'');
 async function aiVerify(){
@@ -3053,7 +3084,7 @@ async function aiVerify(){
   rows=rows.slice(0,20); const out=[]; let i=0;
   for(const tr of rows){ i++; showToast(`🤖 Aranıyor ${i}/${rows.length}: ${cell(tr,16)||cell(tr,17)}`,'var(--warning)');
     try{ const o=await ask(tr); if(o.bulundu){ [['Adres',2,o.adres],['Telefon',3,o.telefon]].forEach(([f,c,v])=>{ if(v&&nz(v)!==nz(cell(tr,c))) out.push({tr,f,c,old:cell(tr,c),nw:v,ad:cell(tr,16)||cell(tr,17),src:o.kaynak,note:o.not}); }); } }
-    catch(e){ out.push({err:e.message,ad:cell(tr,16)||cell(tr,17)}); if(/API key|quota|403|400/i.test(e.message)) break; } }
+    catch(e){ out.push({err:e.message,ad:cell(tr,16)||cell(tr,17)}); if(/API key|403|400/i.test(e.message)) break; } }
   hideToast(); showDiff(out);
 }
 function showDiff(out){
