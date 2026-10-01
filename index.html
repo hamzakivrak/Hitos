@@ -1953,7 +1953,80 @@ function autoAssignForms() {
         }); return map;
     }
 
-    async function safeOCR(w,f){try{return f.type==="application/pdf"?{data:{text:await readPdfSimple(f)}}:(()=>{const u=URL.createObjectURL(f);const r=w.recognize(u);URL.revokeObjectURL(u);return r;})();}catch(e){return{data:{text:""}};}}
+   async function safeOCR(w,f) fonksiyonunu bul, onu tamamen sil ve yerine şu akıllı bloğu yapıştır:
+
+JavaScript
+    // Yeni nesil Görsel Analiz (Gemini Vision) Fonksiyonu
+    async function geminiVisionOCR(file) {
+        const prefs = JSON.parse(localStorage.getItem('hk_prefs') || '{}');
+        const keys = (prefs.gkey || '').split(/[,;\s\n|]+/).map(k => k.trim()).filter(k => k.length > 20);
+        if (!keys.length) throw new Error("API Key yok");
+
+        // Dosyanın adına göre yapay zekaya verilecek komutu (prompt) belirliyoruz
+        let prmt = "Bu görseldeki metni eksiksiz olarak düz metne çevir. Bozuk veya okunamayan harfleri düzelt.";
+        const fName = file.name.toLowerCase();
+        if (fName.includes("görev") || fName.includes("gorev")) {
+            prmt = "Bu bir İSG Görev Emri veya Listesi. İşyeri unvanlarını, SGK numaralarını, Görev Tarihini, Görev Sayısını ve Otomasyon No'yu eksiksiz çıkar. Tablo karmaşıksa sadeleştirerek metne dök.";
+        } else if (fName.includes("detay") || fName.includes("sgk")) {
+            prmt = "Bu bir işyeri detay sayfası. Unvan, Adres, Telefon, SGK numarası ve Tehlike Sınıfını düzgünce ayırt ederek yaz.";
+        } else if (fName.includes("isg") || fName.includes("çalışan")) {
+            prmt = "Bu belge çalışan listesi veya İSG profesyonellerini içeriyor. İsimleri, unvanları ve belge sürelerini netçe dök.";
+        }
+
+        const base64 = await new Promise(r => { const reader = new FileReader(); reader.onload = () => r(reader.result.split(',')[1]); reader.readAsDataURL(file); });
+        const body = { contents: [{ parts: [{ text: prmt }, { inlineData: { mimeType: file.type, data: base64 } }] }] };
+        
+        for (let key of keys) {
+            try {
+                const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+                const j = await r.json();
+                if (r.ok) return j.candidates[0].content.parts[0].text;
+            } catch (e) { }
+        }
+        throw new Error("Vision başarısız");
+    }
+
+    async function safeOCR(w, f) {
+        try {
+            // PDF ise PDF.js ile metin katmanını hızlıca oku (İnternet gerektirmez)
+            if (f.type === "application/pdf") return { data: { text: await readPdfSimple(f) } };
+            
+            const prefs = JSON.parse(localStorage.getItem('hk_prefs') || '{}');
+            const keys = (prefs.gkey || '').split(/[,;\s\n|]+/).map(k => k.trim()).filter(k => k.length > 20);
+            
+            // Eğer dosya RESİM ise, İNTERNET VARSA ve API Key girilmişse önce Gemini (Vision) dene
+            if (navigator.onLine && keys.length > 0 && f.type.startsWith("image/")) {
+                showToast(`🤖 AI Görseli Çözümlüyor: ${f.name}`, "var(--accent)");
+                try {
+                    const aiText = await geminiVisionOCR(f);
+                    return { data: { text: aiText } };
+                } catch (aiErr) {
+                    console.warn("AI okuyamadı veya kotalar doldu, klasik OCR'a dönülüyor...", aiErr);
+                    showToast(`⚠️️ AI yanıt vermedi, klasik OCR (Tesseract) deneniyor...`, "var(--warning)");
+                }
+            } else if (!navigator.onLine && f.type.startsWith("image/")) {
+                // İnternet yoksa anında tespit et ve kullanıcıya bildir
+                showToast(`📶 İnternet Yok! Çevrimdışı OCR (Tesseract) başlatılıyor...`, "var(--warning)");
+            } else if (f.type.startsWith("image/")) {
+                showToast(`⚙️ Klasik OCR (Tesseract) çalışıyor: ${f.name}`, "var(--primary)");
+            }
+
+            // BURASI FALLBACK (YEDEK KORUMA) BÖLÜMÜ: 
+            // - İnternet yoksa
+            // - API Key girilmediyse
+            // - Gemini Vision bir şekilde hata verdiyse
+            // Otomatik olarak yerel (offline) OCR motoru olan Tesseract devralır.
+            if (!w) throw new Error("OCR Motoru yüklenmemiş.");
+            const u = URL.createObjectURL(f);
+            const r = await w.recognize(u);
+            URL.revokeObjectURL(u);
+            return r;
+            
+        } catch (e) {
+            console.error("Görsel Okuma Tamamen Başarısız:", e);
+            return { data: { text: "" } }; // İşlemin kitlenmesini önler
+        }
+    }
 
     function clearAll() {
         if(!confirm("Tüm tablo verileri ve yüklenen dosyalar silinecek. Emin misiniz?")) return;
@@ -2962,7 +3035,7 @@ function clearKabulForms() {
 <script>
 // ===== HitosHK v76: Ayarlar, Yapay Zekâ Doğrulama, Sabit Üst Çubuk, Kılavuz =====
 (function(){
-const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const DEF={theme:'light',accent:'#2563eb',font:15,compact:false,gkey:'',gmodel:'gemini-2.5-flash',gsearch:true};
 let P=Object.assign({},DEF); try{P=Object.assign(P,JSON.parse(localStorage.getItem('hk_prefs')||'{}'));}catch(e){}
 const save=()=>{try{localStorage.setItem('hk_prefs',JSON.stringify(P));}catch(e){}};
@@ -2988,31 +3061,28 @@ if(nav){
 
 // --- Ayarlar penceresi ---
 const MAN=`<div class="hk-man">
-<h4>1. Genel akış</h4><p>Sıra: <b>Şablonlar</b> (Word şablonları yüklenir) → <b>Veri Yükle</b> (UYAP/EBYS dosyaları analiz edilir) → <b>Tablo</b> (39 sütun, elle düzenlenebilir) → <b>Belgeler</b> (Word/PTT/UYAP çıktıları). Üst çubuktaki 4 sekme ve kaydet/yükle/takvim/ayarlar düğmeleri sayfa kaydırılsa da sabit kalır. Belgeler bölümü artık kilitli değildir; tabloya elle satır ekleyerek de kullanılabilir.</p>
-<h4>2. Tablo sütunları</h4><p>Sıra No · Tebligat Adresi · Adres · Telefon · Ruhsat No · Görüşülen Kişiler · Erkek/Kadın/Toplam · İlk/Son Teftiş başlangıç-bitiş tarihleri · Tehlike Sınıfı · İmzalayacak Vekil · Görev/Tarih/Sayı · Unvan · İşveren · SGK Sicil No · Dosya Sicil · Şehir · Uzman ve İSG kadrosu · Tebligat sütunları. Hücreye tıklayıp yazabilirsiniz. Tarih hücrelerine 4 kez tıklamak takvimden tarih atar; <code>📝 Satır Formu</code> seçili satırı form olarak açar.</p>
-<h4>3. DDK (Dilekçe Değerlendirme Komisyonu) formları</h4><p>Okuma sırası: <b>1)</b> PDF'in metin katmanı okunur (sayfa/metin yönü otomatik algılanır, döndürülmüş PDF'ler dahil). <b>2)</b> Metin yoksa (taranmış/fotoğraf PDF) sayfa görüntüye çevrilip OCR ile 0°, 90°, 270°, 180° denenir; başlıkları bulan yön seçilir. <b>3)</b> "Dilekçe Değerlendirme Komisyonu Tarafından Belirlenen Hususlar" ile "İNCELENMEYEN KONU" başlıkları arası maddeler çekilir. Eşleştirme: önce SGK sicil, SGK boşsa ünvan ve dosya adı benzerliği (yazım farkları tolere edilir). Eşleşmeyen satırı açılır listeden elle seçebilirsiniz. Tarayıcı konsolunda (F12) okuma yöntemi ve sonuç görünür.</p>
-<h4>4. Yapay zekâ doğrulama</h4><p>Ayarlar → Yapay Zekâ bölümüne Gemini API anahtarınızı girin (ücretsiz: aistudio.google.com). Tablo üstündeki <code>🤖 Yapay Zekâ ile Doğrula</code> işveren adını web'de arar, adres/telefon farklarını listeler; yalnızca onayladıklarınız tabloya yazılır. Anahtar yalnızca bu tarayıcıda saklanır. Sonuçlar tahmindir, işlem öncesi mutlaka kontrol edin.</p>
-<h4>5. Kayıt ve yedek</h4><p><code>.hk</code> proje dosyası tablo, dosyalar, DDK eşleşmeleri ve ayarları içerir. Tarayıcıyı kapatmadan önce kaydedin; kaydedilmemiş değişiklikte uyarı çıkar. Excel dışa/içe aktarma ve VMLoader (sisteme girilecek verileri çekme) tablo altındadır.</p>
-<h4>6. Takvim</h4><p>Takvim penceresinde sürükle-bırak ile tarih değiştirilir; Google Takvim eşitlemesi için Ayarlar → Takvim'den Client ID ve API anahtarı girilir.</p>
-<h4>7. Kodun yapısı (geliştirici notu)</h4><ul><li><code>processKabulFormPDF_OCR</code> → <code>hkTextLines / hkOcrPage / hkParseForm</code>: DDK okuma hattı.</li><li><code>autoAssignForms</code>: SGK ve bulanık ünvan eşleştirme (<code>hkTok, hkLev, hkScore</code>).</li><li><code>addManualRow, calcDates, handleCellQuadClick, handleTebligatAutoFill</code>: tablo mantığı.</li><li><code>saveProject / loadProject</code>: .hk yedeği · <code>exportExcel</code>: Excel · <code>openCalendarModal</code>: takvim.</li><li>Docxtemplater+PizZip Word şablonlarını doldurur; pdf.js PDF okur; Tesseract.js OCR yapar; FullCalendar takvimi çizer.</li><li>Bu sürümde eklenenler dosya sonundaki <code>HitosHK v76</code> betiğindedir (ayarlar, AI, üst çubuk); tüm görünüm kuralları <code>#hk-modern</code> stil bloğundadır.</li></ul>
-<h4>8. Sorun giderme</h4><p>Form çekilmiyorsa: internet bağlantısını (OCR ve kütüphaneler CDN'den gelir), PDF'in şifresiz olduğunu ve F12 konsolundaki mesajı kontrol edin. Çok bulanık taramalarda maddeler elle yazılmalıdır.</p></div>`;
+<h4>1. Genel akış</h4><p>Sıra: <b>Şablonlar</b> → <b>Veri Yükle</b> → <b>Tablo</b> → <b>Belgeler</b>.</p>
+<h4>2. Yapay Zeka Özellikleri (YENİ)</h4>
+<ul>
+<li><b>Fotoğraf Okuma (OCR):</b> Resim (.jpg, .png) yüklediğinizde sistem artık Tesseract yerine çok daha zeki olan Gemini Vision'ı kullanır.</li>
+<li><b>Doğrulama Butonu:</b> Tablodaki adres, telefon ve <b>Otomasyon No / Görev Tarihini</b> web verisiyle harmanlayıp teyit eder.</li>
+</ul></div>`;
 const ov=document.createElement('div'); ov.className='hk-ov'; ov.id='hkSet';
 ov.innerHTML=`<div class="hk-box"><div class="hk-hd"><h3>⚙️ Ayarlar</h3><button class="hk-x" aria-label="Kapat">&times;</button></div>
 <div class="hk-tabs"><button class="hk-tab on" data-p="g">Görünüm</button><button class="hk-tab" data-p="a">Yapay Zekâ</button><button class="hk-tab" data-p="c">Takvim</button><button class="hk-tab" data-p="m">Kılavuz</button><button class="hk-tab" data-p="h">Hakkında</button></div>
 <div class="hk-body">
 <div class="hk-pane on" data-p="g">
-<div class="hk-row"><div>Tema<small>Açık, koyu veya cihaza göre</small></div><select id="hkTheme" class="form-control" style="width:150px"><option value="light">Açık</option><option value="dark">Koyu (beta)</option><option value="auto">Otomatik</option></select></div>
-<div class="hk-row"><div>Vurgu rengi<small>Düğmeler ve seçili sekme</small></div><div class="hk-sw" id="hkSw"></div></div>
+<div class="hk-row"><div>Tema</div><select id="hkTheme" class="form-control" style="width:150px"><option value="light">Açık</option><option value="dark">Koyu</option><option value="auto">Otomatik</option></select></div>
+<div class="hk-row"><div>Vurgu rengi</div><div class="hk-sw" id="hkSw"></div></div>
 <div class="hk-row"><div>Yazı boyutu<small id="hkFv"></small></div><input type="range" id="hkFont" min="13" max="18" step="1"></div>
-<div class="hk-row"><div>Sıkışık tablo<small>Daha fazla satır görünür</small></div><input type="checkbox" id="hkComp" style="width:20px;height:20px"></div>
 <div class="hk-row"><div>Ayarları sıfırla</div><button class="btn btn-outline" id="hkReset">Varsayılana dön</button></div></div>
-<div class="hk-pane" data-p="a"><p style="font-size:.88rem;line-height:1.6">Gemini API anahtarı, tablodaki <b>🤖 Yapay Zekâ ile Doğrula</b> düğmesi için gerekir. Anahtar yalnızca bu tarayıcıda saklanır.</p>
-<div class="hk-row"><div>Gemini API anahtarı<small>Birden fazla ise virgülle ayırın</small></div><input type="password" id="hkKey" class="form-control" style="width:260px" placeholder="AIza1..., AIza2..."></div>
-<div class="hk-row"><div>Model<small>Hata alırsanız başka bir Gemini modeli yazın</small></div><input id="hkModel" class="form-control" style="width:260px"></div>
-<div class="hk-row"><div>Web aramasını kullan<small>Google Search ile güncel bilgi</small></div><input type="checkbox" id="hkSearch" style="width:20px;height:20px"></div></div>
-<div class="hk-pane" data-p="c"><div class="hk-row"><div>Google Takvim API ayarları<small>Client ID ve API anahtarı</small></div><button class="btn btn-primary" id="hkCal">Aç</button></div></div>
+<div class="hk-pane" data-p="a"><p style="font-size:.88rem;line-height:1.6">Gemini API anahtarı girildiğinde; AI hem görsel okumada (OCR) hem de doğrulama butonunda aktif olur.</p>
+<div class="hk-row"><div>Gemini API anahtarı<br><small id="hkKeyHint" style="color:var(--primary); font-weight:600; display:block; margin-top:4px;">0 Anahtar</small></div><input type="password" id="hkKey" class="form-control" style="width:260px" placeholder="AIza1..., AIza2..."></div>
+<div class="hk-row"><div>Model (Opsiyonel)</div><input id="hkModel" class="form-control" style="width:260px" placeholder="gemini-1.5-flash"></div>
+<div class="hk-row"><div>Web aramasını kullan</div><input type="checkbox" id="hkSearch" style="width:20px;height:20px"></div></div>
+<div class="hk-pane" data-p="c"><div class="hk-row"><div>Google Takvim API</div><button class="btn btn-primary" id="hkCal">Aç</button></div></div>
 <div class="hk-pane" data-p="m">${MAN}</div>
-<div class="hk-pane" data-p="h"><div class="hk-man"><h4>HitosHK v76 · Pro Max + Zeki Asistan</h4><p>İş sağlığı ve güvenliği teftiş dosyalarını tek sayfada hazırlayan, internetsiz çalışabilen (kütüphaneler CDN'den yüklenir) otomasyon aracı. Tüm veriler yalnızca bu cihazda işlenir; Yapay Zekâ özelliği kullanıldığında yalnızca işveren adı, adres ve telefon Google'a gönderilir.</p><p>Tek dosya: <code>index.html</code>. Tarayıcıda açmanız yeterlidir.</p></div></div>
+<div class="hk-pane" data-p="h"><div class="hk-man"><h4>HitosHK v76 · Pro Max</h4></div></div>
 </div></div>`;
 document.body.appendChild(ov);
 const g=id=>document.getElementById(id);
@@ -3020,31 +3090,47 @@ function openSet(tab){ov.classList.add('open'); if(tab) sel(tab);} window.hkOpen
 const close=()=>ov.classList.remove('open');
 function sel(p){$$('#hkSet .hk-tab').forEach(t=>t.classList.toggle('on',t.dataset.p===p)); $$('#hkSet .hk-pane').forEach(t=>t.classList.toggle('on',t.dataset.p===p));}
 ov.querySelector('.hk-x').onclick=close; ov.onclick=e=>{if(e.target===ov)close();};
-$$('#hkSet .hk-tab').forEach(t=>t.onclick=()=>sel(t.dataset.p));
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){$$('.hk-ov.open').forEach(o=>o.classList.remove('open'));}});
+$$('#hkSet .hk-tab').forEach(t=>t.onclick=()=>sel(t.dataset.p)); document.addEventListener('keydown',e=>{if(e.key==='Escape'){$$
+('.hk-ov.open').forEach(o=>o.classList.remove('open'));}});
 ['#2563eb','#7c3aed','#0d9488','#e11d48','#ea580c','#0f172a'].forEach(c=>{const b=document.createElement('button'); b.style.background=c; b.title=c; b.onclick=()=>{P.accent=c;save();apply();sync();}; g('hkSw').appendChild(b);});
-function sync(){g('hkTheme').value=P.theme; g('hkFont').value=P.font; g('hkFv').textContent=P.font+' px'; g('hkComp').checked=P.compact; g('hkKey').value=P.gkey; g('hkModel').value=P.gmodel; g('hkSearch').checked=P.gsearch; $$('#hkSw button').forEach(b=>b.classList.toggle('on',b.title===P.accent));}
+
+function updKeyHint() {
+    const keys = (P.gkey||'').split(/[,;\s\n|]+/).map(k=>k.trim()).filter(k=>k.length>20);
+    const hint = g('hkKeyHint');
+    if(hint) {
+        if(keys.length>0) hint.innerHTML = `<span style="color:var(--success)">✅ ${keys.length} API aktif:</span><br>` + keys.map(k=> k.substring(0,4) + '...' + k.substring(k.length-4)).join(' , ');
+        else hint.innerHTML = '<span style="color:var(--danger)">⚠️ Anahtar girilmedi</span>';
+    }
+}
+
+function sync(){g('hkTheme').value=P.theme; g('hkFont').value=P.font; g('hkFv').textContent=P.font+' px'; g('hkKey').value=P.gkey; g('hkModel').value=P.gmodel; g('hkSearch').checked=P.gsearch; $$('#hkSw button').forEach(b=>b.classList.toggle('on',b.title===P.accent)); updKeyHint();}
 g('hkTheme').onchange=e=>{P.theme=e.target.value;save();apply();};
 g('hkFont').oninput=e=>{P.font=+e.target.value;save();apply();sync();};
-g('hkComp').onchange=e=>{P.compact=e.target.checked;save();apply();};
-g('hkKey').oninput=e=>{P.gkey=e.target.value.trim();save();}; g('hkModel').oninput=e=>{P.gmodel=e.target.value.trim()||DEF.gmodel;save();}; g('hkSearch').onchange=e=>{P.gsearch=e.target.checked;save();};
+g('hkKey').oninput=e=>{P.gkey=e.target.value.trim();save();updKeyHint();}; 
+g('hkModel').oninput=e=>{P.gmodel=e.target.value.trim()||DEF.gmodel;save();}; 
+g('hkSearch').onchange=e=>{P.gsearch=e.target.checked;save();};
 g('hkReset').onclick=()=>{const k=P.gkey; P=Object.assign({},DEF,{gkey:k});save();apply();sync();};
 g('hkCal').onclick=()=>{close(); g('googleSettingsModal').style.display='flex';};
 sync();
 
 // --- Yapay zekâ ile işveren doğrulama ---
 const ta=$('.table-actions');
-if(ta&&ta.children.length>1){ const b=document.createElement('button'); b.className='btn btn-primary'; b.style.cssText='padding:6px 12px;font-size:.8rem;background:#7c3aed;border:0'; b.textContent='🤖 Yapay Zekâ ile Doğrula'; b.title='İşvereni web\'de arar, adres/telefon farklarını gösterir'; b.onclick=aiVerify; ta.children[1].prepend(b); }
+if(ta&&ta.children.length>1){ const b=document.createElement('button'); b.className='btn btn-primary'; b.style.cssText='padding:6px 12px;font-size:.8rem;background:#7c3aed;border:0'; b.textContent='🤖 Yapay Zekâ ile Doğrula'; b.title='Adres/telefon ve Görev/Otomasyon No teyidi yapar'; b.onclick=aiVerify; ta.children[1].prepend(b); }
 const cell=(tr,i)=>(tr.cells[i]?tr.cells[i].innerText:'').trim().replace(/^-$/,'');
+
 async function ask(tr){
   const ad=cell(tr,16)||cell(tr,17), sehir=cell(tr,20);
-  const prompt=`Türkiye'deki şu işyerini web'de ara: "${ad}" ${sehir?'('+sehir+')':''}. Mevcut kayıt adres: "${cell(tr,2)}", telefon: "${cell(tr,3)}". Yalnızca şu JSON'u döndür, başka metin yazma: {"bulundu":true/false,"adres":"güncel açık adres","telefon":"güncel telefon","not":"kısa gerekçe"}. Emin değilsen bulundu:false yaz.`;
+  const gorevTarih = cell(tr,15), otoNo = cell(tr,30);
+  
+  const prompt=`Türkiye'deki şu işyerini web'de ara: "${ad}" ${sehir?'('+sehir+')':''}. Mevcut kayıt adres: "${cell(tr,2)}", telefon: "${cell(tr,3)}". 
+  Ayrıca OCR okumasından gelen Görev Bilgisi: "${gorevTarih}", Otomasyon No: "${otoNo}".
+  Göreviniz: Web aramasıyla adres/telefonu teyit edin. Eğer "Görev Bilgisi" veya "Otomasyon No" alanlarında OCR kaynaklı (harflerin rakam gibi algılanması vb) bariz bir bozulma varsa düzeltin. Görev bilgisi (Tarih / Sayı) formatında, Otomasyon no sadece rakam olmalı.
+  Yalnızca şu JSON'u döndür, başka metin yazma: 
+  {"bulundu":true/false,"adres":"güncel açık adres","telefon":"güncel telefon","gorev":"Düzeltilmiş görev bilgisi","oto":"Düzeltilmiş otomasyon no","not":"kısa gerekçe"}. Emin değilsen bulundu:false yaz.`;
+  
   const body={contents:[{parts:[{text:prompt}]}]}; if(P.gsearch) body.tools=[{google_search:{}}];
   
-  // DİKKAT: Sorunu çözen satır burası! 
-  // Artık virgül (,), noktalı virgül (;), düz boşluk veya satır atlaması fark etmeksizin anahtarları ayırıp, hatalı boşlukları temizleyecek.
   const keys = (P.gkey||'').split(/[,;\s\n|]+/).map(k => k.trim()).filter(k => k.length > 20);
-  
   if(keys.length === 0) throw new Error('Geçerli bir API Anahtarı bulunamadı.');
 
   let sonHata = null;
@@ -3055,52 +3141,53 @@ async function ask(tr){
       const modelName = P.gmodel && P.gmodel.length > 5 ? P.gmodel : 'gemini-1.5-flash';
       
       const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(modelName)}:generateContent?key=${encodeURIComponent(currentKey)}`,{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify(body)
+        method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)
       });
       
       const j=await r.json(); 
-      
-      if(!r.ok) {
-        sonHata = new Error(j.error && j.error.message || ('HTTP '+r.status));
-        console.warn(`[Anahtar ${i+1} Başarısız]:`, sonHata.message);
-        continue; // Bir anahtar patlarsa direkt sonrakine geç
-      }
+      if(!r.ok) { sonHata = new Error(j.error && j.error.message || ('HTTP '+r.status)); continue; }
       
       const txt=((j.candidates||[])[0]?.content?.parts||[]).map(p=>p.text||'').join(''); 
       const m=txt.match(/\{[\s\S]*\}/); if(!m) throw new Error('Yanıt JSON formatında okunamadı');
       const o=JSON.parse(m[0]); 
       o.kaynak=((j.candidates[0].groundingMetadata||{}).groundingChunks||[]).map(c=>c.web&&c.web.uri).filter(Boolean).slice(0,2); 
       
-      return o; // İşlem başarılıysa sonucu döndür ve çık
-      
-    } catch(e) {
-      sonHata = e;
-      console.warn(`[Anahtar ${i+1} Hatası]:`, e.message);
-    }
+      return o; 
+    } catch(e) { sonHata = e; }
   }
-  
-  // Tüm anahtarlar denendi ve hepsi patladıysa son hatayı ekrana yansıt
   throw sonHata;
 }
+
 const nz=s=>(s||'').toLocaleLowerCase('tr').replace(/[^a-z0-9ğüşıöç]/g,'');
+
 async function aiVerify(){
   if(!P.gkey){openSet('a'); showToast('ℹ️ Önce Gemini API anahtarınızı girin','var(--primary)'); return;}
   let rows=$$('#dataTable tbody tr'); if(!rows.length){showToast('ℹ️ Tabloda satır yok','var(--primary)');return;}
   const selRow=$('#dataTable tbody tr.selected'); if(selRow&&confirm('Yalnızca seçili satır doğrulansın mı? (İptal = tüm satırlar)')) rows=[selRow];
   rows=rows.slice(0,20); const out=[]; let i=0;
-  for(const tr of rows){ i++; showToast(`🤖 Aranıyor ${i}/${rows.length}: ${cell(tr,16)||cell(tr,17)}`,'var(--warning)');
-    try{ const o=await ask(tr); if(o.bulundu){ [['Adres',2,o.adres],['Telefon',3,o.telefon]].forEach(([f,c,v])=>{ if(v&&nz(v)!==nz(cell(tr,c))) out.push({tr,f,c,old:cell(tr,c),nw:v,ad:cell(tr,16)||cell(tr,17),src:o.kaynak,note:o.not}); }); } }
-    catch(e){ out.push({err:e.message,ad:cell(tr,16)||cell(tr,17)}); if(/API key|403|400/i.test(e.message)) break; } }
+  
+  for(const tr of rows){ 
+    i++; showToast(`🤖 Kontrol Ediliyor ${i}/${rows.length}: ${cell(tr,16)||cell(tr,17)}`,'var(--warning)');
+    try { 
+      const o=await ask(tr); 
+      if(o.bulundu){ 
+        [['Adres',2,o.adres], ['Telefon',3,o.telefon], ['Görev',15,o.gorev], ['Oto. No',30,o.oto]].forEach(([f,c,v])=>{ 
+          if(v && v !== '-' && nz(v)!==nz(cell(tr,c))) out.push({tr,f,c,old:cell(tr,c),nw:v,ad:cell(tr,16)||cell(tr,17),src:o.kaynak,note:o.not}); 
+        }); 
+      } 
+    } catch(e) { 
+      out.push({err:e.message, ad:cell(tr,16)||cell(tr,17)}); 
+    } 
+  }
   hideToast(); showDiff(out);
 }
+
 function showDiff(out){
   let d=document.getElementById('hkDiff'); if(d) d.remove(); d=document.createElement('div'); d.className='hk-ov open'; d.id='hkDiff';
   const ch=out.filter(x=>!x.err), er=out.filter(x=>x.err);
   d.innerHTML=`<div class="hk-box"><div class="hk-hd"><h3>🤖 Yapay Zekâ Önerileri</h3><button class="hk-x">&times;</button></div><div class="hk-body">
-  ${ch.length?`<p style="font-size:.85rem">Web'de bulunan farklar. Uygulamak istediklerinizi işaretleyin; işaretlemedikleriniz değişmez.</p><table class="hk-diff"><tr><th></th><th>İşyeri</th><th>Alan</th><th>Tablodaki</th><th>Önerilen</th></tr>${ch.map((x,k)=>`<tr><td><input type="checkbox" checked data-k="${k}"></td><td>${esc(x.ad)}</td><td>${x.f}</td><td class="old">${esc(x.old)||'—'}</td><td class="new">${esc(x.nw)}<br><small>${(x.src||[]).map(u=>`<a href="${esc(u)}" target="_blank" rel="noopener">kaynak</a>`).join(' ')}</small></td></tr>`).join('')}</table>`:'<p>Fark bulunamadı: adres ve telefon bilgileri web ile uyumlu veya işyeri web\'de güvenle bulunamadı.</p>'}
-  ${er.map(x=>`<p style="color:var(--danger);font-size:.82rem">⚠️ ${esc(x.ad)}: ${esc(x.err)}</p>`).join('')}
+  ${ch.length?`<p style="font-size:.85rem">Adres, Telefon, Görev veya Otomasyon No için bulunan düzeltmeler.</p><table class="hk-diff"><tr><th></th><th>İşyeri</th><th>Alan</th><th>Tablodaki</th><th>Önerilen</th></tr>${ch.map((x,k)=>`<tr><td><input type="checkbox" checked data-k="${k}"></td><td>${esc(x.ad)}</td><td>${x.f}</td><td class="old">${esc(x.old)||'—'}</td><td class="new">${esc(x.nw)}<br><small>${(x.src||[]).map(u=>`<a href="${esc(u)}" target="_blank" rel="noopener">kaynak</a>`).join(' ')}</small></td></tr>`).join('')}</table>`:'<p>Fark bulunamadı: Mevcut veriler onaylandı veya işyeri tam teyit edilemedi.</p>'}
+  ${er.map(x=>`<p style="color:var(--danger);font-size:.82rem">⚠️ ${esc(x.ad)}:${esc(x.err)}</p>`).join('')}
   <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px"><button class="btn btn-outline" id="hkDc">Kapat</button>${ch.length?'<button class="btn btn-success" id="hkDa">✅ Seçilenleri Tabloya Uygula</button>':''}</div></div></div>`;
   document.body.appendChild(d); const cl=()=>d.remove(); d.querySelector('.hk-x').onclick=cl; d.querySelector('#hkDc').onclick=cl; d.onclick=e=>{if(e.target===d)cl();};
   const a=d.querySelector('#hkDa'); if(a) a.onclick=()=>{let n=0; d.querySelectorAll('input[data-k]:checked').forEach(c=>{const x=ch[+c.dataset.k]; x.tr.cells[x.c].innerText=x.nw; x.tr.cells[x.c].dispatchEvent(new Event('input',{bubbles:true})); n++;}); cl(); showToast(`✅ ${n} alan güncellendi`,'var(--success)'); setTimeout(hideToast,2500);};
