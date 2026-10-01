@@ -3041,22 +3041,31 @@ async function ask(tr){
   const prompt=`Türkiye'deki şu işyerini web'de ara: "${ad}" ${sehir?'('+sehir+')':''}. Mevcut kayıt adres: "${cell(tr,2)}", telefon: "${cell(tr,3)}". Yalnızca şu JSON'u döndür, başka metin yazma: {"bulundu":true/false,"adres":"güncel açık adres","telefon":"güncel telefon","not":"kısa gerekçe"}. Emin değilsen bulundu:false yaz.`;
   const body={contents:[{parts:[{text:prompt}]}]}; if(P.gsearch) body.tools=[{google_search:{}}];
   
-  // Anahtarları virgülle ayırıp temizle (boşlukları vs. sil)
-  const keys = P.gkey.split(',').map(k => k.trim()).filter(k => k.length > 0);
-  if(keys.length === 0) throw new Error('API Anahtarı bulunamadı.');
+  // DİKKAT: Sorunu çözen satır burası! 
+  // Artık virgül (,), noktalı virgül (;), düz boşluk veya satır atlaması fark etmeksizin anahtarları ayırıp, hatalı boşlukları temizleyecek.
+  const keys = (P.gkey||'').split(/[,;\s\n|]+/).map(k => k.trim()).filter(k => k.length > 20);
+  
+  if(keys.length === 0) throw new Error('Geçerli bir API Anahtarı bulunamadı.');
 
-  let lastError = null;
+  let sonHata = null;
 
   for (let i = 0; i < keys.length; i++) {
     try {
       const currentKey = keys[i];
-      const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(P.gmodel)}:generateContent?key=${encodeURIComponent(currentKey)}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+      const modelName = P.gmodel && P.gmodel.length > 5 ? P.gmodel : 'gemini-1.5-flash';
+      
+      const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(modelName)}:generateContent?key=${encodeURIComponent(currentKey)}`,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(body)
+      });
+      
       const j=await r.json(); 
       
-      // EĞER İSTEK BAŞARISIZ OLURSA (Hata kodu ne olursa olsun)
       if(!r.ok) {
-        lastError = new Error(j.error && j.error.message || ('HTTP '+r.status));
-        continue; // İŞLEMİ DURDURMA, DİREKT DİĞER ANAHTARA GEÇ
+        sonHata = new Error(j.error && j.error.message || ('HTTP '+r.status));
+        console.warn(`[Anahtar ${i+1} Başarısız]:`, sonHata.message);
+        continue; // Bir anahtar patlarsa direkt sonrakine geç
       }
       
       const txt=((j.candidates||[])[0]?.content?.parts||[]).map(p=>p.text||'').join(''); 
@@ -3064,15 +3073,16 @@ async function ask(tr){
       const o=JSON.parse(m[0]); 
       o.kaynak=((j.candidates[0].groundingMetadata||{}).groundingChunks||[]).map(c=>c.web&&c.web.uri).filter(Boolean).slice(0,2); 
       
-      return o; // İşlem başarılıysa döngüden çık ve sonucu döndür
+      return o; // İşlem başarılıysa sonucu döndür ve çık
       
     } catch(e) {
-      lastError = e; // Kod patlarsa hatayı sakla ve bir sonraki anahtarı denemeye devam et
+      sonHata = e;
+      console.warn(`[Anahtar ${i+1} Hatası]:`, e.message);
     }
   }
   
-  // Eğer listedeki TÜM anahtarlar denendi ve hepsi patladıysa, en son alınan hatayı ekrana bas
-  throw lastError;
+  // Tüm anahtarlar denendi ve hepsi patladıysa son hatayı ekrana yansıt
+  throw sonHata;
 }
 const nz=s=>(s||'').toLocaleLowerCase('tr').replace(/[^a-z0-9ğüşıöç]/g,'');
 async function aiVerify(){
