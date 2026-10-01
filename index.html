@@ -25,8 +25,6 @@
     <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
 
     <style>
-    
-    /* --- VMLOADER ENTEGRASYON STİLLERİ --- */
         .vm-tab-btn { padding: 12px 20px; border: none; background: none; font-weight: 600; font-size: 0.9rem; color: var(--text-muted); cursor: pointer; white-space: nowrap; border-bottom: 3px solid transparent; transition: all 0.2s; }
         .vm-tab-btn:hover { color: var(--primary); background: #f1f5f9; }
         .vm-tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); background: #ffffff; }
@@ -39,28 +37,22 @@
         .vm-copy-btn { background: #e0e7ff; color: var(--primary); border: none; border-radius: 6px; padding: 4px 10px; font-size: 0.8rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s; }
         .vm-copy-btn:hover { background: var(--primary); color: white; }
         .vm-copy-btn.copied { background: var(--success); color: white; }
-        /* ==========================================================================
-           MODERN SAAS UI/UX TASARIM SİSTEMİ
-           ========================================================================== */
 
         :root {
             --bg-color: #f1f5f9; 
             --card-bg: #ffffff;
             --text-main: #1e293b;
             --text-muted: #64748b;
-            
             --primary: #2563eb; 
             --primary-hover: #1d4ed8;
             --secondary: #f8fafc;
             --accent: #8b5cf6;
-            
             --success: #10b981;
             --success-light: #d1fae5;
             --warning: #f59e0b;
             --warning-light: #fef3c7;
             --danger: #ef4444;
             --danger-light: #fee2e2;
-
             --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
             --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
             --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
@@ -76,7 +68,6 @@
         .app-title h1 { margin: 0; font-size: 1.5rem; font-weight: 800; color: #0f172a; letter-spacing: -0.5px; }
         .badge-pro { background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        /* KULLANIM KILAVUZU STİLLERİ */
         .user-guide { background: white; border: 1px solid var(--primary); border-radius: var(--border-radius); box-shadow: var(--shadow-md); overflow: hidden; transition: all 0.3s ease; }
         .user-guide summary { background: linear-gradient(135deg, #eff6ff, #dbeafe); padding: 18px 25px; font-weight: 800; color: var(--primary); cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between; font-size: 1.1rem; user-select: none; }
         .user-guide summary::-webkit-details-marker { display: none; }
@@ -161,8 +152,6 @@
         tr.selected td:first-child { background-color: #dbeafe !important; border-right-color: #93c5fd; }
         td[contenteditable="true"]:focus { outline: 2px solid var(--primary); outline-offset: -2px; background-color: #fff; border-radius: 4px; }
         .table-actions { background: #f8fafc; padding: 12px 20px; border-top: 1px solid var(--border-color); display: flex; gap: 10px; align-items: center; border-radius: 0 0 var(--border-radius) var(--border-radius); justify-content: space-between; flex-wrap: wrap;}
-
-        /* Toplu Hücre Seçimi İçin */
         td.multi-selected { background-color: #dbeafe !important; outline: 2px solid var(--primary); outline-offset: -2px; }
 
         .doc-panel { background: white; border-radius: var(--border-radius); border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); overflow: hidden; display: none; margin-top:24px; }
@@ -226,96 +215,94 @@
         #inspectionStatusInfo { font-size: 0.8rem; color: #ea580c; display: block; margin-top: 4px; font-weight: 500; }
         .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
         .modal-actions button { flex: 1; }
-
-        /* Kabul Formu Satırları */
         .kabul-form-row { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 8px 15px; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 5px; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
         .kabul-form-title { font-weight: 600; font-size: 0.9rem; color: var(--primary); }
-    
-/* ===== UX İYİLEŞTİRMELERİ ===== */
-html{scroll-behavior:smooth;scroll-padding-top:70px}
-.step-nav{position:sticky;top:0;z-index:900;display:flex;gap:6px;overflow-x:auto;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border:1px solid var(--border-color);border-radius:12px;padding:8px;box-shadow:var(--shadow-sm)}
-.step-nav a{flex:1;min-width:max-content;text-align:center;padding:9px 14px;border-radius:8px;font-size:.85rem;font-weight:600;color:var(--text-muted);text-decoration:none;transition:var(--transition)}
-.step-nav a:hover,.step-nav a.on{background:#eff6ff;color:var(--primary)}
-#clearBtn{background:#fff;color:var(--danger);border:1px solid #fecaca}
-#clearBtn:hover{background:var(--danger-light)}
-.status-details>summary{cursor:pointer;font-weight:700;font-size:.9rem;list-style:none;padding:10px 14px;background:var(--secondary);border:1px solid var(--border-color);border-radius:8px}
-.status-details>summary::-webkit-details-marker{display:none}
-.tbl-search{padding:8px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:.85rem;min-width:190px;font-family:inherit}
-.tbl-search:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
-.sheet-overlay{position:fixed;inset:0;z-index:2600;background:rgba(15,23,42,.6);display:flex;align-items:flex-end;justify-content:center}
-.sheet{background:#fff;width:100%;max-width:720px;max-height:92vh;overflow-y:auto;border-radius:16px 16px 0 0;padding:18px 20px 90px;position:relative;animation:popUp .25s ease}
-.sheet h3{margin:0 0 4px;font-size:1.1rem}
-.sheet h4{margin:18px 0 8px;font-size:.8rem;text-transform:uppercase;letter-spacing:.5px;color:var(--primary);border-bottom:1px solid var(--border-color);padding-bottom:4px}
-.sheet .sheet-bar{position:fixed;bottom:0;width:100%;max-width:720px;background:#fff;border-top:1px solid var(--border-color);padding:12px 20px;display:flex;gap:10px;box-sizing:border-box}
-.sheet .sheet-bar .btn{flex:1}
-@media (max-width:768px){
- body{padding:10px}.container{gap:14px}
- .app-header{padding:14px}.app-title h1{font-size:1.2rem}
- .app-header>div:last-child{width:100%}.app-header .btn{flex:1;font-size:.8rem;padding:10px 8px}
- .card{padding:16px}.btn{min-height:44px}
- #processBtn{padding:16px;font-size:1rem}
- .doc-cards-grid{grid-template-columns:repeat(2,1fr);padding:12px;gap:10px}
- .doc-controls{padding:14px}.scope-selector,.company-navigator{max-width:100%}
- .scope-selector>div{flex-wrap:wrap}
- .table-actions{padding:10px}.tbl-search{width:100%}
- .table-scroll{max-height:70vh}
- #status{left:10px;right:10px;bottom:10px}
- .modal-content-lg,.modal-content-cal{width:100%;height:100%;border-radius:0}
- .vm-data-row{grid-template-columns:1fr auto}.vm-tab-content{padding:14px}
- .guide-grid{grid-template-columns:1fr;padding:14px}
-}
-</style>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<style id="hk-modern">:root{--hk-r:16px}
-body{font-family:'Manrope','Inter',system-ui,sans-serif;background:radial-gradient(900px 380px at 8% -8%,rgba(37,99,235,.14),transparent 60%),radial-gradient(700px 300px at 100% 0,rgba(139,92,246,.10),transparent 60%),var(--bg-color);letter-spacing:-.005em}
-.app-header{background:linear-gradient(120deg,#0b1220 0%,#14295e 58%,#2748c9 100%)!important;border:0!important;border-radius:20px!important;box-shadow:0 18px 44px -18px rgba(20,41,94,.65)!important;padding:22px 26px!important}
-.app-header h1{color:#fff!important;letter-spacing:-.03em;font-weight:800}
-.app-header .badge-pro{background:rgba(255,255,255,.14)!important;color:#dbe6ff!important;border:1px solid rgba(255,255,255,.22)!important;backdrop-filter:blur(6px)}
-.app-header>div:last-child{display:none!important}
-.card,.doc-panel,section.card{border-radius:var(--hk-r)!important;border:1px solid var(--border-color)!important;box-shadow:0 1px 2px rgba(16,24,40,.04),0 16px 36px -22px rgba(16,24,40,.22)!important}
-.btn{border-radius:11px!important;font-weight:700;transition:transform .15s,box-shadow .15s,background .15s,filter .15s}
-.btn:hover{transform:translateY(-1px);box-shadow:0 8px 18px -10px rgba(16,24,40,.35)}
-.btn:focus-visible,.hk-ab:focus-visible,a:focus-visible{outline:3px solid color-mix(in srgb,var(--primary) 40%,transparent);outline-offset:2px}
-.form-control,input[type=text],input[type=search],select,textarea{border-radius:10px}
-.step-nav{top:8px!important;border-radius:16px!important;padding:7px!important;align-items:center;background:rgba(255,255,255,.82)!important;backdrop-filter:blur(14px) saturate(1.4);box-shadow:0 10px 30px -14px rgba(16,24,40,.35)!important;gap:4px!important}
-.step-nav>a{flex:0 1 auto!important;border-radius:11px!important}
-.step-nav>a.on{background:var(--primary)!important;color:#fff!important;box-shadow:0 6px 14px -6px var(--primary)}
-.hk-actions{display:flex;gap:4px;margin-left:auto;padding-left:8px;border-left:1px solid var(--border-color);flex-shrink:0}
-.hk-ab{border:0;background:transparent;color:var(--text-main);font:600 .82rem inherit;font-family:inherit;padding:8px 11px;border-radius:10px;cursor:pointer;white-space:nowrap;transition:background .15s}
-.hk-ab:hover{background:color-mix(in srgb,var(--primary) 12%,transparent);color:var(--primary)}
-.hk-ab.danger:hover{background:var(--danger-light);color:var(--danger)}
-#sec-template,#sec-upload,#sec-table,#docButtons{scroll-margin-top:84px}
-#docButtons{display:block!important}#excelSection{display:flex!important}
-th{background:#0f1b3d!important;color:#e8eefc!important;border-bottom:0!important}
-th:first-child{background:#0b1430!important}
-tbody tr:nth-child(even) td:not(:first-child){background:color-mix(in srgb,var(--primary) 3.5%,transparent)}
-td:focus{outline:2px solid var(--primary);outline-offset:-2px;background:color-mix(in srgb,var(--primary) 8%,#fff)}
-body.hk-compact td,body.hk-compact th{padding:6px 8px!important}
-.hk-ov{position:fixed;inset:0;z-index:3000;background:rgba(8,13,28,.62);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:18px}
-.hk-ov.open{display:flex}
-.hk-box{background:var(--card-bg);color:var(--text-main);width:min(980px,100%);max-height:92vh;border-radius:20px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 30px 80px -20px rgba(0,0,0,.5);animation:popUp .22s ease}
-.hk-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 22px;background:linear-gradient(120deg,#0b1220,#1c3a8f);color:#fff}
-.hk-hd h3{margin:0;font-size:1.05rem}.hk-x{background:rgba(255,255,255,.14);border:0;color:#fff;width:34px;height:34px;border-radius:50%;font-size:1.2rem;cursor:pointer}
-.hk-tabs{display:flex;gap:2px;padding:8px 14px 0;border-bottom:1px solid var(--border-color);overflow-x:auto}
-.hk-tab{border:0;background:none;padding:10px 14px;font:700 .85rem inherit;font-family:inherit;color:var(--text-muted);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
-.hk-tab.on{color:var(--primary);border-bottom-color:var(--primary)}
-.hk-body{padding:20px 24px;overflow:auto}.hk-pane{display:none}.hk-pane.on{display:block}
-.hk-row{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border-color)}
-.hk-row small{display:block;color:var(--text-muted);font-weight:500;margin-top:2px}
-.hk-sw{display:flex;gap:8px;flex-wrap:wrap}.hk-sw button{width:28px;height:28px;border-radius:50%;border:3px solid transparent;cursor:pointer}.hk-sw button.on{border-color:var(--text-main)}
-.hk-man h4{margin:18px 0 6px;color:var(--primary)}.hk-man p,.hk-man li{font-size:.88rem;line-height:1.6}.hk-man code{background:var(--secondary);padding:1px 6px;border-radius:5px;font-size:.8rem}
-.hk-diff{width:100%;border-collapse:collapse;font-size:.82rem}.hk-diff td,.hk-diff th{padding:8px;border-bottom:1px solid var(--border-color);text-align:left;position:static!important;background:none!important;color:var(--text-main)!important}
-.hk-diff .old{color:var(--danger)!important}.hk-diff .new{color:#059669!important;font-weight:700}
-[data-theme=dark]{--bg-color:#0a1020;--card-bg:#111a2e;--text-main:#e6ecf8;--text-muted:#93a1bd;--secondary:#16213a;--border-color:#243252;--success-light:#064e3b;--warning-light:#4a3708;--danger-light:#4c1d1d}
-[data-theme=dark] body{background:var(--bg-color)}
-[data-theme=dark] th:first-child,[data-theme=dark] td:first-child{background:#16213a!important;color:var(--text-main)}
-[data-theme=dark] td,[data-theme=dark] label,[data-theme=dark] h1,[data-theme=dark] h2,[data-theme=dark] h3{color:var(--text-main)}
-[data-theme=dark] input,[data-theme=dark] select,[data-theme=dark] textarea,[data-theme=dark] .form-control{background:#0d1630!important;color:var(--text-main)!important;border-color:var(--border-color)!important}
-[data-theme=dark] .step-nav{background:rgba(17,26,46,.85)!important}
-[data-theme=dark] #excelSection,[data-theme=dark] .doc-controls{background:var(--secondary)!important}
-@media(max-width:768px){.hk-ab span{display:none}.hk-ab{padding:9px}.step-nav>a{padding:8px 10px!important;font-size:.78rem!important}.hk-body{padding:14px}}
-@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-</style>
+
+        html{scroll-behavior:smooth;scroll-padding-top:70px}
+        .step-nav{position:sticky;top:0;z-index:900;display:flex;gap:6px;overflow-x:auto;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border:1px solid var(--border-color);border-radius:12px;padding:8px;box-shadow:var(--shadow-sm)}
+        .step-nav a{flex:1;min-width:max-content;text-align:center;padding:9px 14px;border-radius:8px;font-size:.85rem;font-weight:600;color:var(--text-muted);text-decoration:none;transition:var(--transition)}
+        .step-nav a:hover,.step-nav a.on{background:#eff6ff;color:var(--primary)}
+        #clearBtn{background:#fff;color:var(--danger);border:1px solid #fecaca}
+        #clearBtn:hover{background:var(--danger-light)}
+        .status-details>summary{cursor:pointer;font-weight:700;font-size:.9rem;list-style:none;padding:10px 14px;background:var(--secondary);border:1px solid var(--border-color);border-radius:8px}
+        .status-details>summary::-webkit-details-marker{display:none}
+        .tbl-search{padding:8px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:.85rem;min-width:190px;font-family:inherit}
+        .tbl-search:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+        .sheet-overlay{position:fixed;inset:0;z-index:2600;background:rgba(15,23,42,.6);display:flex;align-items:flex-end;justify-content:center}
+        .sheet{background:#fff;width:100%;max-width:720px;max-height:92vh;overflow-y:auto;border-radius:16px 16px 0 0;padding:18px 20px 90px;position:relative;animation:popUp .25s ease}
+        .sheet h3{margin:0 0 4px;font-size:1.1rem}
+        .sheet h4{margin:18px 0 8px;font-size:.8rem;text-transform:uppercase;letter-spacing:.5px;color:var(--primary);border-bottom:1px solid var(--border-color);padding-bottom:4px}
+        .sheet .sheet-bar{position:fixed;bottom:0;width:100%;max-width:720px;background:#fff;border-top:1px solid var(--border-color);padding:12px 20px;display:flex;gap:10px;box-sizing:border-box}
+        .sheet .sheet-bar .btn{flex:1}
+        @media (max-width:768px){
+            body{padding:10px}.container{gap:14px}
+            .app-header{padding:14px}.app-title h1{font-size:1.2rem}
+            .app-header>div:last-child{width:100%}.app-header .btn{flex:1;font-size:.8rem;padding:10px 8px}
+            .card{padding:16px}.btn{min-height:44px}
+            #processBtn{padding:16px;font-size:1rem}
+            .doc-cards-grid{grid-template-columns:repeat(2,1fr);padding:12px;gap:10px}
+            .doc-controls{padding:14px}.scope-selector,.company-navigator{max-width:100%}
+            .scope-selector>div{flex-wrap:wrap}
+            .table-actions{padding:10px}.tbl-search{width:100%}
+            .table-scroll{max-height:70vh}
+            #status{left:10px;right:10px;bottom:10px}
+            .modal-content-lg,.modal-content-cal{width:100%;height:100%;border-radius:0}
+            .vm-data-row{grid-template-columns:1fr auto}.vm-tab-content{padding:14px}
+            .guide-grid{grid-template-columns:1fr;padding:14px}
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style id="hk-modern">
+        :root{--hk-r:16px}
+        body{font-family:'Manrope','Inter',system-ui,sans-serif;background:radial-gradient(900px 380px at 8% -8%,rgba(37,99,235,.14),transparent 60%),radial-gradient(700px 300px at 100% 0,rgba(139,92,246,.10),transparent 60%),var(--bg-color);letter-spacing:-.005em}
+        .app-header{background:linear-gradient(120deg,#0b1220 0%,#14295e 58%,#2748c9 100%)!important;border:0!important;border-radius:20px!important;box-shadow:0 18px 44px -18px rgba(20,41,94,.65)!important;padding:22px 26px!important}
+        .app-header h1{color:#fff!important;letter-spacing:-.03em;font-weight:800}
+        .app-header .badge-pro{background:rgba(255,255,255,.14)!important;color:#dbe6ff!important;border:1px solid rgba(255,255,255,.22)!important;backdrop-filter:blur(6px)}
+        .app-header>div:last-child{display:none!important}
+        .card,.doc-panel,section.card{border-radius:var(--hk-r)!important;border:1px solid var(--border-color)!important;box-shadow:0 1px 2px rgba(16,24,40,.04),0 16px 36px -22px rgba(16,24,40,.22)!important}
+        .btn{border-radius:11px!important;font-weight:700;transition:transform .15s,box-shadow .15s,background .15s,filter .15s}
+        .btn:hover{transform:translateY(-1px);box-shadow:0 8px 18px -10px rgba(16,24,40,.35)}
+        .btn:focus-visible,.hk-ab:focus-visible,a:focus-visible{outline:3px solid color-mix(in srgb,var(--primary) 40%,transparent);outline-offset:2px}
+        .form-control,input[type=text],input[type=search],select,textarea{border-radius:10px}
+        .step-nav{top:8px!important;border-radius:16px!important;padding:7px!important;align-items:center;background:rgba(255,255,255,.82)!important;backdrop-filter:blur(14px) saturate(1.4);box-shadow:0 10px 30px -14px rgba(16,24,40,.35)!important;gap:4px!important}
+        .step-nav>a{flex:0 1 auto!important;border-radius:11px!important}
+        .step-nav>a.on{background:var(--primary)!important;color:#fff!important;box-shadow:0 6px 14px -6px var(--primary)}
+        .hk-actions{display:flex;gap:4px;margin-left:auto;padding-left:8px;border-left:1px solid var(--border-color);flex-shrink:0}
+        .hk-ab{border:0;background:transparent;color:var(--text-main);font:600 .82rem inherit;font-family:inherit;padding:8px 11px;border-radius:10px;cursor:pointer;white-space:nowrap;transition:background .15s}
+        .hk-ab:hover{background:color-mix(in srgb,var(--primary) 12%,transparent);color:var(--primary)}
+        .hk-ab.danger:hover{background:var(--danger-light);color:var(--danger)}
+        #sec-template,#sec-upload,#sec-table,#docButtons{scroll-margin-top:84px}
+        #docButtons{display:block!important}#excelSection{display:flex!important}
+        th{background:#0f1b3d!important;color:#e8eefc!important;border-bottom:0!important}
+        th:first-child{background:#0b1430!important}
+        tbody tr:nth-child(even) td:not(:first-child){background:color-mix(in srgb,var(--primary) 3.5%,transparent)}
+        td:focus{outline:2px solid var(--primary);outline-offset:-2px;background:color-mix(in srgb,var(--primary) 8%,#fff)}
+        body.hk-compact td,body.hk-compact th{padding:6px 8px!important}
+        .hk-ov{position:fixed;inset:0;z-index:3000;background:rgba(8,13,28,.62);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:18px}
+        .hk-ov.open{display:flex}
+        .hk-box{background:var(--card-bg);color:var(--text-main);width:min(980px,100%);max-height:92vh;border-radius:20px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 30px 80px -20px rgba(0,0,0,.5);animation:popUp .22s ease}
+        .hk-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 22px;background:linear-gradient(120deg,#0b1220,#1c3a8f);color:#fff}
+        .hk-hd h3{margin:0;font-size:1.05rem}.hk-x{background:rgba(255,255,255,.14);border:0;color:#fff;width:34px;height:34px;border-radius:50%;font-size:1.2rem;cursor:pointer}
+        .hk-tabs{display:flex;gap:2px;padding:8px 14px 0;border-bottom:1px solid var(--border-color);overflow-x:auto}
+        .hk-tab{border:0;background:none;padding:10px 14px;font:700 .85rem inherit;font-family:inherit;color:var(--text-muted);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
+        .hk-tab.on{color:var(--primary);border-bottom-color:var(--primary)}
+        .hk-body{padding:20px 24px;overflow:auto}.hk-pane{display:none}.hk-pane.on{display:block}
+        .hk-row{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border-color)}
+        .hk-row small{display:block;color:var(--text-muted);font-weight:500;margin-top:2px}
+        .hk-sw{display:flex;gap:8px;flex-wrap:wrap}.hk-sw button{width:28px;height:28px;border-radius:50%;border:3px solid transparent;cursor:pointer}.hk-sw button.on{border-color:var(--text-main)}
+        .hk-man h4{margin:18px 0 6px;color:var(--primary)}.hk-man p,.hk-man li{font-size:.88rem;line-height:1.6}.hk-man code{background:var(--secondary);padding:1px 6px;border-radius:5px;font-size:.8rem}
+        .hk-diff{width:100%;border-collapse:collapse;font-size:.82rem}.hk-diff td,.hk-diff th{padding:8px;border-bottom:1px solid var(--border-color);text-align:left;position:static!important;background:none!important;color:var(--text-main)!important}
+        .hk-diff .old{color:var(--danger)!important}.hk-diff .new{color:#059669!important;font-weight:700}
+        [data-theme=dark]{--bg-color:#0a1020;--card-bg:#111a2e;--text-main:#e6ecf8;--text-muted:#93a1bd;--secondary:#16213a;--border-color:#243252;--success-light:#064e3b;--warning-light:#4a3708;--danger-light:#4c1d1d}
+        [data-theme=dark] body{background:var(--bg-color)}
+        [data-theme=dark] th:first-child,[data-theme=dark] td:first-child{background:#16213a!important;color:var(--text-main)}
+        [data-theme=dark] td,[data-theme=dark] label,[data-theme=dark] h1,[data-theme=dark] h2,[data-theme=dark] h3{color:var(--text-main)}
+        [data-theme=dark] input,[data-theme=dark] select,[data-theme=dark] textarea,[data-theme=dark] .form-control{background:#0d1630!important;color:var(--text-main)!important;border-color:var(--border-color)!important}
+        [data-theme=dark] .step-nav{background:rgba(17,26,46,.85)!important}
+        [data-theme=dark] #excelSection,[data-theme=dark] .doc-controls{background:var(--secondary)!important}
+        @media(max-width:768px){.hk-ab span{display:none}.hk-ab{padding:9px}.step-nav>a{padding:8px 10px!important;font-size:.78rem!important}.hk-body{padding:14px}}
+        @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+    </style>
 </head>
 <body>
 
@@ -332,7 +319,7 @@ body.hk-compact td,body.hk-compact th{padding:6px 8px!important}
                 <input type="file" id="hkImportInput" accept=".hk" style="display: none;" onclick="this.value=null;" onchange="loadProject(event)">
             </label>
             <button id="calendarBtn" class="btn btn-outline" onclick="openCalendarModal()">📅 Takvim</button>
-            <button id="clearBtn" class="btn btn-danger" onclick="clearAll()">🗑️ Temizle</button>
+            <button id="clearBtn" class="btn btn-danger" onclick="clearAll()">🗑️️ Temizle</button>
         </div>
     </header>
 
@@ -538,7 +525,6 @@ body.hk-compact td,body.hk-compact th{padding:6px 8px!important}
             </div>
         </div>
     </div>
-    </section>
 
     <section id="docButtons" class="doc-panel">
         <div class="doc-panel-header">
@@ -581,7 +567,7 @@ body.hk-compact td,body.hk-compact th{padding:6px 8px!important}
                         <span class="scope-label" style="color: var(--primary);">Konu Seçimi:</span>
                         <select id="programliKonuSelect" style="font-size: 1rem; padding: 4px 10px; font-weight: 700; color: #0f172a; border: 2px solid #cbd5e1; border-radius: 8px; outline: none;">
                             <option value="konu_maden">⛏️ Maden İşyerlerinde</option>
-                            <option value="konu_metal">⚙️ Metal Sektöründe</option>
+                            <option value="konu_metal">⚙️️ Metal Sektöründe</option>
                         </select>
                     </div>
                 </div>
@@ -591,11 +577,8 @@ body.hk-compact td,body.hk-compact th{padding:6px 8px!important}
                         <span class="scope-label" style="color: var(--primary);">📄 İnceleme Konuları (Kabul Formu Havuzu)</span>
                             <div style="display:flex; gap:10px;">
                                 <button class="btn btn-outline" style="font-size: 0.8rem; padding: 6px 12px;" onclick="autoAssignForms()">🔄 Otomatik Eşleştir</button>
-    
                                 <button class="btn btn-outline" style="font-size: 0.8rem; padding: 6px 12px; border-color: var(--danger); color: var(--danger);" onclick="clearKabulForms()">🗑️ Formları Temizle</button>
-    
                                 <button class="btn btn-outline" style="font-size: 0.8rem; padding: 6px 12px; border-color: var(--accent); color: var(--accent);" onclick="openPdfPreviewTabs()">👁️ Yüklenenleri Önizle</button>
-    
                                     <label class="btn btn-primary" style="font-size: 0.8rem; padding: 6px 12px; cursor: pointer; box-shadow: var(--shadow-sm);">
                                     ➕ Toplu Form Yükle (PDF)
                                     <input type="file" multiple accept=".pdf" style="display:none" onchange="handleKabulFormUploadBulk(event)">
@@ -638,7 +621,6 @@ body.hk-compact td,body.hk-compact th{padding:6px 8px!important}
             <div class="doc-card card-teb"><b>📝 Tebliğli Tutanak</b><button class="action-btn" onclick="genDoc('teb_tutanak')">Üret ve İndir</button></div>
             <div class="doc-card card-bulk"><b>📮 PTT Tevdi Listesi</b><button class="action-btn" onclick="genDoc('teblig_liste')">Toplu Üret ve İndir</button></div>
             
-
             <div class="doc-card card-ipc"><b>💰 RAPOR IPC</b><button class="action-btn" onclick="genDoc('ipc')">Üret ve İndir</button></div>
             <div class="doc-card card-nok"><b>✅ RAPOR NOKSANSIZ</b><button class="action-btn" onclick="genDoc('noksansiz')">Üret ve İndir</button></div>
             <div class="doc-card card-tdb"><b>🚫 İDARİ TEDBİR</b><button class="action-btn" onclick="genDoc('tdb')">Üret ve İndir</button></div>
@@ -742,7 +724,6 @@ body.hk-compact td,body.hk-compact th{padding:6px 8px!important}
     </div>
 </div>
 
-    
 <script>
     // --- SABİTLER ---
     const GITHUB_ZIP_URL = "https://raw.githubusercontent.com/hamzakivrak/hitossablonlar/main/Sablonlar.zip";
@@ -1010,7 +991,6 @@ body.hk-compact td,body.hk-compact th{padding:6px 8px!important}
 
     window.addEventListener('DOMContentLoaded', async () => { initGroup(1); loadInspectorDefaults(); await openDB(); loadTemplatesFromDB(); });
 
-    // --- TEFTİŞ TÜRÜ UI DEĞİŞİMİ ---
     function toggleKonuUI() {
         const type = document.getElementById('teftisTuruSelect').value;
         const progDiv = document.getElementById('programliKonuDiv');
@@ -1026,124 +1006,103 @@ body.hk-compact td,body.hk-compact th{padding:6px 8px!important}
         }
     }
 
-  // 1. GÜNCELLENMİŞ TOPLU YÜKLEME FONKSİYONU (OCR Motoru Optimizasyonu İçerir)
-async function handleKabulFormUploadBulk(event) {
-    const files = event.target.files; 
-    if(!files.length) return;
-    
-    showToast("⏳ Formlar Yapay Zeka (OCR) ile okunuyor, lütfen bekleyin (Bu işlem biraz sürebilir)...", "var(--warning)");
-    
-    // PERFORMANS: OCR motorunu her dosya için ayrı ayrı açmamak adına burada 1 kere başlatıyoruz
-    let worker;
-    try {
-        worker = await Tesseract.createWorker('tur');
-    } catch(e) {
-        showToast("❌ OCR Motoru başlatılamadı. İnternet bağlantınızı kontrol edin.", "var(--danger)");
-        return;
-    }
-    
-    let newCount = 0;
-    for(let i = 0; i < files.length; i++) {
-        let file = files[i];
-        showToast(`⏳ Okunuyor: ${file.name} (${i+1}/${files.length})`, "var(--warning)");
-        
-        const data = await processKabulFormPDF_OCR(file, worker);
-        if(data) {
-            data.fileName = file.name;
-            // PDF'i Base64'e çevirip önizleme için saklıyoruz
-            data.fileBase64 = await fileToBase64(file); 
-            
-            kabulFormlariListesi.push(data);
-            newCount++;
+    async function handleKabulFormUploadBulk(event) {
+        const files = event.target.files; 
+        if(!files.length) return;
+        showToast("⏳ Formlar Yapay Zeka (OCR) ile okunuyor, lütfen bekleyin (Bu işlem biraz sürebilir)...", "var(--warning)");
+        let worker;
+        try { worker = await Tesseract.createWorker('tur'); } catch(e) {
+            showToast("❌ OCR Motoru başlatılamadı. İnternet bağlantınızı kontrol edin.", "var(--danger)"); return;
         }
+        let newCount = 0;
+        for(let i = 0; i < files.length; i++) {
+            let file = files[i];
+            showToast(`⏳ Okunuyor: ${file.name} (${i+1}/${files.length})`, "var(--warning)");
+            const data = await processKabulFormPDF_OCR(file, worker);
+            if(data) {
+                data.fileName = file.name;
+                data.fileBase64 = await fileToBase64(file); 
+                kabulFormlariListesi.push(data);
+                newCount++;
+            }
+        }
+        await worker.terminate(); 
+        showToast(`✅ ${newCount} form OCR ile havuza eklendi!`, "var(--success)"); 
+        setTimeout(hideToast, 3000);
+        autoAssignForms(); 
+        event.target.value = ''; 
     }
-    
-    // İşlem bitince motoru kapatarak RAM'i temizliyoruz
-    await worker.terminate(); 
 
-    showToast(`✅ ${newCount} form OCR ile havuza eklendi!`, "var(--success)"); 
-    setTimeout(hideToast, 3000);
-    
-    autoAssignForms(); 
-    event.target.value = ''; 
-}
-
-// 2. YENİ OCR (GÖRSEL ÇÖZÜMLEME) TABANLI PDF OKUMA FONKSİYONU
-
-// ===== v76: GÜÇLENDİRİLMİŞ DDK OKUMA (metin katmanı -> OCR + döndürme) =====
-function hkNorm(s){return (s||'').toLocaleLowerCase('tr').replace(/ğ/g,'g').replace(/ü/g,'u').replace(/ş/g,'s').replace(/ı/g,'i').replace(/ö/g,'o').replace(/ç/g,'c').replace(/[^a-z0-9]/g,'');}
-function hkHasHeading(L){const n=hkNorm(L.join(' '));return n.includes('belirlenenhususlar')&&n.includes('incelenmeyen');}
-async function hkTextLines(page){
-  const vp=page.getViewport({scale:1}), tc=await page.getTextContent(), U=pdfjsLib.Util; let its=[], w={};
-  tc.items.forEach(it=>{ if(!it.str||!it.str.trim()) return; const t=U.transform(vp.transform,it.transform); const a=(((Math.round(Math.atan2(t[1],t[0])/(Math.PI/2)))%4)+4)%4; w[a]=(w[a]||0)+it.str.length; its.push({s:it.str,t,a}); });
-  if(!its.length) return [];
-  const dom=+Object.keys(w).sort((x,y)=>w[y]-w[x])[0], th=dom*Math.PI/2, c=Math.cos(th), sn=Math.sin(th);
-  its=its.filter(i=>i.a===dom).map(i=>({s:i.s,x:i.t[4]*c+i.t[5]*sn,y:-i.t[4]*sn+i.t[5]*c,h:Math.hypot(i.t[2],i.t[3])||8})).sort((a,b)=>a.y-b.y||a.x-b.x);
-  const lines=[]; let cur=null;
-  its.forEach(i=>{ if(!cur||Math.abs(i.y-cur.y)>i.h*0.55){cur={y:i.y,p:[]};lines.push(cur);} cur.p.push(i); });
-  return lines.map(l=>l.p.sort((a,b)=>a.x-b.x).map(i=>i.s).join(' ').replace(/\s+/g,' ').trim()).filter(Boolean);
-}
-function hkRotate(cv,deg){ if(!deg) return cv; const r=document.createElement('canvas'), sw=deg===90||deg===270; r.width=sw?cv.height:cv.width; r.height=sw?cv.width:cv.height; const x=r.getContext('2d'); x.translate(r.width/2,r.height/2); x.rotate(deg*Math.PI/180); x.drawImage(cv,-cv.width/2,-cv.height/2); return r; }
-async function hkOcrPage(page,worker){
-  if(!worker) throw new Error('OCR motoru yok (internet gerekli)');
-  const vp=page.getViewport({scale:2.2}), cv=document.createElement('canvas'); cv.width=vp.width; cv.height=vp.height;
-  await page.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise;
-  let best=null;
-  for(const deg of [0,90,270,180]){
-    const {data}=await worker.recognize(hkRotate(cv,deg)); const n=hkNorm(data.text);
-    const kh=n.includes('belirlenenhususlar'), ki=n.includes('incelenmeyen');
-    const sc=(kh?1000:0)+(ki?500:0)+(n.includes('ddkdegerlendirme')?300:0)+(data.confidence||0);
-    if(!best||sc>best.sc) best={sc,lines:data.text.split('\n').map(x=>x.trim()).filter(x=>x.length>1)};
-    if(kh&&ki) break;
-  }
-  return best.lines;
-}
-function hkParseForm(lines){
-  const full=lines.join('\n'); let ddkTarih='[TARİH BULUNAMADI]';
-  const tm=full.match(/D[uüÜ]zenlenme\s*Tarihi[:;\s]*(\d{2}[./]\d{2}[./]\d{4})/i);
-  if(tm) ddkTarih=tm[1]; else { const all=full.match(/\d{2}\/\d{2}\/\d{4}/g); if(all) ddkTarih=all[all.length-1]; }
-  let sgk='[SGK BULUNAMADI]'; const sm=full.match(/(\d{23})|(\d{1,2}[\.\-]\d{4}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{7}[\.\-]\d{3}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{3})/); if(sm) sgk=sm[0].replace(/\D/g,'');
-  // Dilekçe Değerlendirme Komisyonu maddeleri
-  let cap=false, items=[];
-  for(const line of lines){
-    const n=hkNorm(line);
-    if(cap&&(n.includes('incelenmeyenkonu')||n.includes('ncelenmeyen')||n.includes('teftiskapsam'))) break;
-    if(cap){ const m=line.match(/^\s*[1-9Il|]\s*[\)\.]\s*(.*)$/); const t=(m?m[1]:line).replace(/^[\-•]\s*/,'').trim(); if(t.length<2) continue; if(m||!items.length) items.push(t); else items[items.length-1]+=' '+t; }
-    else if(n.includes('belirlenenhususlar')||(n.includes('dilekce')&&n.includes('komisyon'))) cap=true;
-  }
-  const ddkKonu=items.length?items.map(x=>'• '+x).join('\n'):'[HATA: Komisyon maddeleri okunamadı. PDF çok bulanık olabilir; formu manuel kontrol edin.]';
-  // Unvan / adres (eşleştirme için)
-  let unvan='', adres=''; const a=lines.findIndex(l=>hkNorm(l).includes('teftisyapilacakunvan')), b=lines.findIndex(l=>hkNorm(l).includes('heyetdurumu'));
-  if(a>-1&&b>a){ let st=a; while(st>0&&!hkNorm(lines[st-1]).includes('sgksicil')&&a-st<4) st--; 
-    const c=lines.slice(st,b).map(l=>l.replace(/\d\)\s*Tefti[sşŞ]\s*Yap[ıil]lacak\s*Unvan\s*ve\s*Adres\s*:?/i,'').replace(/^\s*(\d\)|SGK.*)$/i,'').trim()).filter(x=>x.length>1&&!hkNorm(x).includes('sgksicil'));
-    unvan=c[0]||''; adres=c.slice(1).join(' '); }
-  return {sgk,ddkTarih,ddkNo:'-',ddkKonu,unvan,adres};
-}
-async function processKabulFormPDF_OCR(file, worker) {
-  try {
-    const pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer()}).promise; let lines=[], yontem='Metin katmanı';
-    for(let i=1;i<=pdf.numPages;i++) lines.push(...await hkTextLines(await pdf.getPage(i)));
-    if(!hkHasHeading(lines)){ yontem='OCR (otomatik döndürme)'; lines=[]; for(let i=1;i<=pdf.numPages;i++) lines.push(...await hkOcrPage(await pdf.getPage(i),worker)); }
-    const r=hkParseForm(lines); r.yontem=yontem; console.log('[HitosHK] DDK okundu:',file.name,yontem,r); return r;
-  } catch(e) { console.error('DDK okuma hatası:',e); return {sgk:'-',ddkTarih:'-',ddkNo:'-',ddkKonu:`[HATA: PDF okunamadı - ${e.message}]`,unvan:'',adres:''}; }
-}
-// --- Akıllı form-işyeri eşleştirme (SGK boşsa ünvan/dosya adı benzerliği) ---
-const hkMap=s=>(s||'').toLocaleLowerCase('tr').replace(/ğ/g,'g').replace(/ü/g,'u').replace(/ş/g,'s').replace(/ı/g,'i').replace(/ö/g,'o').replace(/ç/g,'c').replace(/c/g,'k').replace(/y/g,'i').replace(/w/g,'v');
-const HK_STOP=new Set(['anonim','sirketi','limited','ticaret','sanaii','sanai','insaat','turizm','gida','hizmetleri','istanbul','magaza','subesi','kabul','formu','form','merkezi','market','ataşehir'].map(hkMap));
-const hkTok=s=>hkMap(s).split(/[^a-z0-9]+/).filter(t=>t.length>=4&&!HK_STOP.has(t)&&!/^\d+$/.test(t));
-function hkLev(a,b){const d=Array.from({length:a.length+1},(_,i)=>[i]);for(let j=1;j<=b.length;j++)d[0][j]=j;for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[a.length][b.length];}
-function hkScore(ft,rt){let n=0;ft.forEach(f=>{if(rt.some(r=>hkLev(f,r)<=Math.max(1,Math.floor(Math.min(f.length,r.length)*0.3))))n++;});return n;}
-function autoAssignForms() {
-  const rows=document.querySelectorAll('#dataTable tbody tr'); ddkVerileri={};
-  rows.forEach((row,idx)=>{
-    const rowIndex=idx+1, rowSgk=(row.cells[18].innerText||'').replace(/\D/g,''); let best=-1;
-    for(let i=0;i<kabulFormlariListesi.length;i++){const f=kabulFormlariListesi[i]; if(f.sgk&&rowSgk&&rowSgk.length>5&&(f.sgk.includes(rowSgk)||rowSgk.includes(f.sgk))){best=i;break;}}
-    if(best===-1){ const rt=hkTok((row.cells[16].innerText||'')+' '+(row.cells[17].innerText||'')); let bs=0;
-      kabulFormlariListesi.forEach((f,i)=>{const sc=hkScore(hkTok((f.unvan||'')+' '+(f.fileName||'').split(/kabul/i)[0]),rt); if(sc>bs){bs=sc;best=i;}}); }
-    if(best!==-1) ddkVerileri[rowIndex]=best;
-  });
-  renderKabulFormUI();
-}
+    function hkNorm(s){return (s||'').toLocaleLowerCase('tr').replace(/ğ/g,'g').replace(/ü/g,'u').replace(/ş/g,'s').replace(/ı/g,'i').replace(/ö/g,'o').replace(/ç/g,'c').replace(/[^a-z0-9]/g,'');}
+    function hkHasHeading(L){const n=hkNorm(L.join(' '));return n.includes('belirlenenhususlar')&&n.includes('incelenmeyen');}
+    async function hkTextLines(page){
+        const vp=page.getViewport({scale:1}), tc=await page.getTextContent(), U=pdfjsLib.Util; let its=[], w={};
+        tc.items.forEach(it=>{ if(!it.str||!it.str.trim()) return; const t=U.transform(vp.transform,it.transform); const a=(((Math.round(Math.atan2(t[1],t[0])/(Math.PI/2)))%4)+4)%4; w[a]=(w[a]||0)+it.str.length; its.push({s:it.str,t,a}); });
+        if(!its.length) return [];
+        const dom=+Object.keys(w).sort((x,y)=>w[y]-w[x])[0], th=dom*Math.PI/2, c=Math.cos(th), sn=Math.sin(th);
+        its=its.filter(i=>i.a===dom).map(i=>({s:i.s,x:i.t[4]*c+i.t[5]*sn,y:-i.t[4]*sn+i.t[5]*c,h:Math.hypot(i.t[2],i.t[3])||8})).sort((a,b)=>a.y-b.y||a.x-b.x);
+        const lines=[]; let cur=null;
+        its.forEach(i=>{ if(!cur||Math.abs(i.y-cur.y)>i.h*0.55){cur={y:i.y,p:[]};lines.push(cur);} cur.p.push(i); });
+        return lines.map(l=>l.p.sort((a,b)=>a.x-b.x).map(i=>i.s).join(' ').replace(/\s+/g,' ').trim()).filter(Boolean);
+    }
+    function hkRotate(cv,deg){ if(!deg) return cv; const r=document.createElement('canvas'), sw=deg===90||deg===270; r.width=sw?cv.height:cv.width; r.height=sw?cv.width:cv.height; const x=r.getContext('2d'); x.translate(r.width/2,r.height/2); x.rotate(deg*Math.PI/180); x.drawImage(cv,-cv.width/2,-cv.height/2); return r; }
+    async function hkOcrPage(page,worker){
+        if(!worker) throw new Error('OCR motoru yok (internet gerekli)');
+        const vp=page.getViewport({scale:2.2}), cv=document.createElement('canvas'); cv.width=vp.width; cv.height=vp.height;
+        await page.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise;
+        let best=null;
+        for(const deg of [0,90,270,180]){
+            const {data}=await worker.recognize(hkRotate(cv,deg)); const n=hkNorm(data.text);
+            const kh=n.includes('belirlenenhususlar'), ki=n.includes('incelenmeyen');
+            const sc=(kh?1000:0)+(ki?500:0)+(n.includes('ddkdegerlendirme')?300:0)+(data.confidence||0);
+            if(!best||sc>best.sc) best={sc,lines:data.text.split('\n').map(x=>x.trim()).filter(x=>x.length>1)};
+            if(kh&&ki) break;
+        }
+        return best.lines;
+    }
+    function hkParseForm(lines){
+        const full=lines.join('\n'); let ddkTarih='[TARİH BULUNAMADI]';
+        const tm=full.match(/D[uüÜ]zenlenme\s*Tarihi[:;\s]*(\d{2}[./]\d{2}[./]\d{4})/i);
+        if(tm) ddkTarih=tm[1]; else { const all=full.match(/\d{2}\/\d{2}\/\d{4}/g); if(all) ddkTarih=all[all.length-1]; }
+        let sgk='[SGK BULUNAMADI]'; const sm=full.match(/(\d{23})|(\d{1,2}[\.\-]\d{4}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{7}[\.\-]\d{3}[\.\-]\d{2}[\.\-]\d{2}[\.\-]\d{3})/); if(sm) sgk=sm[0].replace(/\D/g,'');
+        let cap=false, items=[];
+        for(const line of lines){
+            const n=hkNorm(line);
+            if(cap&&(n.includes('incelenmeyenkonu')||n.includes('ncelenmeyen')||n.includes('teftiskapsam'))) break;
+            if(cap){ const m=line.match(/^\s*[1-9Il|]\s*[\)\.]\s*(.*)$/); const t=(m?m[1]:line).replace(/^[\-•]\s*/,'').trim(); if(t.length<2) continue; if(m||!items.length) items.push(t); else items[items.length-1]+=' '+t; }
+            else if(n.includes('belirlenenhususlar')||(n.includes('dilekce')&&n.includes('komisyon'))) cap=true;
+        }
+        const ddkKonu=items.length?items.map(x=>'• '+x).join('\n'):'[HATA: Komisyon maddeleri okunamadı. PDF çok bulanık olabilir; formu manuel kontrol edin.]';
+        let unvan='', adres=''; const a=lines.findIndex(l=>hkNorm(l).includes('teftisyapilacakunvan')), b=lines.findIndex(l=>hkNorm(l).includes('heyetdurumu'));
+        if(a>-1&&b>a){ let st=a; while(st>0&&!hkNorm(lines[st-1]).includes('sgksicil')&&a-st<4) st--; 
+            const c=lines.slice(st,b).map(l=>l.replace(/\d\)\s*Tefti[sşŞ]\s*Yap[ıil]lacak\s*Unvan\s*ve\s*Adres\s*:?/i,'').replace(/^\s*(\d\)|SGK.*)$/i,'').trim()).filter(x=>x.length>1&&!hkNorm(x).includes('sgksicil'));
+            unvan=c[0]||''; adres=c.slice(1).join(' '); }
+        return {sgk,ddkTarih,ddkNo:'-',ddkKonu,unvan,adres};
+    }
+    async function processKabulFormPDF_OCR(file, worker) {
+        try {
+            const pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer()}).promise; let lines=[], yontem='Metin katmanı';
+            for(let i=1;i<=pdf.numPages;i++) lines.push(...await hkTextLines(await pdf.getPage(i)));
+            if(!hkHasHeading(lines)){ yontem='OCR (otomatik döndürme)'; lines=[]; for(let i=1;i<=pdf.numPages;i++) lines.push(...await hkOcrPage(await pdf.getPage(i),worker)); }
+            const r=hkParseForm(lines); r.yontem=yontem; console.log('[HitosHK] DDK okundu:',file.name,yontem,r); return r;
+        } catch(e) { console.error('DDK okuma hatası:',e); return {sgk:'-',ddkTarih:'-',ddkNo:'-',ddkKonu:`[HATA: PDF okunamadı - ${e.message}]`,unvan:'',adres:''}; }
+    }
+    const hkMap=s=>(s||'').toLocaleLowerCase('tr').replace(/ğ/g,'g').replace(/ü/g,'u').replace(/ş/g,'s').replace(/ı/g,'i').replace(/ö/g,'o').replace(/ç/g,'c').replace(/c/g,'k').replace(/y/g,'i').replace(/w/g,'v');
+    const HK_STOP=new Set(['anonim','sirketi','limited','ticaret','sanaii','sanai','insaat','turizm','gida','hizmetleri','istanbul','magaza','subesi','kabul','formu','form','merkezi','market','ataşehir'].map(hkMap));
+    const hkTok=s=>hkMap(s).split(/[^a-z0-9]+/).filter(t=>t.length>=4&&!HK_STOP.has(t)&&!/^\d+$/.test(t));
+    function hkLev(a,b){const d=Array.from({length:a.length+1},(_,i)=>[i]);for(let j=1;j<=b.length;j++)d[0][j]=j;for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[a.length][b.length];}
+    function hkScore(ft,rt){let n=0;ft.forEach(f=>{if(rt.some(r=>hkLev(f,r)<=Math.max(1,Math.floor(Math.min(f.length,r.length)*0.3))))n++;});return n;}
+    function autoAssignForms() {
+        const rows=document.querySelectorAll('#dataTable tbody tr'); ddkVerileri={};
+        rows.forEach((row,idx)=>{
+            const rowIndex=idx+1, rowSgk=(row.cells[18].innerText||'').replace(/\D/g,''); let best=-1;
+            for(let i=0;i<kabulFormlariListesi.length;i++){const f=kabulFormlariListesi[i]; if(f.sgk&&rowSgk&&rowSgk.length>5&&(f.sgk.includes(rowSgk)||rowSgk.includes(f.sgk))){best=i;break;}}
+            if(best===-1){ const rt=hkTok((row.cells[16].innerText||'')+' '+(row.cells[17].innerText||'')); let bs=0;
+                kabulFormlariListesi.forEach((f,i)=>{const sc=hkScore(hkTok((f.unvan||'')+' '+(f.fileName||'').split(/kabul/i)[0]),rt); if(sc>bs){bs=sc;best=i;}}); }
+            if(best!==-1) ddkVerileri[rowIndex]=best;
+        });
+        renderKabulFormUI();
+    }
 
     function renderKabulFormUI() {
         const listDiv = document.getElementById('kabulFormuListesi');
@@ -1194,28 +1153,20 @@ function autoAssignForms() {
         renderKabulFormUI();
     }
 
-    // --- TEBLİGAT SIRA HESAPLAMA VE AKILLI DOLDURMA ---
     function calculateTebSira() {
         const rows = document.querySelectorAll('#dataTable tbody tr');
-        
         let maxExisting = 0;
         rows.forEach(r => {
             let s = parseInt(r.cells[39].innerText.trim());
             if (!isNaN(s) && s > maxExisting) maxExisting = s;
         });
-
         let counter = maxExisting + 1;
-        
         rows.forEach((r) => {
             let tebCr = r.cells[35] ? r.cells[35].innerText.trim() : '';
             let tebDav = r.cells[36] ? r.cells[36].innerText.trim() : '';
             let mevcutSira = r.cells[39] ? r.cells[39].innerText.trim() : '';
-            
             if (tebCr.length > 2 || tebDav.length > 2) {
-                if (mevcutSira === "") {
-                    r.cells[39].innerText = counter;
-                    counter++;
-                }
+                if (mevcutSira === "") { r.cells[39].innerText = counter; counter++; }
             } else {
                 if (r.cells[39]) r.cells[39].innerText = "";
             }
@@ -1233,16 +1184,11 @@ function autoAssignForms() {
             let maxSira = 0;
             let refRow = null;
             const rows = document.querySelectorAll('#dataTable tbody tr');
-            
-            // Tablodaki EN BÜYÜK sıra numarasını bul
             for (let i = 0; i < rows.length; i++) {
                 let r = rows[i];
                 if (r === row) continue; 
                 let siraVal = parseInt(r.cells[39].innerText.trim());
-                if (!isNaN(siraVal) && siraVal > maxSira) {
-                    maxSira = siraVal;
-                    refRow = r;
-                }
+                if (!isNaN(siraVal) && siraVal > maxSira) { maxSira = siraVal; refRow = r; }
             }
 
             if (refRow) {
@@ -1251,8 +1197,8 @@ function autoAssignForms() {
                 let baseDavetSaati = refRow.cells[37].innerText.trim();
                 let baseDavetAdresi = refRow.cells[38].innerText.trim();
 
-                let addTwoHours = (maxSira % 2 !== 0); // Tek sayıysa 2 saat ekle
-                let advanceDay = (maxSira % 2 === 0);  // Çift sayıysa gün atlat
+                let addTwoHours = (maxSira % 2 !== 0); 
+                let advanceDay = (maxSira % 2 === 0);  
 
                 let newDavetTarihi = baseDavetTarihi;
                 if (advanceDay && baseDavetTarihi && baseDavetTarihi.length >= 8) {
@@ -1261,9 +1207,8 @@ function autoAssignForms() {
                         let d = new Date(p[2], p[1] - 1, p[0]);
                         if (!isNaN(d)) {
                             d.setDate(d.getDate() + 1);
-                            if (d.getDay() === 6) d.setDate(d.getDate() + 2); // Cmt -> Pzt
-                            else if (d.getDay() === 0) d.setDate(d.getDate() + 1); // Pzr -> Pzt
-
+                            if (d.getDay() === 6) d.setDate(d.getDate() + 2); 
+                            else if (d.getDay() === 0) d.setDate(d.getDate() + 1); 
                             let dd = d.getDate().toString().padStart(2, '0');
                             let mm = (d.getMonth() + 1).toString().padStart(2, '0');
                             let yyyy = d.getFullYear();
@@ -1278,11 +1223,8 @@ function autoAssignForms() {
                     let h = parseInt(parts[0]);
                     let m = parts.length > 1 ? parts[1] : "00";
                     if (!isNaN(h)) {
-                        if (addTwoHours) {
-                            h = (h + 2) % 24;
-                        } else if (advanceDay) {
-                            h = (h - 2 + 24) % 24; // Geri al
-                        }
+                        if (addTwoHours) h = (h + 2) % 24;
+                        else if (advanceDay) h = (h - 2 + 24) % 24; 
                     }
                     newDavetSaati = (!isNaN(h) ? h.toString().padStart(2, '0') : parts[0]) + ':' + m;
                 }
@@ -1293,14 +1235,12 @@ function autoAssignForms() {
                 row.cells[38].innerText = baseDavetAdresi;
 
                 calculateTebSira();
-                
                 showToast("⚡ Tebligat verileri akıllı şekilde dolduruldu!", "var(--success)");
                 setTimeout(hideToast, 2500);
             }
         }
     }
 
-    // --- YARDIMCI FORMAT FONKSİYONLARI ---
     function getGunIsmi(tarihStr) {
         if(!tarihStr) return "";
         let p = tarihStr.split('.');
@@ -1314,9 +1254,7 @@ function autoAssignForms() {
         let rows = document.querySelectorAll('#dataTable tbody tr');
         rows.forEach(r => {
             let tebCr = r.cells[35] ? r.cells[35].innerText.trim() : '';
-            if (tebCr.length > 2 && r.cells[38] !== el) {
-                r.cells[38].innerText = val;
-            }
+            if (tebCr.length > 2 && r.cells[38] !== el) { r.cells[38].innerText = val; }
         });
     }
 
@@ -1325,7 +1263,6 @@ function autoAssignForms() {
     function normalizeDate(d){ if(!d||d==='-')return null; d=d.trim(); let m=d.match(/(\d{4})[-/.](\d{2})[-/.](\d{2})/); if(m)return `${m[3]}.${m[2]}.${m[1]}`; m=d.match(/(\d{2})[-/.](\d{2})[-/.](\d{4})/); return m?`${m[1]}.${m[2]}.${m[3]}`:d; }
     function formatSGK(r){ if(!r||r.length<15||r==='-')return r; let s=r.replace(/\D/g,''); if(s.length<20)return s; const p=(a,b)=>s.slice(a,b)||'?'; return `${p(0,1)}.${p(1,5)}.${p(5,7)}.${p(7,9)}.${p(9,16)}.${p(16,19)}.${p(19,21)}.${p(21,23)}`; }
     
-    // --- 81 İL TANIMA FONKSİYONU ---
     function extractCityFromAddress(adres) {
         if(!adres) return null;
         const normMap = {'ı':'i', 'i':'i', 'I':'i', 'İ':'i', 'ğ':'g', 'Ğ':'g', 'ü':'u', 'Ü':'u', 'ş':'s', 'Ş':'s', 'ö':'o', 'Ö':'o', 'ç':'c', 'Ç':'c'};
@@ -1347,8 +1284,6 @@ function autoAssignForms() {
         return null;
     }
     
-    
-    // --- OCR PARSE FONKSİYONLARI ---
     function smartExtract(t,p){for(let x of p){try{let m=t.match(new RegExp(x,'i'));if(m&&m[1])return m[1].replace(/^[:;.\- ]+/,'').trim();}catch(e){}}return '-';}
     function parseWorkplace(t) {
         let sgk = smartExtract(t, [ 'Sgk\\s*No.*?[\\s:;]*([\\d\\.]{20,})', '(\\d{23})', '(\\d{20,})' ]);
@@ -1384,7 +1319,6 @@ function autoAssignForms() {
     }
     function parseCount(t){ let m=t.match(/(\d+)\s*kayıt/i)||t.match(/(\d+)\s*(?:kişi|personel|çalışan)/i); return m?m[1]:'-'; }
 
-    // --- EXCEL OKUMA VE PARSE ---
     function readExcel(file) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -1444,7 +1378,6 @@ function autoAssignForms() {
         }); return { total, erkek: erkek || '-', kadin: kadin || '-' };
     }
 
-    // --- DOC SEÇİM VE SENKRONİZASYON ---
     function updateDocRowSelect() {
         const sel = document.getElementById('docRowSelect'); sel.innerHTML = '';
         const rows = document.querySelectorAll('#dataTable tbody tr');
@@ -1468,7 +1401,6 @@ function autoAssignForms() {
     function nextDocRow() { const sel = document.getElementById('docRowSelect'); if(sel.options.length > 0 && sel.selectedIndex < sel.options.length - 1) { sel.selectedIndex++; syncTableSelection(); } }
     function prevDocRow() { const sel = document.getElementById('docRowSelect'); if(sel.options.length > 0 && sel.selectedIndex > 0) { sel.selectedIndex--; syncTableSelection(); } }
 
-    // --- SATIR TAŞIMA FONKSİYONLARI ---
     function moveSelectedRowUp() {
         const sel = document.querySelector('#dataTable tbody tr.selected');
         if(!sel) return alert("Yukarı taşımak için bir satır seçiniz.");
@@ -1502,12 +1434,10 @@ function autoAssignForms() {
         calculateTebSira();
     }
 
-    // --- WORD ŞABLONU SAF XML AYIKLAMA (SİYAH ARKA PLANI ENGELLER) ---
     function getBodyXmlFromXmlString(xml) {
         let bodyMatch = xml.match(/<w:body[^>]*>([\s\S]*?)<\/w:body>/);
         if (!bodyMatch) return "";
         let bodyXml = bodyMatch[1];
-        
         bodyXml = bodyXml.replace(/<w:sectPr[^>]*>[\s\S]*?<\/w:sectPr>/g, '');
         bodyXml = bodyXml.replace(/<w:shd[^>]*\/>/g, '');
         bodyXml = bodyXml.replace(/<w:shd[^>]*>.*?<\/w:shd>/g, '');
@@ -1516,32 +1446,19 @@ function autoAssignForms() {
         return bodyXml;
     }
 
-    // --- WORD OLUŞTURMA (DOCXTEMPLATER) ---
     async function genDoc(type) {
         if (!templateBuffers[type]) { alert("Bu belge için şablon bulunamadı."); return; }
-
         calculateTebSira(); 
-
         const d = (r, i) => r ? (r.cells[i] ? r.cells[i].innerText.trim() : '') : '';
         const rows = document.querySelectorAll('#dataTable tbody tr');
-        
-        // Satırı sadece bir kez en başta ve güvenli bir şekilde çağırıyoruz
         const selectedRow = document.querySelector('#dataTable tbody tr.selected');
 
-        // --- RAPOR GÜVENLİK KİLİDİ (PRG / İNC UYUMSUZLUK KONTROLÜ) ---
         const reportTypes = ['ipc', 'noksansiz', 'tdb', 'rapor_niteliginde'];
         if (reportTypes.includes(type)) {
-            if(!selectedRow) {
-                alert("Lütfen tablodan işlem yapmak istediğiniz bir satırı seçiniz.");
-                return;
-            }
-            
+            if(!selectedRow) { alert("Lütfen tablodan işlem yapmak istediğiniz bir satırı seçiniz."); return; }
             let teftisTuruCheck = document.getElementById('teftisTuruSelect').value;
             let raporNoRaw = d(selectedRow, 32) || "";
-            
-            // Türkçe karakterleri de kapsayacak şekilde güvenli büyük harfe çevirme
             let raporNoCheck = raporNoRaw.toLocaleUpperCase('tr-TR');
-            
             let isPRG = raporNoCheck.includes('PRG');
             let isINC = raporNoCheck.includes('İNC') || raporNoCheck.includes('INC') || raporNoCheck.includes('İNCELEME') || raporNoCheck.includes('INCELEME');
             
@@ -1554,7 +1471,6 @@ function autoAssignForms() {
                 return;
             }
         }
-        // -------------------------------------------------------------
 
         let dataToFill = {
             "TeftisTuru": document.getElementById('teftisTuruSelect').value,
@@ -1571,7 +1487,6 @@ function autoAssignForms() {
 
         const now = new Date(); const yil = now.getFullYear(); const ay = (now.getMonth() + 1).toString().padStart(2, '0'); const gun = now.getDate().toString().padStart(2, '0');
         const yilAyGun = `${yil}/${ay}${gun}`; 
-        
         let activeRowIndexForKonu = 1; 
 
         if(type === 'teblig_liste') {
@@ -1580,7 +1495,6 @@ function autoAssignForms() {
                 let tebCr = d(r, 35);
                 let tebDav = d(r, 36);
                 let tebSira = parseInt(d(r, 39));
-
                 if((tebCr && tebCr.length > 2) || (tebDav && tebDav.length > 2)) {
                     TebListesi.push({
                         "TebSira": isNaN(tebSira) ? 9999 : tebSira, 
@@ -1590,19 +1504,9 @@ function autoAssignForms() {
                     });
                 }
             });
-            
-            if(TebListesi.length === 0) {
-                alert("Tebligat bilgisi girilmiş hiçbir satır bulunamadı. Lütfen ilgili sütunları doldurun.");
-                return;
-            }
-
-            // PTT Listesi için Sıra Numarasına Göre Kusursuz Sıralama
+            if(TebListesi.length === 0) { alert("Tebligat bilgisi girilmiş hiçbir satır bulunamadı. Lütfen ilgili sütunları doldurun."); return; }
             TebListesi.sort((a, b) => a.TebSira - b.TebSira);
-            
-            Object.assign(dataToFill, {
-                "TebListesi": TebListesi,
-                "YIL-AY-GUN": yilAyGun 
-            });
+            Object.assign(dataToFill, { "TebListesi": TebListesi, "YIL-AY-GUN": yilAyGun });
         }
         else if(type === 'talep') {
             if(rows.length === 0) { alert("Tabloda veri yok."); return; }
@@ -1639,7 +1543,6 @@ function autoAssignForms() {
         else {
             if(!selectedRow) { alert("Lütfen tablodan veya açılır menüden bir satır seçiniz."); return; }
             activeRowIndexForKonu = selectedRow.rowIndex;
-            
             const tamUnvan = d(selectedRow, 17); const kisaUnvan = d(selectedRow, 16); let raporNoFull = d(selectedRow, 32); let raporSadeceTarih = "";
             let m = raporNoFull.match(/(\d{2}[./]\d{2}[./]\d{4})/); if(m) raporSadeceTarih = m[1];
 
@@ -1681,7 +1584,6 @@ function autoAssignForms() {
                 "Uzman": d(selectedRow, 21), "UzmSertifika-Sözleşme": d(selectedRow, 22), "İGUsüre dk": d(selectedRow, 23), "Hekim": d(selectedRow, 24), "HekimSertifika-Sözleşme": d(selectedRow, 25), 
                 "Hsüre": d(selectedRow, 26), "DSP": d(selectedRow, 27), "DSPSertifika-Sözleşme": d(selectedRow, 28), "DSPsüre": d(selectedRow, 29), "K.Kap.Alınma": d(selectedRow, 31),
                 "RaporTarihiveNo": raporNoFull, "RaporTarihi": raporSadeceTarih, "OtomasyonNo": d(selectedRow, 30), "YIL-AY-GUN": yilAyGun,
-
                 "TebCrTarih": tebCrTarih,
                 "TebDavTarih": tebDavTarih,
                 "TebDavGün": tebDavGun, 
@@ -1700,16 +1602,13 @@ function autoAssignForms() {
         
         if(konuTipiStr === 'İnceleme Teftişi') { 
             secilenKonuKey = 'konu_inceleme'; 
-            
             const formIdx = ddkVerileri[activeRowIndexForKonu];
             const kabulData = formIdx !== undefined ? kabulFormlariListesi[formIdx] : null;
-            
-            // YENİ KOD (BUNU YAPIŞTIR)
             if (kabulData) {
                 dataToFill["DDKtarih"] = kabulData.ddkTarih || '[TARİH YOK]';
                 dataToFill["DDKno"] = kabulData.ddkNo || '[SAYI YOK]';
                 dataToFill["DDKkonu"] = kabulData.ddkKonu || '[KONU ALANI BOŞ]';
-                        } else {
+            } else {
                 dataToFill["DDKtarih"] = '[EŞLEŞEN FORM YOK]'; 
                 dataToFill["DDKno"] = '[EŞLEŞEN FORM YOK]'; 
                 dataToFill["DDKkonu"] = '[EŞLEŞTİRME HATASI: Bu işyeri için Kabul Formu yüklenmemiş veya SGK numaraları tablodaki ile aynı değil!]';
@@ -1724,20 +1623,15 @@ function autoAssignForms() {
 
         if (konuTemplateBuffer && type !== 'teblig_liste') {
             let konuDataToFill = { ...dataToFill, "yıl": yil }; 
-
             try {
                 let bufferClone = (konuTemplateBuffer instanceof ArrayBuffer) ? konuTemplateBuffer.slice(0) : konuTemplateBuffer;
                 const zipKonu = new PizZip(bufferClone);
                 const docKonu = new window.docxtemplater(zipKonu, { delimiters: {start: '[%', end: '%]'}, paragraphLoop: true, linebreaks: true, nullGetter: function() { return ""; } });
-                
                 const safeEscape = (str) => { if (typeof str !== 'string') return str; return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;'); };
                 let escapedKonuData = {}; for (let k in konuDataToFill) escapedKonuData[k] = safeEscape(konuDataToFill[k]);
-
                 docKonu.render(escapedKonuData);
-                
                 let renderedXml = docKonu.getZip().file("word/document.xml").asText();
                 rawRaporKonusuXml = getBodyXmlFromXmlString(renderedXml);
-                
             } catch(e) {
                 console.error("Konu şablonu render hatası", e); 
                 let errMsg = e.message;
@@ -1779,11 +1673,9 @@ function autoAssignForms() {
             const doc = new window.docxtemplater(zip, { delimiters: {start: '[%', end: '%]'}, paragraphLoop: true, linebreaks: true, nullGetter: function(part) { return ""; } });
             doc.render(sanitizedData);
             const out = doc.getZip().generate({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
-            
             let dosyaBaslangic = type.toUpperCase();
             let isverenText = (sanitizedData["İşveren"] || sanitizedData["TalepUnvan"] || "ISYERI").replace(/&amp;/g, '&');
             if (type === 'teblig_liste') isverenText = "TOPLU_TEBLIGAT_LISTESI";
-            
             let safeName = isverenText.replace(/[^a-zA-Z0-9ğüşıöçĞÜŞİÖÇ\s]/g, "").trim();
             let firstTwoWords = safeName.split(/\s+/).slice(0, 2).join("_");
             saveAs(out, `${firstTwoWords}_${dosyaBaslangic}.docx`);
@@ -1796,19 +1688,12 @@ function autoAssignForms() {
         }
     }
     
-    // ==========================================
-    // TOPLU BELGE ÜRETİMİ (ZİP İÇİNDE)
-    // ==========================================
     async function genDocBulk(type) {
         if (!templateBuffers[type]) { alert("Bu belge için şablon bulunamadı."); return; }
-
         calculateTebSira(); 
-
         const d = (r, i) => r ? (r.cells[i] ? r.cells[i].innerText.trim() : '') : '';
         const rows = document.querySelectorAll('#dataTable tbody tr');
-        
         let tebligatRows = [];
-        // Sadece tebligat çıkış tarihi veya davet tarihi dolu olan satırları filtrele
         rows.forEach((r) => {
             let tebCr = d(r, 35);
             let tebDav = d(r, 36);
@@ -1821,12 +1706,8 @@ function autoAssignForms() {
             alert("Tebligat bilgisi girilmiş hiçbir satır bulunamadı. Lütfen ilgili sütunları doldurun.");
             return;
         }
-
         showToast("⏳ Toplu belgeler hazırlanıyor, lütfen bekleyin...", "var(--warning)");
-
-        // JSZip kütüphanesi ile dışarı aktarılacak ana ZIP dosyasını oluşturuyoruz
         let zipExport = new JSZip(); 
-        
         const now = new Date(); const yil = now.getFullYear(); const ay = (now.getMonth() + 1).toString().padStart(2, '0'); const gun = now.getDate().toString().padStart(2, '0');
         const yilAyGun = `${yil}/${ay}${gun}`; 
 
@@ -1848,11 +1729,9 @@ function autoAssignForms() {
 
         for (let i = 0; i < tebligatRows.length; i++) {
             let row = tebligatRows[i];
-            
             const tamUnvan = d(row, 17); const kisaUnvan = d(row, 16); 
             let raporNoFull = d(row, 32); let raporSadeceTarih = "";
             let m = raporNoFull.match(/(\d{2}[./]\d{2}[./]\d{4})/); if(m) raporSadeceTarih = m[1];
-
             let tehlikeStr = d(row, 13).toLowerCase(); let azTehlikeliX = "", tehlikeliX = "", cokTehlikeliX = "";
             if (tehlikeStr.includes("çok") || tehlikeStr.includes("cok")) cokTehlikeliX = "X";
             else if (tehlikeStr.includes("az")) azTehlikeliX = "X";
@@ -1892,37 +1771,28 @@ function autoAssignForms() {
                 "TebCrTarih": tebCrTarih, "TebDavTarih": tebDavTarih, "TebDavGün": tebDavGun, "TebDavSaat": d(row, 37),
                 "TebDavAdres": tebDavAdres, "TebIsveren": tamUnvan || kisaUnvan, "TebAdres": d(row, 1) || d(row, 2),  
                 "TebSira": d(row, 39), "TebligatVarsaMetin1": tebligatMetin1, "TebligatVarsaMetin2": tebligatMetin2,
-                "RaporKonusu": "" // Zarf ve Bildirimlerde Rapor Konusu Dinamik XML basımına gerek yok.
+                "RaporKonusu": ""
             });
 
-            // Karakterleri Güvenli Hale Getir
             const sanitizedData = {};
             for (const key in rowData) { sanitizedData[key] = escapeXml(rowData[key]); }
 
             try {
-                // Word şablonunu işle
                 const zip = new PizZip(templateBuffers[type]);
                 const doc = new window.docxtemplater(zip, { delimiters: {start: '[%', end: '%]'}, paragraphLoop: true, linebreaks: true, nullGetter: function(part) { return ""; } });
                 doc.render(sanitizedData);
                 const outBlob = doc.getZip().generate({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
-                
-                // Dosya Adını Sıra Numarasına Göre Oluştur (ZIP İçinde Sıralı Dursun)
                 let isverenText = (sanitizedData["İşveren"] || "ISYERI").replace(/&amp;/g, '&');
                 let safeName = isverenText.replace(/[^a-zA-Z0-9ğüşıöçĞÜŞİÖÇ\s]/g, "").trim();
                 let firstTwoWords = safeName.split(/\s+/).slice(0, 2).join("_");
                 let siraStr = sanitizedData["TebSira"] ? sanitizedData["TebSira"].toString().padStart(2, '0') + "_" : "";
-                
                 let docName = `${siraStr}${firstTwoWords}_${type.toUpperCase()}.docx`;
-                
-                // Oluşturulan dosyayı ZIP klasörünün içine ekle
                 zipExport.file(docName, outBlob);
-                
             } catch (error) {
                 console.error("Satır " + (i+1) + " için hata:", error);
             }
         }
         
-        // ZIP Dosyasını İndir
         zipExport.generateAsync({type:"blob"}).then(function(content) {
             saveAs(content, `TOPLU_${type.toUpperCase()}.zip`);
             showToast("✅ Toplu belgeler ZIP olarak başarıyla indirildi!", "var(--success)");
@@ -1953,16 +1823,11 @@ function autoAssignForms() {
         }); return map;
     }
 
-   
-
-JavaScript
-    // Yeni nesil Görsel Analiz (Gemini Vision) Fonksiyonu
     async function geminiVisionOCR(file) {
         const prefs = JSON.parse(localStorage.getItem('hk_prefs') || '{}');
         const keys = (prefs.gkey || '').split(/[,;\s\n|]+/).map(k => k.trim()).filter(k => k.length > 20);
         if (!keys.length) throw new Error("API Key yok");
 
-        // Dosyanın adına göre yapay zekaya verilecek komutu (prompt) belirliyoruz
         let prmt = "Bu görseldeki metni eksiksiz olarak düz metne çevir. Bozuk veya okunamayan harfleri düzelt.";
         const fName = file.name.toLowerCase();
         if (fName.includes("görev") || fName.includes("gorev")) {
@@ -1978,7 +1843,8 @@ JavaScript
         
         for (let key of keys) {
             try {
-                const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+                const modelName = prefs.gmodel && prefs.gmodel.length > 5 ? prefs.gmodel : 'gemini-1.5-flash';
+                const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(modelName)}:generateContent?key=${key}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
                 const j = await r.json();
                 if (r.ok) return j.candidates[0].content.parts[0].text;
             } catch (e) { }
@@ -1988,13 +1854,11 @@ JavaScript
 
     async function safeOCR(w, f) {
         try {
-            // PDF ise PDF.js ile metin katmanını hızlıca oku (İnternet gerektirmez)
             if (f.type === "application/pdf") return { data: { text: await readPdfSimple(f) } };
             
             const prefs = JSON.parse(localStorage.getItem('hk_prefs') || '{}');
             const keys = (prefs.gkey || '').split(/[,;\s\n|]+/).map(k => k.trim()).filter(k => k.length > 20);
             
-            // Eğer dosya RESİM ise, İNTERNET VARSA ve API Key girilmişse önce Gemini (Vision) dene
             if (navigator.onLine && keys.length > 0 && f.type.startsWith("image/")) {
                 showToast(`🤖 AI Görseli Çözümlüyor: ${f.name}`, "var(--accent)");
                 try {
@@ -2002,20 +1866,14 @@ JavaScript
                     return { data: { text: aiText } };
                 } catch (aiErr) {
                     console.warn("AI okuyamadı veya kotalar doldu, klasik OCR'a dönülüyor...", aiErr);
-                    showToast(`⚠️️ AI yanıt vermedi, klasik OCR (Tesseract) deneniyor...`, "var(--warning)");
+                    showToast(`⚠ AI yanıt vermedi, klasik OCR (Tesseract) deneniyor...`, "var(--warning)");
                 }
             } else if (!navigator.onLine && f.type.startsWith("image/")) {
-                // İnternet yoksa anında tespit et ve kullanıcıya bildir
-                showToast(`📶 İnternet Yok! Çevrimdışı OCR (Tesseract) başlatılıyor...`, "var(--warning)");
+                showToast(`📶 İnternet Yok! Çevrimdışı OCR başlatılıyor...`, "var(--warning)");
             } else if (f.type.startsWith("image/")) {
                 showToast(`⚙️ Klasik OCR (Tesseract) çalışıyor: ${f.name}`, "var(--primary)");
             }
 
-            // BURASI FALLBACK (YEDEK KORUMA) BÖLÜMÜ: 
-            // - İnternet yoksa
-            // - API Key girilmediyse
-            // - Gemini Vision bir şekilde hata verdiyse
-            // Otomatik olarak yerel (offline) OCR motoru olan Tesseract devralır.
             if (!w) throw new Error("OCR Motoru yüklenmemiş.");
             const u = URL.createObjectURL(f);
             const r = await w.recognize(u);
@@ -2024,7 +1882,7 @@ JavaScript
             
         } catch (e) {
             console.error("Görsel Okuma Tamamen Başarısız:", e);
-            return { data: { text: "" } }; // İşlemin kitlenmesini önler
+            return { data: { text: "" } };
         }
     }
 
@@ -2158,801 +2016,11 @@ JavaScript
     function moveFileDown(gIdx, type, idx) { const arr = filesData[gIdx][type]; if (idx < arr.length - 1) { [arr[idx + 1], arr[idx]] = [arr[idx], arr[idx + 1]]; renderFileList(gIdx, type); } }
     function delFile(gIdx, type, idx) { filesData[gIdx][type].splice(idx, 1); renderFileList(gIdx, type); }
     function previewFile(gIdx, type, idx) { const file = filesData[gIdx][type][idx]; const url = URL.createObjectURL(file); document.getElementById('previewArea').innerHTML = file.type.includes('pdf') ? `<iframe src="${url}" style="width:100%;height:100%;border:none;"></iframe>` : `<img src="${url}" style="max-width:100%; max-height:100%; display:block; margin:auto;">`; document.getElementById('modal').style.display = 'flex'; }
-    
-    function addManualRow() { 
-        const tb = document.querySelector('#dataTable tbody'); let rowIdx = tb.rows.length + 1; let tr = `<tr tabindex="0" onclick="selRow(this)"><td style="text-align:center"><strong>${rowIdx}</strong><br><span style="font-size:10px;color:#777">...</span></td>`; 
-        for(let j=0; j<39; j++) { let events = (j===8) ? `oninput="calcDates(this)"` : ""; if([9,10,11,12].includes(j+1)) events += ` onclick="handleCellQuadClick(this)"`; if(j===37) events += ` oninput="propagateDavetAdresi(this)"`; if(j===34) events += ` onclick="handleTebligatAutoFill(this)"`; let st = (j===38) ? ` style="font-weight:bold; color:var(--primary);"` : ""; tr += `<td contenteditable="true" ${events}${st}></td>`; } 
-        tr += `</tr>`; tb.insertAdjacentHTML('beforeend', tr); const newRow = tb.lastElementChild; selRow(newRow); newRow.scrollIntoView({behavior: "smooth", block: "center"}); updateDocRowSelect();
-    }
-    
-    function delSelectedRow() { 
-        const sel = document.querySelector('#dataTable tbody tr.selected'); if(!sel) return alert("Seçili satır yok."); 
-        if(confirm("Silmek istediğinize emin misiniz?")) { sel.remove(); reindexRows(); updateDocRowSelect(); } 
-    }
-    
-    function selRow(r, updateDrop = true){ document.querySelectorAll('#dataTable tbody tr.selected').forEach(x => x.classList.remove('selected')); if(r) r.classList.add('selected'); if(updateDrop) syncDropdownFromTable(); }
-    
-    function calcDates(el) { let row = el.parentElement, startVal = el.innerText.trim(); if(!startVal.match(/^\d{2}\.\d{2}\.\d{4}$/)) return; let parts = startVal.split('.'), d = new Date(parts[2], parts[1]-1, parts[0]); let dEnd1 = new Date(d); dEnd1.setDate(dEnd1.getDate() + 1); row.cells[10].innerText = dEnd1.toLocaleDateString('tr-TR'); let dStart2 = new Date(d); dStart2.setMonth(dStart2.getMonth() + 1); row.cells[11].innerText = dStart2.toLocaleDateString('tr-TR'); let dEnd2 = new Date(dStart2); dEnd2.setDate(dEnd2.getDate() + 1); row.cells[12].innerText = dEnd2.toLocaleDateString('tr-TR'); }
-    function propagateTaskInfo(el) { let row = el.closest('tr'); if(row === document.querySelector('#dataTable tbody tr:first-child')) { let val = el.innerText, next = row.nextElementSibling; while(next) { next.cells[15].innerText = val; next = next.nextElementSibling; } } }
-    function propagateCity(el) { let row = el.closest('tr'); if(row === document.querySelector('#dataTable tbody tr:first-child')) { let val = el.innerText, next = row.nextElementSibling; while(next) { next.cells[20].innerText = val; next = next.nextElementSibling; } } }
-    async function exportExcel() { const date = new Date(), pad = (n) => n.toString().padStart(2, '0'), str = `${pad(date.getDate())}_${pad(date.getMonth()+1)}_${date.getFullYear()}_${pad(date.getHours())}_${pad(date.getMinutes())}`, fileName = `ISG_Tablo_${str}.xlsx`; var wb = XLSX.utils.table_to_book(document.getElementById("dataTable"), {sheet: "ISG Listesi", raw: true}); if (window.showSaveFilePicker) { try { const handle = await window.showSaveFilePicker({ suggestedName: fileName, types: [{ description: 'Excel Dosyası', accept: {'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx']} }] }); const writable = await handle.createWritable(); const wbout = XLSX.write(wb, {bookType: 'xlsx', type: 'array'}); await writable.write(wbout); await writable.close(); return; } catch (err) { if (err.name !== 'AbortError') console.error(err); return; } } XLSX.writeFile(wb, fileName); }
-    
-    function runExcelImport() {
-        const fileInput = document.getElementById('excelImportInput'); if (!fileInput.files.length) { alert("Lütfen bir Excel dosyası seçin."); return; }
-        const file = fileInput.files[0]; const reader = new FileReader();
-        reader.onload = function(e) {
-            const data = new Uint8Array(e.target.result); const workbook = XLSX.read(data, {type: 'array'}); const firstSheet = workbook.Sheets[workbook.SheetNames[0]]; const jsonData = XLSX.utils.sheet_to_json(firstSheet, {header: 1});
-            const tbody = document.querySelector("#dataTable tbody"); tbody.innerHTML = ""; let rowIndexCounter = 1;
-            const requiredCols = 39; 
-
-            jsonData.slice(1).forEach((row, idx) => {
-                let hasContent = false; for(let c=1; c<=requiredCols; c++) { if(row[c] !== undefined && row[c] !== null && row[c].toString().trim() !== "") { hasContent = true; break; } }
-                if(!hasContent) return; 
-                let rawIsveren = row[17] || row[16] || ""; let firstWord = rawIsveren ? rawIsveren.toString().split(' ')[0] : "..."; let html = `<tr tabindex="0" onclick="selRow(this)">`; html += `<td style="text-align:center"><strong>${rowIndexCounter++}</strong><br><span style="font-size:10px;color:#777;display:block;margin-top:2px;">${firstWord}</span></td>`;
-                for(let c=1; c<=requiredCols; c++) { let val = row[c] !== undefined ? row[c] : ""; let ev = ""; if(c===9) ev = `oninput="calcDates(this)"`; if(c===15) ev = `oninput="propagateTaskInfo(this)"`; if(c===20) ev = `oninput="propagateCity(this)"`; if(c===38) ev = `oninput="propagateDavetAdresi(this)"`; if(c===35) ev = `onclick="handleTebligatAutoFill(this)"`; if([9,10,11,12].includes(c)) ev += ` onclick="handleCellQuadClick(this)"`; let st = (c===39) ? ` style="font-weight:bold; color:var(--primary);"` : ""; html += `<td contenteditable="true" ${ev}${st}>${val}</td>`; }
-                html += `</tr>`; tbody.insertAdjacentHTML('beforeend', html);
-            });
-            showToast("✅ Excel verileri yüklendi!", "var(--success)"); document.getElementById('excelSection').style.display='block'; document.getElementById('docButtons').style.display='block'; updateDocRowSelect(); calculateTebSira();
-        }; reader.readAsArrayBuffer(file);
-    }
-
-    let calendar; let tempAssignDate = null;
-    function getColorForRow(index) { const colors = ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444', '#14b8a6', '#f43f5e', '#6366f1', '#84cc16']; return colors[index % colors.length]; }
-    function parseDateToISO(d) { if (!d || d.length < 10) return null; let p = d.trim().split('.'); return (p.length === 3) ? `${p[2]}-${p[1]}-${p[0]}` : null; }
-    function parseISOToDate(iso) { let d = new Date(iso); if (isNaN(d.getTime())) return ""; return `${d.getDate().toString().padStart(2, '0')}.${(d.getMonth() + 1).toString().padStart(2, '0')}.${d.getFullYear()}`; }
-
-    function updateTableFromCalendar(info) {
-        const event = info.event; const rowIndex = event.extendedProps.rowIndex; const startCol = event.extendedProps.startCol; const endCol = event.extendedProps.endCol;
-        const table = document.getElementById("dataTable"); if (!table || table.rows.length <= rowIndex) return; const row = table.rows[rowIndex]; 
-        let newStart = parseISOToDate(event.start); let newEnd = newStart; if(event.end) { let d = new Date(event.end); d.setDate(d.getDate() - 1); newEnd = parseISOToDate(d); }
-        if (row.cells[startCol]) row.cells[startCol].innerText = newStart; if (row.cells[endCol]) row.cells[endCol].innerText = newEnd;
-        row.cells[startCol].style.backgroundColor = "#eff6ff"; setTimeout(() => row.cells[startCol].style.backgroundColor = "", 1000);
-    }
-
-    function openCalendarModal() { const modal = document.getElementById('calendarModal'); modal.style.display = 'flex'; setTimeout(() => renderCalendar(), 100); }
-
-
-    
-    function getEventsFromTable() {
-    const events = []; 
-    const rows = document.querySelectorAll('#dataTable tbody tr');
-    
-    rows.forEach((row, index) => {
-        const rowIndex = index + 1;
-        const siraNo = row.cells[0].innerText.split('\n')[0]; 
-        const isverenTam = row.cells[17].innerText || ("İşyeri " + siraNo); 
-        const isyeriAdi = isverenTam.split(' ').slice(0, 2).join(' ');
-        const color = getColorForRow(index); 
-        
-        // KABUL FORMU NOTUNU ÇEKME VE SADECE TAKVİM İÇİN FORMATLAMA
-        let komisyonNotu = "";
-        const formIdx = ddkVerileri[rowIndex];
-        if (formIdx !== undefined && kabulFormlariListesi[formIdx]) {
-            const data = kabulFormlariListesi[formIdx];
-            let rawKonu = data.ddkKonu || 'Bilgi bulunamadı.';
-            
-            // DİKKAT: Word belgesini bozmamak için metni sadece Google Takvim'e gönderirken alt alta bölüyoruz!
-            let formatliKonu = rawKonu.replace(/([a-zğüşıöçA-ZĞÜŞİÖÇ\.,;!\)\]])\s+(?=\d+\)|\d+\.|•|-)/g, '$1\n');
-            
-            komisyonNotu = `\n\nDilekçe Değerlendirme Komisyonu Tarafından Belirlenen Hususlar:\n${formatliKonu}`;
-        }
-
-        const ilkBas = parseDateToISO(row.cells[9].innerText); 
-        const ilkBit = parseDateToISO(row.cells[10].innerText); 
-        const sonBas = parseDateToISO(row.cells[11].innerText); 
-        const sonBit = parseDateToISO(row.cells[12].innerText); 
-        
-        if (ilkBas) { 
-            let endD; 
-            if(ilkBit) { endD = new Date(ilkBit); endD.setDate(endD.getDate() + 1); } 
-            else { endD = new Date(ilkBas); endD.setDate(endD.getDate() + 1); } 
-            
-            events.push({ 
-                title: `1.Tef: ${isyeriAdi}`, 
-                start: ilkBas, 
-                end: endD.toISOString().split('T')[0], 
-                color: color, 
-                allDay: true, 
-                editable: true, 
-                extendedProps: { rowIndex: rowIndex, startCol: 9, endCol: 10, type: 1 },
-                description: `HitosHK Otomatik Teftiş Programı - 1. Teftiş${komisyonNotu}` 
-            }); 
-        } 
-        
-        if (sonBas) { 
-            let endD; 
-            if(sonBit) { endD = new Date(sonBit); endD.setDate(endD.getDate() + 1); } 
-            else { endD = new Date(sonBas); endD.setDate(endD.getDate() + 1); } 
-            
-            events.push({ 
-                title: `2.Tef: ${isyeriAdi}`, 
-                start: sonBas, 
-                end: endD.toISOString().split('T')[0], 
-                color: color, 
-                allDay: true, 
-                editable: true, 
-                extendedProps: { rowIndex: rowIndex, startCol: 11, endCol: 12, type: 2 },
-                description: `HitosHK Otomatik Teftiş Programı - 2. Teftiş${komisyonNotu}` 
-            }); 
-        } 
-    }); 
-    return events; 
-}
-
-
-
-    
-    function renderCalendar() {
-        const calendarEl = document.getElementById('calendar'); if (calendar) { calendar.destroy(); }
-        calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth', locale: 'tr', height: '100%', firstDay: 1, headerToolbar: { left: 'prev,next today', center: 'title', right: '' }, buttonText: { today: 'Bugün' },
-            editable: true, droppable: true, eventResizableFromStart: true, events: getEventsFromTable(),
-            eventDrop: function(info) { updateTableFromCalendar(info); }, eventResize: function(info) { updateTableFromCalendar(info); },
-            eventClick: function(info) { openAssignModal(info.event.startStr, info.event, null); }, dateClick: function(info) { openAssignModal(info.dateStr, null, null); }
-        }); calendar.render();
-    }
-
-    function updateAssignmentModalUI() {
-        const select = document.getElementById('assignWorkplaceSelect'); const addrDiv = document.getElementById('assignAddressDisplay'); const typeSelect = document.getElementById('assignTypeSelect'); const statusInfo = document.getElementById('inspectionStatusInfo'); const table = document.getElementById("dataTable");
-        if (select.value) {
-            const row = table.rows[select.value]; const addr = row.cells[2].innerText; addrDiv.innerText = addr || "Adres bulunamadı.";
-            const t1Start = row.cells[9].innerText; const t2Start = row.cells[11].innerText; 
-            let t1Filled = (t1Start && t1Start.length > 5); let t2Filled = (t2Start && t2Start.length > 5);
-            if (t1Filled && t2Filled) { statusInfo.innerHTML = "⚠️ <b>Uyarı:</b> Bu işyerinin her iki teftiş tarihi de dolu. Değiştirmek istediğinizi seçiniz."; statusInfo.style.color = "var(--warning)"; } 
-            else if (t1Filled) { typeSelect.value = "2"; statusInfo.innerText = "ℹ️ İlk Teftiş dolu, varsayılan olarak İkinci Teftiş seçildi."; statusInfo.style.color = "var(--text-muted)"; } 
-            else { typeSelect.value = "1"; statusInfo.innerText = "ℹ️ Yeni kayıt için İlk Teftiş öneriliyor."; statusInfo.style.color = "var(--text-muted)"; }
-        } else { addrDiv.innerText = ""; statusInfo.innerText = ""; }
-    }
-
-    function openAssignModal(dateStr, event, preSelectedRowIndex) {
-        const modal = document.getElementById('assignmentModal'); const title = document.getElementById('assignModalTitle'); const startInput = document.getElementById('assignStartDate'); const endInput = document.getElementById('assignEndDate'); const select = document.getElementById('assignWorkplaceSelect');
-        select.innerHTML = ""; const table = document.getElementById("dataTable"); let hasData = false;
-        for(let i=1; i<table.rows.length; i++) {
-            const row = table.rows[i]; const siraNo = row.cells[0].innerText.split('\n')[0]; let unvan = row.cells[17].innerText; if(!unvan || unvan === '-') unvan = row.cells[16].innerText; if(!unvan || unvan === '-') unvan = "İsimsiz İşyeri";
-            const opt = document.createElement("option"); opt.value = i; opt.text = `${siraNo} - ${unvan.substring(0, 40)}`; select.appendChild(opt); hasData = true;
-        }
-        if(!hasData) { alert("Listelenecek işyeri yok."); return; }
-        if(preSelectedRowIndex !== null && preSelectedRowIndex !== undefined) { select.value = preSelectedRowIndex; title.innerText = "✏️ Teftiş Düzenle"; startInput.value = dateStr; endInput.value = dateStr; } 
-        else if (event) {
-            title.innerText = "✏️ Teftiş Düzenle"; select.value = event.extendedProps.rowIndex; startInput.value = dateStr; 
-            let endDateStr = dateStr; if (event.end) { let d = new Date(event.endStr || event.end); d.setDate(d.getDate() - 1); endDateStr = d.toISOString().split('T')[0]; } endInput.value = endDateStr;
-            const typeSelect = document.getElementById('assignTypeSelect'); if(event.extendedProps.startCol === 9) typeSelect.value = "1"; else typeSelect.value = "2";
-        } else { title.innerText = "📅 Yeni Teftiş Atama"; startInput.value = dateStr; endInput.value = dateStr; select.selectedIndex = 0; }
-        updateAssignmentModalUI(); modal.style.display = 'block'; window.currentEditingEvent = event;
-    }
-
-    function confirmAssignment() {
-        const rowIndex = document.getElementById('assignWorkplaceSelect').value; const sDateVal = document.getElementById('assignStartDate').value; const eDateVal = document.getElementById('assignEndDate').value; const targetType = document.getElementById('assignTypeSelect').value; 
-        if(!sDateVal || !eDateVal) { alert("Lütfen tarihleri giriniz."); return; }
-        const table = document.getElementById("dataTable"); const targetRow = table.rows[rowIndex]; const sDateStr = parseISOToDate(sDateVal); const eDateStr = parseISOToDate(eDateVal); const userDateObj = new Date(sDateVal);
-        if (targetType === '1') {
-            const secondStartStr = targetRow.cells[11].innerText;
-            if (secondStartStr && secondStartStr.length > 5) { const secondISO = parseDateToISO(secondStartStr); const secondDateObj = new Date(secondISO); if (userDateObj >= secondDateObj) { alert("HATA: İlk Teftiş tarihi, İkinci Teftiş tarihinden SONRA veya AYNI olamaz.\nLütfen daha erken bir tarih seçiniz."); return; } }
-        } else {
-            const firstStartStr = targetRow.cells[9].innerText;
-            if (firstStartStr && firstStartStr.length > 5) { const firstISO = parseDateToISO(firstStartStr); const firstDateObj = new Date(firstISO); if (userDateObj <= firstDateObj) { alert("HATA: İkinci Teftiş tarihi, İlk Teftiş tarihinden ÖNCE veya AYNI olamaz.\nLütfen daha ileri bir tarih seçiniz."); return; } }
-        }
-        let startCol, endCol; if (targetType === '1') { startCol = 9; endCol = 10; } else { startCol = 11; endCol = 12; }
-        targetRow.cells[startCol].innerText = sDateStr; targetRow.cells[endCol].innerText = eDateStr;
-        document.getElementById('assignmentModal').style.display = 'none'; calendar.removeAllEvents(); calendar.addEventSource(getEventsFromTable()); window.currentEditingEvent = null;
-    }
-
-    // ==========================================
-    // PROJE KAYDETME VE YÜKLEME (.hk FORMATI)
-    // ==========================================
-    async function saveProject() {
-        const rows = document.querySelectorAll('#dataTable tbody tr');
-        if(rows.length === 0) { alert("Kaydedilecek bir tablo verisi bulunamadı."); return; }
-
-        let tableData = [];
-        rows.forEach(row => {
-            let rowData = [];
-            for(let i=0; i<row.cells.length; i++) {
-                rowData.push(row.cells[i].innerHTML);
-            }
-            tableData.push(rowData);
-        });
-
-        const projectState = {
-            version: "1.0",
-            teftisTuru: document.getElementById('teftisTuruSelect').value,
-            programliKonu: document.getElementById('programliKonuSelect') ? document.getElementById('programliKonuSelect').value : "",
-            kabulFormlariListesi: kabulFormlariListesi,
-            ddkVerileri: ddkVerileri,
-            tableData: tableData
-        };
-
-        const jsonStr = JSON.stringify(projectState);
-        const date = new Date();
-        const pad = (n) => n.toString().padStart(2, '0');
-        const fileName = `HitosProje_${date.getFullYear()}${pad(date.getMonth()+1)}${pad(date.getDate())}_${pad(date.getHours())}${pad(date.getMinutes())}.hk`;
-
-        if (window.showSaveFilePicker) {
-            try {
-                const handle = await window.showSaveFilePicker({
-                    suggestedName: fileName,
-                    types: [{
-                        description: 'Hitos Proje Dosyası',
-                        accept: { 'text/plain': ['.hk'] }
-                    }]
-                });
-                const writable = await handle.createWritable();
-                await writable.write(jsonStr);
-                await writable.close();
-                
-                showToast("✅ Proje istediğiniz konuma başarıyla kaydedildi!", "var(--success)");
-                setTimeout(hideToast, 4000);
-            } catch (err) {
-                if (err.name !== 'AbortError') {
-                    console.error(err);
-                    alert("Kaydetme sırasında bir hata oluştu.");
-                }
-            }
-        } else {
-            const blob = new Blob([jsonStr], { type: "text/plain;charset=utf-8" });
-            saveAs(blob, fileName);
-            showToast("✅ Proje indirildi!", "var(--success)");
-            setTimeout(hideToast, 4000);
-        }
-    }
-
-    function loadProject(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-
-        showToast("⏳ Proje yükleniyor...", "var(--warning)");
-        const reader = new FileReader();
-        
-        reader.onload = function(e) {
-            try {
-                const projectState = JSON.parse(e.target.result);
-                
-                if(projectState.teftisTuru) document.getElementById('teftisTuruSelect').value = projectState.teftisTuru;
-                if(projectState.programliKonu && document.getElementById('programliKonuSelect')) document.getElementById('programliKonuSelect').value = projectState.programliKonu;
-                toggleKonuUI();
-
-                kabulFormlariListesi = projectState.kabulFormlariListesi || [];
-                ddkVerileri = projectState.ddkVerileri || {};
-
-                const tbody = document.querySelector("#dataTable tbody");
-                tbody.innerHTML = ""; 
-                
-                if (projectState.tableData) {
-                    projectState.tableData.forEach((rowData) => {
-                        let tr = `<tr tabindex="0" onclick="selRow(this)">`;
-                            
-                        const requiredCols = 40; 
-                        while(rowData.length < requiredCols) {
-                            rowData.push(""); 
-                        }
-
-                        rowData.forEach((cellHtml, cIdx) => {
-                            let ev = "";
-                            if(cIdx===9) ev = `oninput="calcDates(this)"`; 
-                            if(cIdx===15) ev = `oninput="propagateTaskInfo(this)"`; 
-                            if(cIdx===20) ev = `oninput="propagateCity(this)"`; 
-                            if(cIdx===38) ev = `oninput="propagateDavetAdresi(this)"`; 
-                            if(cIdx===35) ev = `onclick="handleTebligatAutoFill(this)"`; 
-                            if([9,10,11,12].includes(cIdx)) ev += ` onclick="handleCellQuadClick(this)"`; 
-                            let st = (cIdx===39) ? ` style="font-weight:bold; color:var(--primary);"` : "";
-                            
-                            if (cIdx === 0) {
-                                tr += `<td style="text-align:center">${cellHtml}</td>`;
-                            } else {
-                                tr += `<td contenteditable="true" ${ev}${st}>${cellHtml}</td>`;
-                            }
-                        });
-                        tr += `</tr>`;
-                        tbody.insertAdjacentHTML('beforeend', tr);
-                    });
-                }
-
-                document.getElementById('excelSection').style.display='block'; 
-                document.getElementById('docButtons').style.display='block'; 
-                updateDocRowSelect();
-                calculateTebSira(); 
-                
-                showToast("📂 Proje başarıyla yüklendi! Kaldığınız yerden devam edebilirsiniz.", "var(--success)");
-                setTimeout(hideToast, 4000);
-
-            } catch(err) {
-                alert("Hata: Dosya okunamadı. Bu geçerli bir HitosHK (.hk) proje dosyası olmayabilir.");
-                console.error(err);
-                hideToast();
-            }
-        };
-        reader.readAsText(file);
-    }
-
-    // ==========================================
-    // EXCEL BENZERİ TOPLU HÜCRE SEÇME VE SİLME/YAPIŞTIRMA
-    // ==========================================
-    let isDraggingCell = false;
-
-    document.querySelector('#dataTable').addEventListener('mousedown', function(e) {
-        if (e.target.tagName === 'TD') {
-            isDraggingCell = true;
-            if (!e.ctrlKey && !e.metaKey) {
-                document.querySelectorAll('.multi-selected').forEach(c => c.classList.remove('multi-selected'));
-            }
-            e.target.classList.add('multi-selected');
-        }
-    });
-
-    document.querySelector('#dataTable').addEventListener('mouseover', function(e) {
-        if (isDraggingCell && e.target.tagName === 'TD') {
-            e.target.classList.add('multi-selected');
-            window.getSelection().removeAllRanges(); 
-        }
-    });
-
-    document.addEventListener('mouseup', function() {
-        isDraggingCell = false;
-    });
-
-    document.addEventListener('keydown', async function(e) {
-        const selectedCells = document.querySelectorAll('.multi-selected');
-        
-        // Toplu Silme
-        if ((e.key === 'Delete' || e.key === 'Backspace') && selectedCells.length > 1) {
-            e.preventDefault(); 
-            selectedCells.forEach(td => {
-                td.innerText = ''; 
-                td.dispatchEvent(new Event('input', { bubbles: true }));
-            });
-        }
-    });
-
-    // Toplu Kopyalama İşlemi
-    document.querySelector('#dataTable').addEventListener('copy', function(e) {
-        const selectedCells = document.querySelectorAll('.multi-selected');
-        if(selectedCells.length > 1) {
-            let minRow = Infinity, minCol = Infinity, maxRow = -1, maxCol = -1;
-            selectedCells.forEach(td => {
-                let r = td.parentElement.rowIndex;
-                let c = td.cellIndex;
-                if(r < minRow) minRow = r; if(r > maxRow) maxRow = r;
-                if(c < minCol) minCol = c; if(c > maxCol) maxCol = c;
-            });
-            let tsv = "";
-            const table = document.getElementById("dataTable");
-            for(let r = minRow; r <= maxRow; r++) {
-                let rowVals = [];
-                for(let c = minCol; c <= maxCol; c++) {
-                    let cell = table.rows[r].cells[c];
-                    if(cell && cell.classList.contains('multi-selected')) {
-                        rowVals.push(cell.innerText.replace(/\n/g, ' '));
-                    } else if(cell) {
-                        rowVals.push(""); 
-                    }
-                }
-                tsv += rowVals.join('\t') + '\n';
-            }
-            e.clipboardData.setData('text/plain', tsv);
-            e.preventDefault();
-            showToast("✅ Seçilen hücreler kopyalandı", "var(--success)");
-            setTimeout(hideToast, 2000);
-        }
-    });
-
-    // Toplu Yapıştırma İşlemi
-    document.querySelector('#dataTable').addEventListener('paste', function(e) {
-        let activeCell = document.activeElement;
-        if(activeCell.tagName !== 'TD') return;
-
-        let pasteData = (e.clipboardData || window.clipboardData).getData('text');
-        if(!pasteData || (!pasteData.includes('\t') && !pasteData.includes('\n'))) return; 
-
-        e.preventDefault();
-        let rows = pasteData.trimEnd().split('\n');
-        let startRowIdx = activeCell.parentElement.rowIndex;
-        let startColIdx = activeCell.cellIndex;
-        const table = document.getElementById("dataTable");
-
-        rows.forEach((rowText, rOffset) => {
-            let cols = rowText.split('\t');
-            cols.forEach((cellText, cOffset) => {
-                let targetRow = table.rows[startRowIdx + rOffset];
-                if(targetRow) {
-                    let targetCell = targetRow.cells[startColIdx + cOffset];
-                    if(targetCell && targetCell.contentEditable === "true") {
-                        targetCell.innerText = cellText;
-                        targetCell.dispatchEvent(new Event('input', { bubbles: true }));
-                    }
-                }
-            });
-        });
-        showToast("✅ Veriler tabloya yapıştırıldı", "var(--success)");
-        setTimeout(hideToast, 2000);
-        calculateTebSira();
-    });
-
-    document.querySelector('#dataTable').addEventListener('focusin', function(e) {
-        if (e.target.tagName === 'TD') {
-            const selectedCells = document.querySelectorAll('.multi-selected');
-            if (selectedCells.length <= 1) {
-                selectedCells.forEach(c => c.classList.remove('multi-selected'));
-            }
-        }
-    });
-    
-    // ==========================================
-    // VMLOADERHK ENTEGRASYONU (Tablodan Veri Çekme)
-    // ==========================================
-    function openVMLoaderModal() {
-        const rows = document.querySelectorAll('#dataTable tbody tr');
-        if(rows.length === 0) {
-            alert("Tabloda veri bulunmuyor. Lütfen önce veri yükleyin veya analiz edin.");
-            return;
-        }
-
-        const tabsHeader = document.getElementById('vmTabsHeader');
-        const tabsContentArea = document.getElementById('vmTabsContentArea');
-        tabsHeader.innerHTML = '';
-        tabsContentArea.innerHTML = '';
-
-        rows.forEach((row, index) => {
-            // Hitos tablosundan hücre okuma yardımcı fonksiyonu
-            const d = (colIndex) => {
-                const cell = row.cells[colIndex];
-                return cell ? (cell.innerText.trim() || "-") : "-";
-            };
-
-            const isverenTam = d(17) !== "-" ? d(17) : (d(16) !== "-" ? d(16) : "İsimsiz İşyeri");
-            // Sekme adı için ilk 2 kelime + sıra numarası
-            const tabName = `${index + 1}. ${isverenTam.split(/\s+/).slice(0, 2).join(" ")}`;
-
-            let raporTam = d(32);
-            let raporTarihi = raporTam;
-            let raporNo = "-";
-            if (raporTam.includes("/")) {
-                const parts = raporTam.split("/");
-                raporTarihi = parts[0].trim();
-                raporNo = parts.slice(1).join("/").trim();
-            }
-
-            const formData = [
-                { label: "İŞYERİ ADI", value: isverenTam },
-                { label: "İŞYERİ ADRESİ", value: d(2) },
-                { label: "SGK NO", value: d(18) },
-                { label: "SİCİL NO", value: d(19) },
-                { label: "İLK TUTANAK TARİHİ", value: d(10) },
-                { label: "İLK TEFTİŞ TARİHLERİ", value: `${d(9)} - ${d(10)}` },
-                { label: "İKİNCİ TEFTİŞ TUTANAK TARİHİ", value: d(12) },
-                { label: "İKİNCİ TEFTİŞ EKSTRA TARİHLER", value: `${d(11)} - ${d(12)}` },
-                { label: "TELEFON", value: d(3) },
-                { label: "GÖRÜŞÜLEN KİŞİLER", value: d(5) },
-                { label: "TEHLİKE SINIFI", value: d(13) },
-                { label: "ÇALIŞAN SAYILARI", value: `${d(6)} Erkek ; ${d(7)} Kadın ; ${d(8)} Toplam` },
-                { label: "UZMAN İSMİ", value: d(21) },
-                { label: "HEKİM İSMİ", value: d(24) },
-                { label: "RAPOR TARİHİ", value: raporTarihi },
-                { label: "RAPOR NO", value: raporNo }
-            ];
-
-            createVMTab(tabName, formData, index);
-        });
-
-        document.getElementById('vmLoaderModal').style.display = 'flex';
-        // İlk sekmeyi otomatik aç
-        if(tabsHeader.firstChild) {
-            tabsHeader.firstChild.click();
-        }
-    }
-
-    function createVMTab(tabName, formData, index) {
-        const tabsHeader = document.getElementById('vmTabsHeader');
-        const tabsContentArea = document.getElementById('vmTabsContentArea');
-        const tabId = `vm-tab-${index}`;
-
-        const btn = document.createElement('button');
-        btn.className = 'vm-tab-btn';
-        btn.innerText = tabName;
-        btn.onclick = () => switchVMTab(btn, tabId);
-        tabsHeader.appendChild(btn);
-
-        const contentDiv = document.createElement('div');
-        contentDiv.id = tabId;
-        contentDiv.className = 'vm-tab-content';
-
-        formData.forEach((item, i) => {
-            const rowDiv = document.createElement('div');
-            rowDiv.className = 'vm-data-row';
-            
-            const valColor = (item.value === "-" || item.value === " - ") ? "color: #ef4444;" : "";
-
-            rowDiv.innerHTML = `
-                <div class="vm-data-label">${item.label}</div>
-                <div class="vm-data-value" style="${valColor}" id="vm-val-${index}-${i}">${item.value}</div>
-                <button class="vm-copy-btn" onclick="copyVMToClipboard('vm-val-${index}-${i}', this)">
-                    📋 Kopyala
-                </button>
-            `;
-            contentDiv.appendChild(rowDiv);
-        });
-
-        tabsContentArea.appendChild(contentDiv);
-    }
-
-    function switchVMTab(clickedBtn, targetId) {
-        document.querySelectorAll('.vm-tab-btn').forEach(btn => btn.classList.remove('active'));
-        document.querySelectorAll('.vm-tab-content').forEach(content => content.classList.remove('active'));
-
-        clickedBtn.classList.add('active');
-        document.getElementById(targetId).classList.add('active');
-    }
-
-    function copyVMToClipboard(elementId, btnElement) {
-        const textToCopy = document.getElementById(elementId).innerText;
-        
-        navigator.clipboard.writeText(textToCopy).then(() => {
-            const originalText = btnElement.innerHTML;
-            btnElement.innerHTML = '✅ Alındı';
-            btnElement.classList.add('copied');
-            
-            // HitosHK'nın kendi hazır toast sistemini kullanıyoruz
-            showToast("✅ Kopyalandı!", "var(--success)");
-
-            setTimeout(() => {
-                btnElement.innerHTML = originalText;
-                btnElement.classList.remove('copied');
-                hideToast();
-            }, 1500);
-        }).catch(err => {
-            console.error('Kopyalama başarısız!', err);
-            alert('Kopyalama başarısız oldu.');
-        });
-    }
-// ==========================================
-// GOOGLE CALENDAR ENTEGRASYONU (GÜVENLİ & DİNAMİK YÖNTEM)
-// ==========================================
-const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest';
-const SCOPES = 'https://www.googleapis.com/auth/calendar.events';
-
-let tokenClient;
-let gapiInited = false;
-let gisInited = false;
-
-// Sayfa yüklendiğinde hafızadaki ayarları kutulara doldur
-window.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('settingClientId').value = localStorage.getItem('hitos_client_id') || '';
-    document.getElementById('settingApiKey').value = localStorage.getItem('hitos_api_key') || '';
-    
-    // Eğer anahtarlar önceden kaydedilmişse Google servislerini sessizce başlat
-    if (localStorage.getItem('hitos_api_key') && localStorage.getItem('hitos_client_id')) {
-        loadGoogleScripts();
-    }
-});
-
-// Ayarları kaydetme fonksiyonu
-function saveGoogleSettings() {
-    const clientId = document.getElementById('settingClientId').value.trim();
-    const apiKey = document.getElementById('settingApiKey').value.trim();
-    
-    if(!clientId || !apiKey) {
-        alert("Lütfen senkronizasyon için her iki alanı da doldurun.");
-        return;
-    }
-    
-    // Tarayıcı hafızasına kaydet (Şifreler kodda görünmez)
-    localStorage.setItem('hitos_client_id', clientId);
-    localStorage.setItem('hitos_api_key', apiKey);
-    
-    document.getElementById('googleSettingsModal').style.display = 'none';
-    showToast("✅ Ayarlar kaydedildi. Servisler başlatılıyor...", "var(--success)");
-    
-    loadGoogleScripts();
-}
-
-// Google kütüphanelerini HTML'e dinamik olarak yükleyen fonksiyon
-function loadGoogleScripts() {
-    if(!window.gapi) {
-        const script1 = document.createElement('script');
-        script1.src = "https://apis.google.com/js/api.js";
-        script1.onload = () => gapi.load('client', intializeGapiClient);
-        document.head.appendChild(script1);
-    } else {
-        gapi.load('client', intializeGapiClient);
-    }
-
-    if(!window.google || !window.google.accounts) {
-        const script2 = document.createElement('script');
-        script2.src = "https://accounts.google.com/gsi/client";
-        script2.onload = gisLoaded;
-        document.head.appendChild(script2);
-    } else {
-        gisLoaded();
-    }
-}
-
-async function intializeGapiClient() { 
-    const apiKey = localStorage.getItem('hitos_api_key');
-    if(!apiKey) return;
-    try {
-        await gapi.client.init({ apiKey: apiKey, discoveryDocs: [DISCOVERY_DOC] }); 
-        gapiInited = true; 
-    } catch(e) { console.error("Google API Başlatılma Hatası", e); }
-}
-
-function gisLoaded() { 
-    const clientId = localStorage.getItem('hitos_client_id');
-    if(!clientId) return;
-    tokenClient = google.accounts.oauth2.initTokenClient({ client_id: clientId, scope: SCOPES, callback: '' }); 
-    gisInited = true; 
-}
-
-// Güncelle Butonuna Tıklandığında Çalışacak Fonksiyon
-function handleAuthClick() {
-    const clientId = localStorage.getItem('hitos_client_id');
-    const apiKey = localStorage.getItem('hitos_api_key');
-    
-    // 1. Kontrol: Ayarlar boş mu?
-    if(!clientId || !apiKey) {
-        alert("Google Takvim ile eşitlemek için önce API ayarlarını girmelisiniz!");
-        document.getElementById('googleSettingsModal').style.display = 'flex';
-        return;
-    }
-
-    // 2. Kontrol: Servisler henüz yüklenmediyse bekle
-    if(!gapiInited || !gisInited) {
-        showToast("⏳ Google servisleri hazırlanıyor, lütfen bekleyin...", "var(--warning)");
-        loadGoogleScripts();
-        setTimeout(handleAuthClick, 2000); // 2 saniye sonra tekrar dene
-        return;
-    }
-
-    tokenClient.callback = async (resp) => {
-        if (resp.error !== undefined) throw (resp);
-        showToast("⏳ Senkronizasyon başladı, eski etkinlikler kontrol ediliyor...", "var(--warning)");
-        await syncHitosToGoogle();
-    };
-
-    if (gapi.client.getToken() === null) {
-        tokenClient.requestAccessToken({prompt: 'consent'});
-    } else {
-        tokenClient.requestAccessToken({prompt: ''});
-    }
-}
-
-
-
-    
-// Temizle ve Yeni Etkinlikleri Ekle Fonksiyonu
-async function syncHitosToGoogle() {
-    try {
-        const now = new Date();
-        const timeMin = new Date(now.getFullYear(), now.getMonth(), 1).toISOString(); 
-        const timeMax = new Date(now.getFullYear(), now.getMonth() + 2, 0).toISOString(); 
-
-        const response = await gapi.client.calendar.events.list({
-            'calendarId': 'primary',
-            'timeMin': timeMin,
-            'timeMax': timeMax,
-            'privateExtendedProperty': 'source=HitosHK'
-        });
-
-        const existingEvents = response.result.items || [];
-        for (let event of existingEvents) {
-            await gapi.client.calendar.events.delete({
-                'calendarId': 'primary',
-                'eventId': event.id
-            });
-        }
-
-        const eventsToInsert = getEventsFromTable(); 
-        
-        for (let ev of eventsToInsert) {
-            const resource = {
-                'summary': ev.title,
-                'description': ev.description, // ARTIK STATİK METİN DEĞİL, DİNAMİK NOT GELİYOR
-                'start': { 'date': ev.start },
-                'end': { 'date': ev.end },
-                'extendedProperties': {
-                    'private': { 'source': 'HitosHK' }
-                },
-                'reminders': { 'useDefault': true }
-            };
-
-            await gapi.client.calendar.events.insert({
-                'calendarId': 'primary',
-                'resource': resource
-            });
-        }
-
-        showToast("✅ Takvim notlarla birlikte kusursuz eşitlendi!", "var(--success)");
-        setTimeout(hideToast, 4000);
-    } catch (err) {
-        console.error(err);
-        showToast("❌ Eşitleme başarısız oldu!", "var(--danger)");
-    }
-}
-
-
-    
-
-
-// ==========================================
-// PDF ÖNİZLEME (SEKMELİ YAPI) FONKSİYONU
-// ==========================================
-function openPdfPreviewTabs() {
-    if (kabulFormlariListesi.length === 0) {
-        alert("Henüz yüklenmiş bir kabul formu bulunmuyor.");
-        return;
-    }
-
-    const header = document.getElementById('pdfTabsHeader');
-    const contentArea = document.getElementById('pdfTabsContentArea');
-    header.innerHTML = '';
-    contentArea.innerHTML = '';
-
-    kabulFormlariListesi.forEach((form, index) => {
-        const tabId = `pdf-tab-${index}`;
-        
-        const btn = document.createElement('button');
-        btn.className = 'vm-tab-btn';
-        btn.innerText = form.fileName.length > 25 ? form.fileName.substring(0, 25) + '...' : form.fileName;
-        btn.title = form.fileName;
-        
-        btn.onclick = () => {
-            document.querySelectorAll('#pdfTabsHeader .vm-tab-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('#pdfTabsContentArea .vm-tab-content').forEach(c => c.classList.remove('active'));
-            btn.classList.add('active');
-            document.getElementById(tabId).classList.add('active');
-        };
-        header.appendChild(btn);
-
-        const contentDiv = document.createElement('div');
-        contentDiv.id = tabId;
-        contentDiv.className = 'vm-tab-content';
-        contentDiv.style.padding = '0'; 
-        contentDiv.style.height = '100%';
-        
-        // fileUrl yerine fileBase64 kullanıyoruz.
-        if (form.fileBase64) {
-            contentDiv.innerHTML = `<iframe src="${form.fileBase64}" style="width: 100%; height: 100%; border: none;"></iframe>`;
-        } else {
-            contentDiv.innerHTML = `<div style="padding: 20px; text-align:center; color: var(--danger);">⚠️ Önizleme dosyası bulunamadı. Lütfen listeyi temizleyip formu tekrar yükleyin.</div>`;
-        }
-        
-        contentArea.appendChild(contentDiv);
-    });
-
-    document.getElementById('pdfPreviewModal').style.display = 'flex';
-    if(header.firstChild) {
-        header.firstChild.click();
-    }
-}
-
-    // PDF Dosyasını Kalıcı Olarak Kaydetmek İçin Base64'e Çeviren Fonksiyon
-function fileToBase64(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = error => reject(error);
-    });
-}
-
-// Kabul Formlarını ve Eşleşmeleri Komple Silen Fonksiyon
-function clearKabulForms() {
-    if(confirm("Yüklenen tüm kabul formları ve tabloyla olan eşleşmeleri silinecek. Emin misiniz?")) {
-        kabulFormlariListesi = [];
-        ddkVerileri = {};
-        renderKabulFormUI();
-        showToast("🗑️ Kabul formları başarıyla temizlendi.", "var(--danger)");
-        setTimeout(hideToast, 2000);
-    }
-}
-
-    
-
-    
 </script>
 
 <script>
 (function(){
  const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
- // Yönlendirme çubuğu
  const c=$('.container'), h=c.querySelector('.app-header');
  const g=c.querySelector(':scope > div[style*="grid-template-columns"]'); if(g) g.id='sec-template';
  const u=$('#uploadArea'); if(u) u.closest('section').id='sec-upload';
@@ -2964,13 +2032,11 @@ function clearKabulForms() {
  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting) nav.querySelectorAll('a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+e.target.id));}),{rootMargin:'-30% 0px -60% 0px'});
  ['sec-template','sec-upload','sec-table','docButtons'].forEach(id=>{const el=document.getElementById(id); if(el) io.observe(el);});
 
- // Şablon durumlarını tek satıra topla
  const sg=$('.status-grid');
  if(sg){const d=document.createElement('details'); d.className='status-details'; const s=document.createElement('summary'); d.appendChild(s); sg.before(d); d.appendChild(sg);
   const upd=()=>{const ok=sg.querySelectorAll('.icon.ok').length, n=sg.querySelectorAll('.status-item').length; s.textContent=(ok===n?'✅':'📁')+' Şablonlar: '+ok+'/'+n+' hazır — detay için tıklayın';};
   new MutationObserver(upd).observe(sg,{subtree:true,childList:true,attributes:true,characterData:true}); upd();}
 
- // Tablo araması + satır formu butonu
  const ta=$('.table-actions');
  if(ta&&ta.children.length>1){
   const q=document.createElement('input'); q.type='search'; q.className='tbl-search'; q.placeholder='🔎 Tabloda ara...';
@@ -2980,7 +2046,6 @@ function clearKabulForms() {
   ta.children[1].prepend(b);
  }
 
- // Satır form paneli (mobil dostu düzenleme)
  function openSheet(){
   const old=$('.sheet-overlay'); if(old) old.remove();
   const tr=$('#dataTable tbody tr.selected');
@@ -3012,26 +2077,24 @@ function clearKabulForms() {
   document.body.appendChild(ov);
  }
 
- // Esc ile en üstteki pencereyi kapat
  document.addEventListener('keydown',e=>{
   if(e.key!=='Escape') return;
   const open=$$('.modal-overlay,.sheet-overlay').filter(m=>getComputedStyle(m).display!=='none').sort((a,b)=>(+getComputedStyle(b).zIndex||0)-(+getComputedStyle(a).zIndex||0))[0];
   if(open){ if(open.classList.contains('sheet-overlay')) open.remove(); else open.style.display='none'; }
  });
 
- // Kaydedilmemiş değişiklik uyarısı
  let dirty=false; const tb=$('#dataTable tbody');
  if(tb){tb.addEventListener('input',()=>dirty=true); new MutationObserver(()=>dirty=true).observe(tb,{childList:true});}
  ['saveProject','exportExcel'].forEach(fn=>{const f=window[fn]; if(typeof f==='function') window[fn]=function(){dirty=false; return f.apply(this,arguments);};});
  window.addEventListener('beforeunload',e=>{if(dirty&&$('#dataTable tbody tr')){e.preventDefault(); e.returnValue='';}});
 
- // alert() -> engellemeyen bildirim (toast)
  const _showToast=window.showToast;
  if(typeof _showToast==='function'){
   window.alert=function(m){_showToast('ℹ️ '+m,'var(--primary)'); setTimeout(window.hideToast,Math.min(9000,3000+String(m).length*40));};
  }
 })();
 </script>
+
 <script>
 // ===== HitosHK v76: Ayarlar, Yapay Zekâ Doğrulama, Sabit Üst Çubuk, Kılavuz =====
 (function(){
@@ -3049,7 +2112,6 @@ function apply(){
 apply();
 const esc=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
-// --- Sabit üst çubuk: kaydet / yükle / takvim / ayarlar / temizle ---
 const nav=$('.step-nav');
 if(nav){
   nav.querySelectorAll('a').forEach(a=>{a.onclick=e=>{e.preventDefault();const el=document.getElementById(a.getAttribute('href').slice(1)); if(el) el.scrollIntoView({behavior:'smooth',block:'start'});};});
@@ -3059,7 +2121,6 @@ if(nav){
   nav.appendChild(box);
 }
 
-// --- Ayarlar penceresi ---
 const MAN=`<div class="hk-man">
 <h4>1. Genel akış</h4><p>Sıra: <b>Şablonlar</b> → <b>Veri Yükle</b> → <b>Tablo</b> → <b>Belgeler</b>.</p>
 <h4>2. Yapay Zeka Özellikleri (YENİ)</h4>
@@ -3068,7 +2129,7 @@ const MAN=`<div class="hk-man">
 <li><b>Doğrulama Butonu:</b> Tablodaki adres, telefon ve <b>Otomasyon No / Görev Tarihini</b> web verisiyle harmanlayıp teyit eder.</li>
 </ul></div>`;
 const ov=document.createElement('div'); ov.className='hk-ov'; ov.id='hkSet';
-ov.innerHTML=`<div class="hk-box"><div class="hk-hd"><h3>⚙️ Ayarlar</h3><button class="hk-x" aria-label="Kapat">&times;</button></div>
+ov.innerHTML=`<div class="hk-box"><div class="hk-hd"><h3>⚙️️ Ayarlar</h3><button class="hk-x" aria-label="Kapat">&times;</button></div>
 <div class="hk-tabs"><button class="hk-tab on" data-p="g">Görünüm</button><button class="hk-tab" data-p="a">Yapay Zekâ</button><button class="hk-tab" data-p="c">Takvim</button><button class="hk-tab" data-p="m">Kılavuz</button><button class="hk-tab" data-p="h">Hakkında</button></div>
 <div class="hk-body">
 <div class="hk-pane on" data-p="g">
@@ -3090,8 +2151,7 @@ function openSet(tab){ov.classList.add('open'); if(tab) sel(tab);} window.hkOpen
 const close=()=>ov.classList.remove('open');
 function sel(p){$$('#hkSet .hk-tab').forEach(t=>t.classList.toggle('on',t.dataset.p===p)); $$('#hkSet .hk-pane').forEach(t=>t.classList.toggle('on',t.dataset.p===p));}
 ov.querySelector('.hk-x').onclick=close; ov.onclick=e=>{if(e.target===ov)close();};
-$$('#hkSet .hk-tab').forEach(t=>t.onclick=()=>sel(t.dataset.p)); document.addEventListener('keydown',e=>{if(e.key==='Escape'){$$
-('.hk-ov.open').forEach(o=>o.classList.remove('open'));}});
+$$('#hkSet .hk-tab').forEach(t=>t.onclick=()=>sel(t.dataset.p)); document.addEventListener('keydown',e=>{if(e.key==='Escape'){$$('.hk-ov.open').forEach(o=>o.classList.remove('open'));}});
 ['#2563eb','#7c3aed','#0d9488','#e11d48','#ea580c','#0f172a'].forEach(c=>{const b=document.createElement('button'); b.style.background=c; b.title=c; b.onclick=()=>{P.accent=c;save();apply();sync();}; g('hkSw').appendChild(b);});
 
 function updKeyHint() {
@@ -3113,7 +2173,6 @@ g('hkReset').onclick=()=>{const k=P.gkey; P=Object.assign({},DEF,{gkey:k});save(
 g('hkCal').onclick=()=>{close(); g('googleSettingsModal').style.display='flex';};
 sync();
 
-// --- Yapay zekâ ile işveren doğrulama ---
 const ta=$('.table-actions');
 if(ta&&ta.children.length>1){ const b=document.createElement('button'); b.className='btn btn-primary'; b.style.cssText='padding:6px 12px;font-size:.8rem;background:#7c3aed;border:0'; b.textContent='🤖 Yapay Zekâ ile Doğrula'; b.title='Adres/telefon ve Görev/Otomasyon No teyidi yapar'; b.onclick=aiVerify; ta.children[1].prepend(b); }
 const cell=(tr,i)=>(tr.cells[i]?tr.cells[i].innerText:'').trim().replace(/^-$/,'');
@@ -3187,13 +2246,12 @@ function showDiff(out){
   const ch=out.filter(x=>!x.err), er=out.filter(x=>x.err);
   d.innerHTML=`<div class="hk-box"><div class="hk-hd"><h3>🤖 Yapay Zekâ Önerileri</h3><button class="hk-x">&times;</button></div><div class="hk-body">
   ${ch.length?`<p style="font-size:.85rem">Adres, Telefon, Görev veya Otomasyon No için bulunan düzeltmeler.</p><table class="hk-diff"><tr><th></th><th>İşyeri</th><th>Alan</th><th>Tablodaki</th><th>Önerilen</th></tr>${ch.map((x,k)=>`<tr><td><input type="checkbox" checked data-k="${k}"></td><td>${esc(x.ad)}</td><td>${x.f}</td><td class="old">${esc(x.old)||'—'}</td><td class="new">${esc(x.nw)}<br><small>${(x.src||[]).map(u=>`<a href="${esc(u)}" target="_blank" rel="noopener">kaynak</a>`).join(' ')}</small></td></tr>`).join('')}</table>`:'<p>Fark bulunamadı: Mevcut veriler onaylandı veya işyeri tam teyit edilemedi.</p>'}
-  ${er.map(x=>`<p style="color:var(--danger);font-size:.82rem">⚠️ ${esc(x.ad)}:${esc(x.err)}</p>`).join('')}
+  ${er.map(x=>`<p style="color:var(--danger);font-size:.82rem">⚠️️ ${esc(x.ad)}:${esc(x.err)}</p>`).join('')}
   <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px"><button class="btn btn-outline" id="hkDc">Kapat</button>${ch.length?'<button class="btn btn-success" id="hkDa">✅ Seçilenleri Tabloya Uygula</button>':''}</div></div></div>`;
   document.body.appendChild(d); const cl=()=>d.remove(); d.querySelector('.hk-x').onclick=cl; d.querySelector('#hkDc').onclick=cl; d.onclick=e=>{if(e.target===d)cl();};
   const a=d.querySelector('#hkDa'); if(a) a.onclick=()=>{let n=0; d.querySelectorAll('input[data-k]:checked').forEach(c=>{const x=ch[+c.dataset.k]; x.tr.cells[x.c].innerText=x.nw; x.tr.cells[x.c].dispatchEvent(new Event('input',{bubbles:true})); n++;}); cl(); showToast(`✅ ${n} alan güncellendi`,'var(--success)'); setTimeout(hideToast,2500);};
 }
 })();
-
 </script>
 </body>
 </html>
