@@ -3330,105 +3330,202 @@ const ta=$('.table-actions');if(ta&&ta.children.length>1){const b=document.creat
 
 <style>
 /* =========================================================
-   HitosHK - Önceki Aykırılıklar sütunu katlanabilir görünüm
-   Ana tablonun 45. sütunu = index 44
+   HitosHK - Önceki Aykırılıklar sütunu (sabit yükseklik + detay butonu)
+   45. sütun: hücre taşmasın, satır yükselmesin
    ========================================================= */
-
-#dataTable tbody td:nth-child(45) {
-    cursor: pointer;
+#dataTable tbody td:nth-child(45){
+    padding: 0 !important;
+    vertical-align: top !important;
     position: relative;
-
-    /* Kapalı durumda yaklaşık 3 satır */
-    max-height: 4.5em;
-    overflow: hidden;
-
-    /* Satırların korunması */
+    cursor: default !important;
+    max-width: 340px;
+}
+#dataTable tbody td:nth-child(45)::after,
+#dataTable tbody td:nth-child(45)::before{
+    content: none !important;
+    display: none !important;
+}
+#dataTable tbody td:nth-child(45) > .hk-ak-wrap{
+    position: relative;
+}
+#dataTable tbody td:nth-child(45) .hk-ak-box{
+    max-height: 72px;      /* yaklaşık 3 satır */
+    min-height: 40px;
+    overflow-y: auto;
+    padding: 10px 34px 10px 12px; /* sağda butona yer */
     white-space: pre-line;
     line-height: 1.45;
-
-    /* Görsel olarak tıklanabilir olduğunu belli etsin */
-    transition: background-color .15s ease;
+    box-sizing: border-box;
+    outline: none;
+    font-size: .85rem;
+    color: var(--text-main);
 }
-
-/* Üzerine gelince */
-#dataTable tbody td:nth-child(45):hover {
-    background: rgba(37, 99, 235, .06);
+#dataTable tbody td:nth-child(45) .hk-ak-box:focus{
+    outline: 2px solid var(--primary);
+    outline-offset: -2px;
+    background: #fff;
 }
-
-/* Açılmış durum */
-#dataTable tbody td:nth-child(45).hk-expanded {
-    max-height: none;
-    overflow: visible;
+#dataTable tbody td:nth-child(45) .hk-ak-box::-webkit-scrollbar{
+    width: 6px;
 }
-
-/* Kapalı hücreye küçük açma işareti */
-#dataTable tbody td:nth-child(45):not(.hk-expanded)::after {
-    content: "  ▾";
+#dataTable tbody td:nth-child(45) .hk-ak-box::-webkit-scrollbar-thumb{
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+#dataTable tbody td:nth-child(45) .hk-ak-box::-webkit-scrollbar-thumb:hover{
+    background: #94a3b8;
+}
+#dataTable tbody td:nth-child(45) .hk-ak-expand{
     position: absolute;
-    right: 5px;
-    bottom: 2px;
-    font-size: .75rem;
-    opacity: .65;
+    top: 4px;
+    right: 4px;
+    background: #eef2ff;
+    border: 1px solid #c7d2fe;
+    color: var(--primary);
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    opacity: .75;
+    z-index: 2;
+    transition: all .15s;
 }
-
-/* Açık hücrede kapatma işareti */
-#dataTable tbody td:nth-child(45).hk-expanded::after {
-    content: "  ▴";
-    position: absolute;
-    right: 5px;
-    bottom: 2px;
-    font-size: .75rem;
-    opacity: .65;
+#dataTable tbody td:nth-child(45) .hk-ak-expand:hover{
+    background: var(--primary);
+    color: #fff;
+    opacity: 1;
 }
 </style>
 
 <script>
 /* =========================================================
-   HitosHK - Önceki Aykırılıklar tıklayınca aç/kapa
+   HitosHK - Önceki Aykırılıklar: kaydırılabilir kutu + detay butonu
    ========================================================= */
+(function(){
+    const COL_INDEX = 44;   /* 0-based → 45. sütun */
 
-(function () {
+    function processCell(td){
+        if(!td) return;
+        if(td.dataset.hkAk === '1') return;
 
-    function initPreviousViolations() {
+        let wrap = td.querySelector(':scope > .hk-ak-wrap');
 
-        const table = document.getElementById('dataTable');
-        if (!table) return;
+        if(!wrap){
+            /* Hücrenin mevcut içeriğini al, kutuyu kur */
+            const content = td.innerHTML;
+            td.removeAttribute('contenteditable');
+            td.innerHTML = '';
 
-        table.querySelectorAll('tbody td:nth-child(45)').forEach(td => {
+            wrap = document.createElement('div');
+            wrap.className = 'hk-ak-wrap';
 
-            /* Aynı hücreye ikinci kez event bağlamayalım */
-            if (td.dataset.hkCollapseReady === '1') return;
+            const box = document.createElement('div');
+            box.className = 'hk-ak-box';
+            box.setAttribute('contenteditable', 'true');
+            box.innerHTML = content;
 
-            td.dataset.hkCollapseReady = '1';
-
-            td.addEventListener('click', function (e) {
-
-                /* Hücreye tıklayınca aç/kapa */
-                this.classList.toggle('hk-expanded');
-
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'hk-ak-expand';
+            btn.title = 'Detay penceresini aç';
+            btn.textContent = '⛶';
+            btn.addEventListener('click', function(e){
+                e.stopPropagation();
+                e.preventDefault();
+                openAkModal(td);
             });
+            /* Kutuya tıklanınca butonun tetiklenmemesi için */
+            btn.addEventListener('mousedown', e => e.stopPropagation());
 
+            wrap.appendChild(box);
+            wrap.appendChild(btn);
+            td.appendChild(wrap);
+        } else {
+            /* Proje dosyasından geri yüklendiyse kutu hazır; sadece td'yi düzelt */
+            td.removeAttribute('contenteditable');
+        }
+
+        td.dataset.hkAk = '1';
+    }
+
+    function openAkModal(td){
+        const box = td.querySelector('.hk-ak-box');
+        const content = box ? box.innerText : '';
+
+        let modal = document.getElementById('hkAkModal');
+        if(!modal){
+            modal = document.createElement('div');
+            modal.id = 'hkAkModal';
+            modal.className = 'modal-overlay';
+            modal.style.zIndex = 3200;
+            modal.innerHTML = `
+                <div class="modal-content-cal" style="max-width:760px;height:auto;max-height:88vh;">
+                    <button class="modal-close modal-close-dark" id="hkAkClose">&times;</button>
+                    <h3 style="margin-top:0;">📝 Önceki Aykırılıklar / Alınması Gerekli Tedbirler</h3>
+                    <p style="font-size:.82rem;color:var(--text-muted);margin-top:0;">
+                        Her maddeyi ayrı satıra yazın. "Kaydet" dediğinizde hücreye aktarılır.
+                    </p>
+                    <textarea id="hkAkText" class="form-control"
+                              rows="15"
+                              style="font-size:.92rem;line-height:1.55;width:100%;box-sizing:border-box;white-space:pre-wrap;"></textarea>
+                    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px;">
+                        <button class="btn btn-outline" id="hkAkCancel">İptal</button>
+                        <button class="btn btn-primary" id="hkAkSave">💾 Kaydet</button>
+                    </div>
+                </div>`;
+            document.body.appendChild(modal);
+
+            modal.querySelector('#hkAkClose').onclick  = () => modal.style.display = 'none';
+            modal.querySelector('#hkAkCancel').onclick = () => modal.style.display = 'none';
+            modal.addEventListener('click', e => { if(e.target === modal) modal.style.display = 'none'; });
+        }
+
+        const ta = modal.querySelector('#hkAkText');
+        ta.value = content;
+        modal.style.display = 'flex';
+
+        /* Aynı modal tekrar kullanılacağı için onclick'i her seferinde tazele */
+        modal.querySelector('#hkAkSave').onclick = function(){
+            const targetBox = td.querySelector('.hk-ak-box');
+            if(targetBox){
+                targetBox.innerText = ta.value;
+                targetBox.dispatchEvent(new Event('input', {bubbles: true}));
+            }
+            modal.style.display = 'none';
+            if(window.showToast){
+                showToast('✅ Kaydedildi', 'var(--success)');
+                setTimeout(window.hideToast, 1500);
+            }
+        };
+
+        setTimeout(() => ta.focus(), 80);
+    }
+
+    function scan(){
+        const tbody = document.querySelector('#dataTable tbody');
+        if(!tbody) return;
+        tbody.querySelectorAll('tr').forEach(tr => {
+            if(tr.cells[COL_INDEX]) processCell(tr.cells[COL_INDEX]);
         });
     }
 
-    /* İlk yükleme */
-    initPreviousViolations();
-
-    /* Sonradan eklenen / değişen satırlar için */
-    const table = document.getElementById('dataTable');
-
-    if (table) {
-
-        const observer = new MutationObserver(function () {
-            initPreviousViolations();
-        });
-
-        observer.observe(table.querySelector('tbody') || table, {
-            childList: true,
-            subtree: true
-        });
+    /* İlk çalıştırma */
+    if(document.readyState === 'loading'){
+        document.addEventListener('DOMContentLoaded', scan);
+    } else {
+        scan();
     }
 
+    /* Sonradan eklenen satırları da işle */
+    const tbody = document.querySelector('#dataTable tbody');
+    if(tbody){
+        new MutationObserver(scan).observe(tbody, {childList: true});
+    }
 })();
 </script>
 
