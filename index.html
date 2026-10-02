@@ -3267,11 +3267,18 @@ function open(){css();let o=$('#hkPrev');if(o)o.remove();o=document.createElemen
  const say=(c,t,isHtml)=>{const d=$('#pvChat');d.insertAdjacentHTML('beforeend',`<div class="${c}" style="margin:6px 0;padding:8px 10px;border-radius:10px;${c==='u'?'background:#eff6ff;text-align:right':'background:#f8fafc;text-align:left'}">${isHtml?t:esc(t)}</div>`);d.scrollTop=1e9;};
  function renderTable(t){
   if(!t||!t.basliklar||!t.satirlar) return '';
+  lastTable=t;
+  const metin=t.satirlar.map(r=>r.join(' | ')).join('\n');
   let h='<div style="overflow:auto;margin-top:8px;border-radius:10px;border:1px solid var(--border-color)"><table style="width:100%;border-collapse:collapse;font-size:.8rem;background:#fff"><thead><tr>';
   t.basliklar.forEach(x=>h+=`<th style="background:#0f766e;color:#fff;padding:7px 9px;text-align:left;white-space:nowrap">${esc(x)}</th>`);
   h+='</tr></thead><tbody>';
   t.satirlar.forEach((r,i)=>{h+=`<tr style="background:${i%2?'#f8fafc':'#fff'}">`;r.forEach(c=>h+=`<td style="padding:6px 9px;border-bottom:1px solid #e2e8f0;vertical-align:top">${esc(c)}</td>`);h+='</tr>';});
-  return h+'</tbody></table></div>';
+  h+='</tbody></table>';
+  h+=`<div style="margin-top:6px;display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap">
+    <button class="btn btn-outline" style="padding:5px 12px;font-size:.78rem" onclick="navigator.clipboard.writeText(${JSON.stringify(metin).replace(/"/g,'&quot;')});this.textContent='✅ Kopyalandı';setTimeout(()=>this.textContent='📋 Düz Metin Kopyala',1500)">📋 Düz Metin Kopyala</button>
+    <button class="btn btn-success" style="padding:5px 12px;font-size:.78rem" onclick="window.hkAktarTablo()">📥 Ana Tablonun Dosya Tablosu Sütununa Aktar</button>
+  </div></div>`;
+  return h;
 }
 
 const send=async()=>{
@@ -3311,7 +3318,7 @@ const send=async()=>{
         ${detay.length?'<div style="margin-top:4px;color:#065f46;font-size:.75rem">'+detay.slice(0,6).join(' • ')+(detay.length>6?' …':'')+'</div>':''}
       </div>`;
     }
-    say('a', esc(r.yanit||'Tamam.')+html);
+    say('a', esc(r.yanit||'Tamam.')+html, true);
   }catch(e){ say('a','⚠️ '+esc(e.message)); }
 };
  $('#pvSend').onclick=send;$('#pvMsg').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}};
