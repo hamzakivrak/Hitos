@@ -3234,7 +3234,14 @@ Kullanıcı açıkça "ana tabloya", "ana tablo", "üstteki tablo" veya benzeri 
 Kullanıcı "önceki teftiş tablosu" derse hedef:"onceki" kullan.
 Bir dosya/görüntüde bulunan bilgiyi ana tabloya aktarmasını isterse, bilgiyi dosyadan çıkar ve uygun ana tablo satırına uygula.
 Satır eşleştirmesinde SGK sicil no, ruhsat no, dosya sicil, işveren/unvan ve adres bilgilerini birlikte değerlendir; emin değilsen mevcut satırları değiştirmek yerine kısa yanıt ver ve islemler boş olsun.
-Tarihler GG.AA.YYYY. Raporda/dosyada olmayan bilgiyi ASLA uydurma. Değişiklik gerekmiyorsa islemler boş dizi olsun.`;
+Tarihler GG.AA.YYYY. Raporda/dosyada olmayan bilgiyi ASLA uydurma. Değişiklik gerekmiyorsa islemler boş dizi olsun.
+
+ÇOK ÖNEMLİ KURALLAR (İHLALİ YASAK):
+1. "yanit" alanına ASLA HTML kodu yazma. İçinde <div>, <table>, <tr>, <td>, <th>, style="...", class="..." gibi HİÇBİR şey bulunmasın. Sadece düz Türkçe metin olsun (en fazla 2-3 cümle, kısa özet).
+2. Tablo/liste halinde bir şey göstermen istenirse, HTML kodunu DEĞİL, tabloGoster alanını doldur: {"basliklar":["..."],"satirlar":[["...","..."]]}.
+3. "dök", "göster", "çıkar", "listele", "tablo yap" gibi isteklerde SADECE tabloGoster kullan, yanit içine HTML koyma.
+4. Uzun metinleri (aykırılık listesi vb.) tabloGoster içinde tek sütunlu satırlar olarak ver, yanit içine yapıştırma.
+5. yanit = "İşte istediğiniz tablo:" gibi KISA bir açıklama olsun.
 
 // Arayüz
 function css(){if($('#pvCss'))return;const s=document.createElement('style');s.id='pvCss';s.textContent=`.pv-card{border:1px solid var(--border-color);border-radius:14px;padding:12px;margin:10px 0;background:var(--card-bg)}.pv-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px}.pv-g label{font-size:.72rem;color:var(--text-muted);display:block;margin-bottom:2px}.pv-g textarea,.pv-card select,.pv-in{width:100%;font:inherit;font-size:.82rem;padding:6px 8px;border:1px solid var(--border-color);border-radius:8px;background:var(--card-bg);color:var(--text-main)}.pv-chat{max-height:200px;overflow:auto;border:1px solid var(--border-color);border-radius:12px;padding:8px;font-size:.85rem;margin-bottom:8px}.pv-chat .u{text-align:right;color:var(--primary)}.pv-chat p{margin:4px 0}.pv-chip{display:inline-block;background:#eef2ff;border-radius:99px;padding:2px 10px;margin:2px;font-size:.75rem}.pv-h{margin:16px 0 4px;font-size:.95rem}`;document.head.appendChild(s);}
