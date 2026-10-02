@@ -3116,25 +3116,12 @@ function showDiff(out){
 
 </script>
 <script>
-// ===== HitosHK v77+: Önceki Teftiş Veri Merkezi (AI ile çekme, kıyaslama, sohbet, ekran görüntüsü, ana tablo desteği) =====
+// ===== HitosHK v77: Önceki Teftiş Veri Merkezi (AI ile çekme, kıyaslama, sohbet, ekran görüntüsü) =====
 (function(){
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-// YENİ: ruhsat (4) ve tebligat_adres (1) alanları eklendi
-const F=[
- ['unvan','İşveren / Ünvan',17],
- ['adres','Adres',2],
- ['tebligat_adres','Tebligat Adresi',1],
- ['ruhsat','Ruhsat No',4],
- ['sgk','İşyeri SGK Sicil No',18],
- ['dosyaSicil','Dosya Sicil',19],
- ['telefon','Telefon',3],
- ['onceki_bas','Önceki Teftiş Başlangıç',40],
- ['onceki_bit','Önceki Teftiş Bitiş',41],
- ['rapor_tarih','Önceki Rapor Tarihi',42],
- ['rapor_no','Önceki Rapor No',43],
- ['aykirilik','Önceki Aykırılıklar / Alınması Gerekli Tedbirler',44]
-];
+const F=[['unvan','İşveren / Ünvan',17],['adres','Adres',2],['tebligatAdresi','Tebligat Adresi',1],['telefon','Telefon',3],['ruhsatNo','Ruhsat No',4],['sgk','İşyeri SGK Sicil No',18],['dosyaSicil','Dosya Sicil',19],
+['onceki_bas','Önceki Teftiş Başlangıç',40],['onceki_bit','Önceki Teftiş Bitiş',41],['rapor_tarih','Önceki Rapor Tarihi',42],['rapor_no','Önceki Rapor No',43],['aykirilik','Önceki Aykırılıklar / Alınması Gerekli Tedbirler',44]];
 const KEYS=F.map(f=>f[0]), NCOL=45;
 const cell=(tr,i)=>(tr.cells[i]?tr.cells[i].innerText:'').trim().replace(/^-$/,'');
 const fold=s=>(s||'').toLocaleLowerCase('tr').replace(/ğ/g,'g').replace(/ü/g,'u').replace(/ş/g,'s').replace(/ı/g,'i').replace(/ö/g,'o').replace(/ç/g,'c');
@@ -3152,7 +3139,59 @@ const snap=()=>{UNDO.push(JSON.stringify(S)); if(UNDO.length>30)UNDO.shift();};
 // Ana tabloya yeni sütunları ekle (eksik hücreleri otomatik tamamlar)
 const tb=$('#dataTable tbody');
 function norm(){$$('#dataTable tbody tr').forEach(tr=>{while(tr.cells.length<NCOL){const td=document.createElement('td');td.contentEditable='true';tr.appendChild(td);}});}
+
 if(tb){new MutationObserver(norm).observe(tb,{childList:true});norm();}
+
+const MAIN_FIELDS={
+  tebligatAdresi:1, adres:2, telefon:3, ruhsatNo:4,
+  unvan:16, isveren:17, sgk:18, dosyaSicil:19,
+  onceki_bas:40, onceki_bit:41, rapor_tarih:42, rapor_no:43, aykirilik:44
+};
+const MAIN_ALIASES={
+  'tebligat adresi':'tebligatAdresi','tebligatadresi':'tebligatAdresi',
+  'adres':'adres','telefon':'telefon','ruhsat no':'ruhsatNo','ruhsatno':'ruhsatNo',
+  'unvan':'unvan','ünvan':'unvan','işveren':'isveren','isveren':'isveren',
+  'sgk':'sgk','sgk sicil no':'sgk','dosya sicil':'dosyaSicil','dosyasicil':'dosyaSicil',
+  'önceki teftiş başlangıç':'onceki_bas','önceki teftiş bitiş':'onceki_bit',
+  'önceki rapor tarihi':'rapor_tarih','önceki rapor no':'rapor_no',
+  'önceki aykırılıklar':'aykirilik'
+};
+function mainRows(){return $$('#dataTable tbody tr');}
+function mainState(){
+  return mainRows().map((tr,i)=>{
+    const o={satir:i+1};
+    Object.keys(MAIN_FIELDS).forEach(k=>o[k]=cell(tr,MAIN_FIELDS[k]));
+    return o;
+  });
+}
+function mainKey(k){
+  if(MAIN_FIELDS[k]!==undefined)return k;
+  const f=fold(k);
+  return MAIN_ALIASES[f]||MAIN_ALIASES[f.replace(/\\s+/g,'')]||null;
+}
+function setMainField(tr,k,v){
+  const key=mainKey(k), c=MAIN_FIELDS[key];
+  if(!tr||c===undefined)return false;
+  tr.cells[c].innerText=fix(key,v);
+  tr.cells[c].dispatchEvent(new Event('input',{bubbles:true}));
+  return true;
+}
+function addMainRow(data){
+  if(typeof addManualRow!=='function')return false;
+  addManualRow();norm();
+  const tr=mainRows().pop(); if(!tr)return false;
+  Object.entries(data||{}).forEach(([k,v])=>setMainField(tr,k,v));
+  return true;
+}
+function applyMainOp(p){
+  const rows=mainRows();
+  const i=(p.satir|0)-1;
+  if(p.tip==='guncelle' && rows[i])return setMainField(rows[i],p.alan,p.deger);
+  if(p.tip==='ekle' && p.veri)return addMainRow(p.veri);
+  if(p.tip==='sil' && rows[i]){rows[i].remove();if(typeof calculateTebSira==='function')calculateTebSira();return true;}
+  return false;
+}
+
 
 // Gemini
 async function gem(parts,sys){
@@ -3174,40 +3213,42 @@ async function fileParts(f){const n=f.name.toLowerCase();
  if(/\.doc$/.test(n))throw new Error(f.name+': eski .doc desteklenmiyor, .docx veya PDF kullanın.');
  return [{text:`[${f.name}]`},{inline_data:{mime_type:f.type||(n.endsWith('.pdf')?'application/pdf':'image/png'),data:await b64(f)}}];}
 
-// YENİ: tebligat_adres ve ruhsat çıkarımı eklendi
-const SYS_X=`Sen bir İş Müfettişi asistanısın. Verilen önceki teftiş raporu / ekran görüntüsü / metinlerden HER İŞYERİ için bilgileri çıkar. SADECE JSON dizi döndür: [{"unvan":"","adres":"işyeri açık adresi","tebligat_adres":"tebligat zarfı/tebligat bildirimi bölümünde yazan adres (varsa), yoksa boş","ruhsat":"işyeri açma ve çalışma ruhsatı numarası (varsa)","sgk":"işyeri SGK sicil no","dosyaSicil":"","telefon":"","onceki_bas":"önceki teftiş başlangıç tarihi GG.AA.YYYY","onceki_bit":"önceki teftiş bitiş tarihi GG.AA.YYYY","rapor_tarih":"GG.AA.YYYY","rapor_no":"","aykirilik":["alınması gerekli tedbir / aykırılık 1","..."]}]. Raporda olmayan alanı boş bırak, ASLA uydurma. Aykırılıkları madde madde ayrı dizi öğesi yap.`;
-
-// YENİ: Hem "prev" hem "main" hedefli işlem destekli sohbet sistemi
-const SYS_C=`Kullanıcının "Önceki Teftiş" tablosu ve "Ana Tablo"yu düzenlemesine yardım eden asistansın. Satır numaraları 1'den başlar.
-HEDEFLER:
-- "prev" = Önceki Teftiş tablosu (bu penceredeki kayıtlar).
-- "main" = Ana tablo (#dataTable, ekranda görünen asıl teftiş tablosu).
-Kullanıcı "ana tablo", "asıl tablo", "esas tablo", "ISG tablosu" gibi ifadeler kullanırsa hedef "main"dir. "Önceki", "bu tablo", "buradaki" derse hedef "prev"dir. Emin değilsen hedefi "prev" yap.
+const SYS_X=`Sen bir İş Müfettişi asistanısın. Verilen önceki teftiş raporu / ekran görüntüsü / metinlerden HER İŞYERİ için bilgileri çıkar.
+SADECE JSON dizi döndür: [{"unvan":"","adres":"","tebligatAdresi":"","telefon":"","ruhsatNo":"","sgk":"işyeri SGK sicil no","dosyaSicil":"","onceki_bas":"önceki teftiş başlangıç tarihi GG.AA.YYYY","onceki_bit":"önceki teftiş bitiş tarihi GG.AA.YYYY","rapor_tarih":"GG.AA.YYYY","rapor_no":"","aykirilik":["alınması gerekli tedbir / aykırılık 1","..."]}].
+Özellikle raporda geçen "Tebligat Adresi", "tebligat adresi", "tebliğ adresi" gibi ifadeleri tebligatAdresi alanına; "Ruhsat No", "Ruhsat Numarası", "İşyeri Ruhsatı" gibi ifadeleri ruhsatNo alanına aktar.
+Raporda olmayan alanı boş bırak, ASLA uydurma. Aykırılıkları madde madde ayrı dizi öğesi yap.`;
+const SYS_C=`Kullanıcının "önceki teftiş verileri" tablosunu ve ana teftiş tablosunu düzenlemesine yardım eden asistansın.
+İki tabloyu da görebilirsin. Önceki teftiş tablosunun satırları 1'den, ana tablonun satırları da 1'den başlar.
 SADECE JSON döndür: {"yanit":"kısa Türkçe yanıt","islemler":[
-{"hedef":"prev","tip":"guncelle","satir":1,"alan":"adres","deger":"..."},
-{"hedef":"main","tip":"guncelle","satir":3,"alan":"ruhsat","deger":"12345"},
-{"hedef":"main","tip":"ekle","veri":{"unvan":"...","adres":"..."}},
-{"hedef":"prev","tip":"sil","satir":2}
+{"tip":"guncelle","hedef":"onceki","satir":1,"alan":"adres","deger":"..."},
+{"tip":"guncelle","hedef":"ana","satir":1,"alan":"ruhsatNo","deger":"..."},
+{"tip":"ekle","hedef":"onceki","veri":{"unvan":"..."}},
+{"tip":"ekle","hedef":"ana","veri":{"unvan":"...","ruhsatNo":"..."}},
+{"tip":"sil","hedef":"onceki","satir":2},
+{"tip":"sil","hedef":"ana","satir":3}
 ]}.
-Geçerli alanlar (her iki tablo için aynı isimle): ${KEYS.join(', ')}. Tarihler GG.AA.YYYY. Değişiklik gerekmiyorsa islemler boş dizi olsun. Uydurma bilgi yazma.`;
+Geçerli ÖNCEKİ alanlar: ${KEYS.join(', ')}.
+Geçerli ANA alanlar: tebligatAdresi, adres, telefon, ruhsatNo, unvan, isveren, sgk, dosyaSicil, onceki_bas, onceki_bit, rapor_tarih, rapor_no, aykirilik.
+Kullanıcı açıkça "ana tabloya", "ana tablo", "üstteki tablo" veya benzeri bir hedef belirtirse hedef:"ana" kullan.
+Kullanıcı "önceki teftiş tablosu" derse hedef:"onceki" kullan.
+Bir dosya/görüntüde bulunan bilgiyi ana tabloya aktarmasını isterse, bilgiyi dosyadan çıkar ve uygun ana tablo satırına uygula.
+Satır eşleştirmesinde SGK sicil no, ruhsat no, dosya sicil, işveren/unvan ve adres bilgilerini birlikte değerlendir; emin değilsen mevcut satırları değiştirmek yerine kısa yanıt ver ve islemler boş olsun.
+Tarihler GG.AA.YYYY. Raporda/dosyada olmayan bilgiyi ASLA uydurma. Değişiklik gerekmiyorsa islemler boş dizi olsun.`;
 
 // Arayüz
-function css(){if($('#pvCss'))return;const s=document.createElement('style');s.id='pvCss';s.textContent=`.pv-card{border:1px solid var(--border-color);border-radius:14px;padding:12px;margin:10px 0;background:var(--card-bg)}.pv-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px}.pv-g label{font-size:.72rem;color:var(--text-muted);display:block;margin-bottom:2px}.pv-g textarea,.pv-card select,.pv-in{width:100%;font:inherit;font-size:.82rem;padding:6px 8px;border:1px solid var(--border-color);border-radius:8px;background:var(--card-bg);color:var(--text-main)}.pv-chat{max-height:200px;overflow:auto;border:1px solid var(--border-color);border-radius:12px;padding:8px;font-size:.85rem;margin-bottom:8px}.pv-chat .u{text-align:right;color:var(--primary)}.pv-chat p{margin:4px 0}.pv-chip{display:inline-block;background:#eef2ff;border-radius:99px;padding:2px 10px;margin:2px;font-size:.75rem}.pv-h{margin:16px 0 4px;font-size:.95rem}.pv-tag{font-size:.68rem;padding:1px 6px;border-radius:6px;background:#dbeafe;color:#1e40af;margin-left:6px}.pv-tag.main{background:#fef3c7;color:#92400e}`;document.head.appendChild(s);}
+function css(){if($('#pvCss'))return;const s=document.createElement('style');s.id='pvCss';s.textContent=`.pv-card{border:1px solid var(--border-color);border-radius:14px;padding:12px;margin:10px 0;background:var(--card-bg)}.pv-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px}.pv-g label{font-size:.72rem;color:var(--text-muted);display:block;margin-bottom:2px}.pv-g textarea,.pv-card select,.pv-in{width:100%;font:inherit;font-size:.82rem;padding:6px 8px;border:1px solid var(--border-color);border-radius:8px;background:var(--card-bg);color:var(--text-main)}.pv-chat{max-height:200px;overflow:auto;border:1px solid var(--border-color);border-radius:12px;padding:8px;font-size:.85rem;margin-bottom:8px}.pv-chat .u{text-align:right;color:var(--primary)}.pv-chat p{margin:4px 0}.pv-chip{display:inline-block;background:#eef2ff;border-radius:99px;padding:2px 10px;margin:2px;font-size:.75rem}.pv-h{margin:16px 0 4px;font-size:.95rem}`;document.head.appendChild(s);}
 const TAGS=['ÖncekiTeftişBaşlangıç','ÖncekiTeftişBitiş','ÖncekiRaporTarihi','ÖncekiRaporNo','ÖncekiAykırılıklar','ÖncekiAykırılıklarSatır'];
-
 function open(){css();let o=$('#hkPrev');if(o)o.remove();o=document.createElement('div');o.className='hk-ov open';o.id='hkPrev';
  o.innerHTML=`<div class="hk-box" style="width:min(1100px,100%)"><div class="hk-hd"><h3>📚 Önceki Teftiş Veri Merkezi</h3><button class="hk-x">&times;</button></div><div class="hk-body">
- <p style="font-size:.85rem;margin-top:0">Eski rapor (PDF/Word/resim), ekran görüntüsü (Ctrl+V ile yapıştırabilirsiniz) veya metin ekleyin; yapay zekâ <b>adres, tebligat adresi, ruhsat no, sicil no</b>, önceki teftiş tarihleri, rapor tarihi/no ve aykırılıkları çıkarır. Sonra ana tabloyla kıyaslayıp neyi tutacağınızı siz seçersiniz.</p>
+ <p style="font-size:.85rem;margin-top:0">Eski rapor (PDF/Word/resim), ekran görüntüsü (Ctrl+V ile yapıştırabilirsiniz) veya metin ekleyin; yapay zekâ adres, sicil no, önceki teftiş tarihleri, rapor tarihi/no ve aykırılıkları tabloya çıkarır. Sonra ana tabloyla kıyaslayıp neyi tutacağınızı siz seçersiniz.</p>
  <div class="pv-card"><input type="file" id="pvF" multiple accept=".pdf,.docx,.txt,.csv,image/*" style="display:none"><button class="btn btn-outline" id="pvAdd">📎 Dosya / Görüntü Ekle</button> <span id="pvAtt"></span>
  <textarea class="pv-in" id="pvTxt" rows="3" placeholder="İsterseniz rapor metnini buraya yapıştırın..." style="margin-top:8px"></textarea>
  <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-primary" id="pvRun" style="background:#7c3aed;border:0">🤖 Verileri Çek</button><button class="btn btn-outline" id="pvClr">Kaynakları Temizle</button></div></div>
  <h4 class="pv-h">Önceki Teftiş Tablosu <small id="pvN"></small></h4><div id="pvRows"></div>
  <div style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0"><button class="btn btn-outline" id="pvNew">➕ Satır</button><button class="btn btn-outline" id="pvUndo">↶ Geri Al</button><button class="btn btn-success" id="pvCmp">🔍 Ana Tabloyla Karşılaştır ve Aktar</button></div>
- <h4 class="pv-h">💬 Yapay Zekâ ile Sohbet <span class="pv-tag">prev</span><span class="pv-tag main">main</span></h4>
- <p style="font-size:.78rem;color:var(--text-muted);margin:0 0 6px">"ana tablo" / "asıl tablo" derseniz hedef <b>main</b>; "bu tablo" / "önceki" derseniz hedef <b>prev</b> olur.</p>
- <div class="pv-chat" id="pvChat"><p><em>Örn: "2. satırın adresini ... yap", "ana tabloda 3. satırın ruhsat nosunu 12345 yap", "ana tablonun 1. satırına tebligat adresi olarak ... yaz", "tüm aykırılıkları madde madde yaz"</em></p></div>
- <div style="display:flex;gap:8px"><input class="pv-in" id="pvMsg" placeholder="Ne değiştirmek istersiniz? (prev = bu tablo, main = ana tablo)"><button class="btn btn-primary" id="pvSend">Gönder</button></div>
- <details style="margin-top:14px;font-size:.82rem"><summary><b>Word şablonlarında kullanılacak etiketler</b></summary><p>Şablonunuza şu etiketleri yazın (veri ana tablonun yeni sütunlarından gelir): ${TAGS.map(t=>`<code class="pv-chip">[%${t}%]</code>`).join('')}<br>İstediğiniz şablona ekleyin; eklemediğiniz şablonlar değişmez. <code>ÖncekiAykırılıklar</code> alt alta maddeler, <code>…Satır</code> tek satır (;) olarak basılır.</p></details>
+ <h4 class="pv-h">💬 Yapay Zekâ ile Sohbet</h4><div class="pv-chat" id="pvChat"><p><em>Örn: "2. satırın adresini ... yap", "tüm aykırılıkları madde madde yaz", "sicil no 1234 olan satırı sil"</em></p></div>
+ <div style="display:flex;gap:8px"><input class="pv-in" id="pvMsg" placeholder="Tabloda ne değiştirmek istersiniz?"><button class="btn btn-primary" id="pvSend">Gönder</button></div>
+ <details style="margin-top:14px;font-size:.82rem"><summary><b>Word şablonlarında kullanılacak etiketler</b></summary><p>Şablonunuza şu etiketleri yazın (veri ana tablonun yeni sütunlarından gelir): ${TAGS.map(t=>`<code class="pv-chip">[%${t}%]</code>`).join('')}<br>İsterseniz yalnızca ihtiyacınız olan şablona ekleyin; eklemediğiniz şablonlar değişmez. <code>ÖncekiAykırılıklar</code> alt alta maddeler, <code>…Satır</code> tek satır (;) olarak basılır.</p></details>
  </div></div>`;
  document.body.appendChild(o);const cl=()=>o.remove();o.querySelector('.hk-x').onclick=cl;
  const att=()=>{$('#pvAtt').innerHTML=ATT.map((f,i)=>`<span class="pv-chip">${esc(f.name)} <a href="#" data-i="${i}">✕</a></span>`).join('');$$('#pvAtt a').forEach(a=>a.onclick=e=>{e.preventDefault();ATT.splice(+a.dataset.i,1);att();});};
@@ -3222,46 +3263,33 @@ function open(){css();let o=$('#hkPrev');if(o)o.remove();o=document.createElemen
  $('#pvUndo').onclick=()=>{if(!UNDO.length)return;S=JSON.parse(UNDO.pop());persist();render();};
  $('#pvCmp').onclick=compare;
  const say=(c,t)=>{const d=$('#pvChat');d.insertAdjacentHTML('beforeend',`<p class="${c}">${esc(t)}</p>`);d.scrollTop=1e9;};
-
- // YENİ: sohbet artık prev+main destekli
  const send=async()=>{const m=$('#pvMsg').value.trim();if(!m)return;$('#pvMsg').value='';say('u',m);
-  try{
-   const prevState=S.map((r,i)=>Object.assign({satir:i+1},Object.fromEntries(KEYS.map(k=>[k,r[k]]))));
-   const mainTrs=$$('#dataTable tbody tr');
-   const mainState=mainTrs.map((tr,i)=>({satir:i+1,unvan:cell(tr,17)||cell(tr,16),adres:cell(tr,2),tebligat_adres:cell(tr,1),ruhsat:cell(tr,4),sgk:cell(tr,18),dosyaSicil:cell(tr,19),telefon:cell(tr,3),onceki_bas:cell(tr,40),onceki_bit:cell(tr,41),rapor_tarih:cell(tr,42),rapor_no:cell(tr,43),aykirilik:cell(tr,44)}));
+  try{const state=S.map((r,i)=>Object.assign({satir:i+1},Object.fromEntries(KEYS.map(k=>[k,r[k]]))));
+   const main=mainState();
    const hist=CHAT.slice(-6).map(h=>h.r+': '+h.t).join('\n');
-   const parts=[{text:`ÖNCEKİ TEFTİŞ TABLOSU ("prev"):\n${JSON.stringify(prevState)}\n\nANA TABLO ("main", #dataTable):\n${JSON.stringify(mainState)}\n\nÖnceki konuşma:\n${hist}\n\nKullanıcı isteği: ${m}`}];
+   const parts=[{text:`Önceki teftiş tablosu:\n${JSON.stringify(state)}\n\nAna teftiş tablosu:\n${JSON.stringify(main)}\n\nÖnceki konuşma:\n${hist}\n\nKullanıcı isteği: ${m}`}];
    for(const f of ATT.filter(f=>f.type.startsWith('image/')||f.type==='application/pdf'))parts.push(...await fileParts(f));
-   const r=await gem(parts,SYS_C);CHAT.push({r:'K',t:m},{r:'A',t:r.yanit||''});snap();let n=0,mainCnt=0,prevCnt=0;
-   (r.islemler||[]).forEach(p=>{const i=(p.satir|0)-1; const hedef=(p.hedef||'prev').toString().toLowerCase();
-    if(hedef==='main'){
-      const tr=mainTrs[i]; if(!tr) return;
-      if(p.tip==='guncelle'){
-        const fdef=F.find(fd=>fd[0]===p.alan); if(!fdef) return;
-        if(tr.cells[fdef[2]]){ tr.cells[fdef[2]].innerText=fix(p.alan,p.deger); tr.cells[fdef[2]].dispatchEvent(new Event('input',{bubbles:true})); n++; mainCnt++; }
-      } else if(p.tip==='sil'){ tr.remove(); n++; mainCnt++; }
-      else if(p.tip==='ekle' && p.veri){
-        if(window.addManualRow){ addManualRow(); } else { const tbo=$('#dataTable tbody'); const row=document.createElement('tr'); for(let k=0;k<NCOL;k++){const td=document.createElement('td');td.contentEditable='true';row.appendChild(td);} tbo.appendChild(row); }
-        norm(); const nt=$$('#dataTable tbody tr').pop();
-        F.forEach(fd=>{ if(p.veri[fd[0]] && nt.cells[fd[2]]) { nt.cells[fd[2]].innerText=fix(fd[0],p.veri[fd[0]]); nt.cells[fd[2]].dispatchEvent(new Event('input',{bubbles:true})); } });
-        n++; mainCnt++;
-      }
-    } else {
-      if(p.tip==='guncelle'&&S[i]&&KEYS.includes(p.alan)){S[i][p.alan]=fix(p.alan,p.deger);n++;prevCnt++;}
-      else if(p.tip==='ekle'&&p.veri){S.push(blank(p.veri));n++;prevCnt++;}
-      else if(p.tip==='sil'&&S[i]){S[i]=null;n++;prevCnt++;}
-    }
+   const r=await gem(parts,SYS_C);CHAT.push({r:'K',t:m},{r:'A',t:r.yanit||''});
+   snap();let nPrev=0,nMain=0;
+   (r.islemler||[]).forEach(p=>{
+     const hedef=(p.hedef||'onceki').toLowerCase();
+     if(hedef==='ana'||hedef==='main'){
+       if(applyMainOp(p))nMain++;
+     }else{
+       const i=(p.satir|0)-1;
+       if(p.tip==='guncelle'&&S[i]&&KEYS.includes(p.alan)){S[i][p.alan]=fix(p.alan,p.deger);nPrev++;}
+       else if(p.tip==='ekle'&&p.veri){S.push(blank(p.veri));nPrev++;}
+       else if(p.tip==='sil'&&S[i]){S[i]=null;nPrev++;}
+     }
    });
-   // Ana tabloda değişiklik olduysa bağlı sistemleri güncelle
-   if(mainCnt>0){
-     if(typeof window.reindexRows==='function') window.reindexRows();
-     if(typeof window.calculateTebSira==='function') window.calculateTebSira();
-     if(typeof window.updateDocRowSelect==='function') window.updateDocRowSelect();
-     norm();
-   }
-   S=S.filter(Boolean); if(!n)UNDO.pop(); persist(); render();
-   say('a',(r.yanit||'Tamam.')+(n?` (${n} değişiklik uygulandı — prev:${prevCnt}, main:${mainCnt}; beğenmezseniz "Geri Al")`:''));
-  }catch(e){say('a','⚠️ '+e.message);}};
+   S=S.filter(Boolean);
+   if(!nPrev&&!nMain)UNDO.pop();
+   persist();render();
+   if(typeof calculateTebSira==='function')calculateTebSira();
+   const toplam=nPrev+nMain;
+   const detay=[nPrev?`${nPrev} önceki teftiş`:'' ,nMain?`${nMain} ana tablo`:'' ].filter(Boolean).join(', ');
+   say('a',(r.yanit||'Tamam.')+(toplam?` (${detay} değişiklik uygulandı — beğenmezseniz "Geri Al")`:''));}
+  catch(e){say('a','⚠️ '+e.message);}};
  $('#pvSend').onclick=send;$('#pvMsg').onkeydown=e=>{if(e.key==='Enter')send();};
  att();render();}
 
@@ -3274,8 +3302,10 @@ function render(){const box=$('#pvRows');if(!box)return;const rows=$$('#dataTabl
   d.querySelectorAll('textarea').forEach(t=>t.oninput=()=>{r[t.dataset.k]=t.value;persist();});
   d.querySelector('[data-d]').onclick=()=>{snap();S.splice(i,1);persist();render();};box.appendChild(d);});}
 
-function autoMatch(s){const rows=$$('#dataTable tbody tr'),sg=dg(s.sgk);
+function autoMatch(s){const rows=$$('#dataTable tbody tr'),sg=dg(s.sgk),rh=dg(s.ruhsatNo),ds=dg(s.dosyaSicil);
  if(sg.length>5){const i=rows.findIndex(r=>{const x=dg(cell(r,18));return x&&(x.includes(sg)||sg.includes(x));});if(i>=0)return i;}
+ if(rh.length>0){const i=rows.findIndex(r=>{const x=dg(cell(r,4));return x&&(x===rh||x.includes(rh)||rh.includes(x));});if(i>=0)return i;}
+ if(ds.length>0){const i=rows.findIndex(r=>{const x=dg(cell(r,19));return x&&(x===ds||x.includes(ds)||ds.includes(x));});if(i>=0)return i;}
  const a=toks(s.unvan);if(!a.size)return -1;let b=-1,bs=.6;
  rows.forEach((r,i)=>{const t=toks(cell(r,17)+' '+cell(r,16));const n=[...a].filter(x=>t.has(x)).length;const sc=n/Math.min(a.size,t.size||99);if(sc>=bs&&(n>=2||a.size===1)){bs=sc;b=i;}});return b;}
 
@@ -3286,17 +3316,13 @@ function compare(){const rows=$$('#dataTable tbody tr');if(!rows.length){toast('
   F.forEach(([k,l,c])=>{const nv=(s[k]||'').trim();if(!nv)return;const ov=cell(tr,c);if(nz(nv)===nz(ov))return;items.push({tr,k,l,c,ov,nv,name:`${mi+1}. ${(cell(tr,16)||cell(tr,17)).slice(0,34)}`});});});
  let d=$('#hkCmp');if(d)d.remove();d=document.createElement('div');d.className='hk-ov open';d.id='hkCmp';d.style.zIndex=3100;
  d.innerHTML=`<div class="hk-box"><div class="hk-hd"><h3>🔍 Farklar: Hangisi Kalsın?</h3><button class="hk-x">&times;</button></div><div class="hk-body">
- ${items.length?`<p style="font-size:.85rem;margin-top:0">Boş alanlarda varsayılan "Önceki rapordan"; dolu ve farklı olanlarda varsayılan "Mevcut". Seçiminizi değiştirebilirsiniz.</p><div style="overflow:auto"><table class="hk-diff"><tr><th>İşyeri</th><th>Alan</th><th>Mevcut (ana tablo)</th><th>Önceki rapordan</th></tr>${items.map((x,i)=>`<tr><td>${esc(x.name)}</td><td>${esc(x.l)}</td><td class="old"><label><input type="radio" name="c${i}" value="o" ${x.ov?'checked':''}> ${esc(x.ov)||'— (boş)'}</label></td><td class="new"><label><input type="radio" name="c${i}" value="n" ${x.ov?'':'checked'}> <span style="white-space:pre-wrap">${esc(x.nv)}</span></label></td></tr>`).join('')}</table></div>`:'<p>Eşleşen satırlarda fark bulunamadı.</p>'}
- ${nomatch.length?`<p style="font-size:.85rem"><b>Ana tabloda eşleşmeyen kayıtlar:</b></p>${nomatch.map(n=>`<label style="display:block;font-size:.84rem"><input type="checkbox" data-nm="${n.si}"> "${esc(n.name)}" için ana tabloya yeni satır ekle</label>`).join('')}<p style="font-size:.78rem;color:var(--text-muted)">Kayıttaki "Eşleştir" listesinden ana tablo satırını elle seçip tekrar karşılaştırabilirsiniz.</p>`:''}
+ ${items.length?`<p style="font-size:.85rem;margin-top:0">Ana tabloda boş olan alanlar için varsayılan "Önceki rapordan"; dolu ve farklı olanlarda varsayılan "Mevcut". Seçiminizi değiştirebilirsiniz.</p><div style="overflow:auto"><table class="hk-diff"><tr><th>İşyeri</th><th>Alan</th><th>Mevcut (ana tablo)</th><th>Önceki rapordan</th></tr>${items.map((x,i)=>`<tr><td>${esc(x.name)}</td><td>${esc(x.l)}</td><td class="old"><label><input type="radio" name="c${i}" value="o" ${x.ov?'checked':''}> ${esc(x.ov)||'— (boş)'}</label></td><td class="new"><label><input type="radio" name="c${i}" value="n" ${x.ov?'':'checked'}> <span style="white-space:pre-wrap">${esc(x.nv)}</span></label></td></tr>`).join('')}</table></div>`:'<p>Eşleşen satırlarda fark bulunamadı.</p>'}
+ ${nomatch.length?`<p style="font-size:.85rem"><b>Ana tabloda eşleşmeyen kayıtlar:</b></p>${nomatch.map(n=>`<label style="display:block;font-size:.84rem"><input type="checkbox" data-nm="${n.si}"> "${esc(n.name)}" için ana tabloya yeni satır ekle</label>`).join('')}<p style="font-size:.78rem;color:var(--text-muted)">Dilerseniz kayıttaki "Eşleştir" listesinden ana tablo satırını elle seçip tekrar karşılaştırabilirsiniz.</p>`:''}
  <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px"><button class="btn btn-outline" id="pvX">Vazgeç</button><button class="btn btn-success" id="pvOk">✅ Seçimleri Ana Tabloya Aktar</button></div></div></div>`;
  document.body.appendChild(d);const cl=()=>d.remove();d.querySelector('.hk-x').onclick=cl;$('#pvX').onclick=cl;
  $('#pvOk').onclick=()=>{let n=0;items.forEach((x,i)=>{const v=d.querySelector(`input[name=c${i}]:checked`);if(v&&v.value==='n'){x.tr.cells[x.c].innerText=x.nv;x.tr.cells[x.c].dispatchEvent(new Event('input',{bubbles:true}));n++;}});
   d.querySelectorAll('[data-nm]:checked').forEach(c=>{const s=S[+c.dataset.nm];if(!s)return;if(window.addManualRow)addManualRow();norm();const tr=$$('#dataTable tbody tr').pop();F.forEach(([k,l,col])=>{if(s[k]&&tr.cells[col])tr.cells[col].innerText=s[k];});n++;});
-  cl();render();toast(`✅ ${n} alan/satır ana tabloya aktarıldı`,'var(--success)');
-  if(typeof window.reindexRows==='function') window.reindexRows();
-  if(typeof window.calculateTebSira==='function') window.calculateTebSira();
-  if(typeof window.updateDocRowSelect==='function') window.updateDocRowSelect();
- };}
+  cl();render();toast(`✅ ${n} alan/satır ana tabloya aktarıldı`,'var(--success)');};}
 
 const ta=$('.table-actions');if(ta&&ta.children.length>1){const b=document.createElement('button');b.className='btn btn-primary';b.style.cssText='padding:6px 12px;font-size:.8rem;background:#0f766e;border:0';b.textContent='📚 Önceki Teftiş Verileri';b.title='Eski rapor / ekran görüntüsünden veri çek, kıyasla, aktar';b.onclick=open;ta.children[1].prepend(b);}
 })();
