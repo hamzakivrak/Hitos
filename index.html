@@ -517,6 +517,7 @@ body.hk-compact td,body.hk-compact th{padding:6px 8px!important}
 <th style="background:#fef3c7; color:#92400e;">Önceki Rapor Tarihi</th>
 <th style="background:#fef3c7; color:#92400e;">Önceki Rapor No</th>
 <th style="background:#fef3c7; color:#92400e;">Önceki Aykırılıklar / Alınması Gerekli Tedbirler</th>
+<th style="background:#ecfccb; color:#3f6212;">Dosya Tablosu (İç İçe Teftişler)</th>
                         </tr>
                     </thead>
                     <tbody oninput="calculateTebSira()"></tbody>
@@ -1695,7 +1696,7 @@ function autoAssignForms() {
                 "TebIsveren": tamUnvan || kisaUnvan, 
                 "TebAdres": d(selectedRow, 1) || d(selectedRow, 2),  
                 "TebSira": d(selectedRow, 39),
-"ÖncekiTeftişBaşlangıç": d(selectedRow, 40), "OncekiTeftisBaslangic": d(selectedRow, 40), "ÖncekiTeftişBitiş": d(selectedRow, 41), "OncekiTeftisBitis": d(selectedRow, 41), "ÖncekiRaporTarihi": d(selectedRow, 42), "ÖncekiRaporNo": d(selectedRow, 43), "ÖncekiAykırılıklar": d(selectedRow, 44), "OncekiAykirliklar": d(selectedRow, 44), "ÖncekiAykırılıklarSatır": d(selectedRow, 44).split(/\n+/).filter(Boolean).join("; "),
+"ÖncekiTeftişBaşlangıç": d(selectedRow, 40), "OncekiTeftisBaslangic": d(selectedRow, 40), "ÖncekiTeftişBitiş": d(selectedRow, 41), "OncekiTeftisBitis": d(selectedRow, 41), "ÖncekiRaporTarihi": d(selectedRow, 42), "ÖncekiRaporNo": d(selectedRow, 43), "ÖncekiAykırılıklar": d(selectedRow, 44), "OncekiAykirliklar": d(selectedRow, 44), "ÖncekiAykırılıklarSatır": d(selectedRow, 44).split(/\n+/).filter(Boolean).join("; "), "DosyaTablosu": d(selectedRow, 45), "DosyaTablosuSatır": d(selectedRow, 45).split(/\n+/).filter(Boolean).join("; "), 
                 "TebligatVarsaMetin1": tebligatMetin1,
                 "TebligatVarsaMetin2": tebligatMetin2
             });
@@ -1898,7 +1899,7 @@ function autoAssignForms() {
                 "TebCrTarih": tebCrTarih, "TebDavTarih": tebDavTarih, "TebDavGün": tebDavGun, "TebDavSaat": d(row, 37),
                 "TebDavAdres": tebDavAdres, "TebIsveren": tamUnvan || kisaUnvan, "TebAdres": d(row, 1) || d(row, 2),  
                 "TebSira": d(row, 39),
-"ÖncekiTeftişBaşlangıç": d(row, 40), "OncekiTeftisBaslangic": d(row, 40), "ÖncekiTeftişBitiş": d(row, 41), "OncekiTeftisBitis": d(row, 41), "ÖncekiRaporTarihi": d(row, 42), "ÖncekiRaporNo": d(row, 43), "ÖncekiAykırılıklar": d(row, 44), "OncekiAykirliklar": d(row, 44), "ÖncekiAykırılıklarSatır": d(row, 44).split(/\n+/).filter(Boolean).join("; "), "TebligatVarsaMetin1": tebligatMetin1, "TebligatVarsaMetin2": tebligatMetin2,
+"ÖncekiTeftişBaşlangıç": d(row, 40), "OncekiTeftisBaslangic": d(row, 40), "ÖncekiTeftişBitiş": d(row, 41), "OncekiTeftisBitis": d(row, 41), "ÖncekiRaporTarihi": d(row, 42), "ÖncekiRaporNo": d(row, 43), "ÖncekiAykırılıklar": d(row, 44), "OncekiAykirliklar": d(row, 44), "ÖncekiAykırılıklarSatır": d(row, 44).split(/\n+/).filter(Boolean).join("; "), "TebligatVarsaMetin1": tebligatMetin1, "TebligatVarsaMetin2": tebligatMetin2, "DosyaTablosu": d(row, 45), "DosyaTablosuSatır": d(row, 45).split(/\n+/).filter(Boolean).join("; "),
                 "RaporKonusu": "" // Zarf ve Bildirimlerde Rapor Konusu Dinamik XML basımına gerek yok.
             });
 
@@ -2117,7 +2118,7 @@ function autoAssignForms() {
         reader.onload = function(e) {
             const data = new Uint8Array(e.target.result); const workbook = XLSX.read(data, {type: 'array'}); const firstSheet = workbook.Sheets[workbook.SheetNames[0]]; const jsonData = XLSX.utils.sheet_to_json(firstSheet, {header: 1});
             const tbody = document.querySelector("#dataTable tbody"); tbody.innerHTML = ""; let rowIndexCounter = 1;
-            const requiredCols = 44; 
+            const requiredCols = 46; 
 
             jsonData.slice(1).forEach((row, idx) => {
                 let hasContent = false; for(let c=1; c<=requiredCols; c++) { if(row[c] !== undefined && row[c] !== null && row[c].toString().trim() !== "") { hasContent = true; break; } }
@@ -2355,7 +2356,7 @@ function autoAssignForms() {
                     projectState.tableData.forEach((rowData) => {
                         let tr = `<tr tabindex="0" onclick="selRow(this)">`;
                             
-                        const requiredCols = 45; 
+                        const requiredCols = 46; 
                         while(rowData.length < requiredCols) {
                             rowData.push(""); 
                         }
@@ -3121,8 +3122,8 @@ function showDiff(out){
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const F=[['unvan','İşveren / Ünvan',17],['adres','Adres',2],['tebligatAdresi','Tebligat Adresi',1],['telefon','Telefon',3],['ruhsatNo','Ruhsat No',4],['sgk','İşyeri SGK Sicil No',18],['dosyaSicil','Dosya Sicil',19],
-['onceki_bas','Önceki Teftiş Başlangıç',40],['onceki_bit','Önceki Teftiş Bitiş',41],['rapor_tarih','Önceki Rapor Tarihi',42],['rapor_no','Önceki Rapor No',43],['aykirilik','Önceki Aykırılıklar / Alınması Gerekli Tedbirler',44]];
-const KEYS=F.map(f=>f[0]), NCOL=45;
+['onceki_bas','Önceki Teftiş Başlangıç',40],['onceki_bit','Önceki Teftiş Bitiş',41],['rapor_tarih','Önceki Rapor Tarihi',42],['rapor_no','Önceki Rapor No',43],['aykirilik','Önceki Aykırılıklar / Alınması Gerekli Tedbirler',44],['dosyaTablosu','Dosya Tablosu (İç İçe Teftişler)',45]];
+const KEYS=F.map(f=>f[0]), NCOL=46;
 const cell=(tr,i)=>(tr.cells[i]?tr.cells[i].innerText:'').trim().replace(/^-$/,'');
 const fold=s=>(s||'').toLocaleLowerCase('tr').replace(/ğ/g,'g').replace(/ü/g,'u').replace(/ş/g,'s').replace(/ı/g,'i').replace(/ö/g,'o').replace(/ç/g,'c');
 const nz=s=>fold(s).replace(/[^a-z0-9]/g,''), dg=s=>String(s||'').replace(/\D/g,'');
@@ -3145,7 +3146,7 @@ if(tb){new MutationObserver(norm).observe(tb,{childList:true});norm();}
 const MAIN_FIELDS={
   tebligatAdresi:1, adres:2, telefon:3, ruhsatNo:4,
   unvan:16, isveren:17, sgk:18, dosyaSicil:19,
-  onceki_bas:40, onceki_bit:41, rapor_tarih:42, rapor_no:43, aykirilik:44
+  onceki_bas:40, onceki_bit:41, rapor_tarih:42, rapor_no:43, aykirilik:44, dosyaTablosu:45
 };
 const MAIN_ALIASES={
   'tebligat adresi':'tebligatAdresi','tebligatadresi':'tebligatAdresi',
@@ -3214,12 +3215,12 @@ async function fileParts(f){const n=f.name.toLowerCase();
  return [{text:`[${f.name}]`},{inline_data:{mime_type:f.type||(n.endsWith('.pdf')?'application/pdf':'image/png'),data:await b64(f)}}];}
 
 const SYS_X=`Sen bir İş Müfettişi asistanısın. Verilen önceki teftiş raporu / ekran görüntüsü / metinlerden HER İŞYERİ için bilgileri çıkar.
-SADECE JSON dizi döndür: [{"unvan":"","adres":"","tebligatAdresi":"","telefon":"","ruhsatNo":"","sgk":"işyeri SGK sicil no","dosyaSicil":"","onceki_bas":"önceki teftiş başlangıç tarihi GG.AA.YYYY","onceki_bit":"önceki teftiş bitiş tarihi GG.AA.YYYY","rapor_tarih":"GG.AA.YYYY","rapor_no":"","aykirilik":["alınması gerekli tedbir / aykırılık 1","..."]}].
+SADECE JSON dizi döndür: [{"unvan":"","adres":"","tebligatAdresi":"","telefon":"","ruhsatNo":"","sgk":"işyeri SGK sicil no","dosyaSicil":"","onceki_bas":"GG.AA.YYYY","onceki_bit":"GG.AA.YYYY","rapor_tarih":"GG.AA.YYYY","rapor_no":"","aykirilik":["madde1","madde2"],"dosyaTablosu":"Belgenin içinde DAHA ESKİ teftişlere ait bir tablo/liste varsa (ör. tarih-tespit-alınan tedbir sütunları olan), satırları 'GG.AA.YYYY | Tespit | Tedbir' biçiminde alt alta yaz. Yoksa boş bırak."}].
 Özellikle raporda geçen "Tebligat Adresi", "tebligat adresi", "tebliğ adresi" gibi ifadeleri tebligatAdresi alanına; "Ruhsat No", "Ruhsat Numarası", "İşyeri Ruhsatı" gibi ifadeleri ruhsatNo alanına aktar.
 Raporda olmayan alanı boş bırak, ASLA uydurma. Aykırılıkları madde madde ayrı dizi öğesi yap.`;
 const SYS_C=`Kullanıcının "önceki teftiş verileri" tablosunu ve ana teftiş tablosunu düzenlemesine yardım eden asistansın.
 İki tabloyu da görebilirsin. Önceki teftiş tablosunun satırları 1'den, ana tablonun satırları da 1'den başlar.
-SADECE JSON döndür: {"yanit":"kısa Türkçe yanıt","islemler":[
+SADECE JSON döndür: {"yanit":"kısa Türkçe yanıt (tablo açıklaması olabilir)","tabloGoster":{"basliklar":["Sütun1","Sütun2"],"satirlar":[["değer","değer"],["...","..."]]},"islemler":[
 {"tip":"guncelle","hedef":"onceki","satir":1,"alan":"adres","deger":"..."},
 {"tip":"guncelle","hedef":"ana","satir":1,"alan":"ruhsatNo","deger":"..."},
 {"tip":"ekle","hedef":"onceki","veri":{"unvan":"..."}},
@@ -3237,7 +3238,7 @@ Tarihler GG.AA.YYYY. Raporda/dosyada olmayan bilgiyi ASLA uydurma. Değişiklik 
 
 // Arayüz
 function css(){if($('#pvCss'))return;const s=document.createElement('style');s.id='pvCss';s.textContent=`.pv-card{border:1px solid var(--border-color);border-radius:14px;padding:12px;margin:10px 0;background:var(--card-bg)}.pv-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px}.pv-g label{font-size:.72rem;color:var(--text-muted);display:block;margin-bottom:2px}.pv-g textarea,.pv-card select,.pv-in{width:100%;font:inherit;font-size:.82rem;padding:6px 8px;border:1px solid var(--border-color);border-radius:8px;background:var(--card-bg);color:var(--text-main)}.pv-chat{max-height:200px;overflow:auto;border:1px solid var(--border-color);border-radius:12px;padding:8px;font-size:.85rem;margin-bottom:8px}.pv-chat .u{text-align:right;color:var(--primary)}.pv-chat p{margin:4px 0}.pv-chip{display:inline-block;background:#eef2ff;border-radius:99px;padding:2px 10px;margin:2px;font-size:.75rem}.pv-h{margin:16px 0 4px;font-size:.95rem}`;document.head.appendChild(s);}
-const TAGS=['ÖncekiTeftişBaşlangıç','ÖncekiTeftişBitiş','ÖncekiRaporTarihi','ÖncekiRaporNo','ÖncekiAykırılıklar','ÖncekiAykırılıklarSatır'];
+const TAGS=['ÖncekiTeftişBaşlangıç','ÖncekiTeftişBitiş','ÖncekiRaporTarihi','ÖncekiRaporNo','ÖncekiAykırılıklar','ÖncekiAykırılıklarSatır','DosyaTablosu','DosyaTablosuSatır'];
 function open(){css();let o=$('#hkPrev');if(o)o.remove();o=document.createElement('div');o.className='hk-ov open';o.id='hkPrev';
  o.innerHTML=`<div class="hk-box" style="width:min(1100px,100%)"><div class="hk-hd"><h3>📚 Önceki Teftiş Veri Merkezi</h3><button class="hk-x">&times;</button></div><div class="hk-body">
  <p style="font-size:.85rem;margin-top:0">Eski rapor (PDF/Word/resim), ekran görüntüsü (Ctrl+V ile yapıştırabilirsiniz) veya metin ekleyin; yapay zekâ adres, sicil no, önceki teftiş tarihleri, rapor tarihi/no ve aykırılıkları tabloya çıkarır. Sonra ana tabloyla kıyaslayıp neyi tutacağınızı siz seçersiniz.</p>
@@ -3246,8 +3247,9 @@ function open(){css();let o=$('#hkPrev');if(o)o.remove();o=document.createElemen
  <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-primary" id="pvRun" style="background:#7c3aed;border:0">🤖 Verileri Çek</button><button class="btn btn-outline" id="pvClr">Kaynakları Temizle</button></div></div>
  <h4 class="pv-h">Önceki Teftiş Tablosu <small id="pvN"></small></h4><div id="pvRows"></div>
  <div style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0"><button class="btn btn-outline" id="pvNew">➕ Satır</button><button class="btn btn-outline" id="pvUndo">↶ Geri Al</button><button class="btn btn-success" id="pvCmp">🔍 Ana Tabloyla Karşılaştır ve Aktar</button></div>
- <h4 class="pv-h">💬 Yapay Zekâ ile Sohbet</h4><div class="pv-chat" id="pvChat"><p><em>Örn: "2. satırın adresini ... yap", "tüm aykırılıkları madde madde yaz", "sicil no 1234 olan satırı sil"</em></p></div>
- <div style="display:flex;gap:8px"><input class="pv-in" id="pvMsg" placeholder="Tabloda ne değiştirmek istersiniz?"><button class="btn btn-primary" id="pvSend">Gönder</button></div>
+ <h4 class="pv-h">💬 Yapay Zekâ ile Sohbet</h4>
+ <div class="pv-chat" id="pvChat" style="max-height:420px"><p><em>Örn: "PDF'deki tüm teftiş bilgilerini tablo halinde dök", "bu tabloyu ana tabloya aktar", "2. satırın adresini ... yap"</em></p></div>
+ <div style="display:flex;gap:8px;align-items:flex-start"><textarea class="pv-in" id="pvMsg" rows="2" placeholder="Ne yapmak istersiniz? (Enter=Gönder, Shift+Enter=alt satır)" style="resize:vertical"></textarea><button class="btn btn-primary" id="pvSend" style="white-space:nowrap">Gönder</button></div>
  <details style="margin-top:14px;font-size:.82rem"><summary><b>Word şablonlarında kullanılacak etiketler</b></summary><p>Şablonunuza şu etiketleri yazın (veri ana tablonun yeni sütunlarından gelir): ${TAGS.map(t=>`<code class="pv-chip">[%${t}%]</code>`).join('')}<br>İsterseniz yalnızca ihtiyacınız olan şablona ekleyin; eklemediğiniz şablonlar değişmez. <code>ÖncekiAykırılıklar</code> alt alta maddeler, <code>…Satır</code> tek satır (;) olarak basılır.</p></details>
  </div></div>`;
  document.body.appendChild(o);const cl=()=>o.remove();o.querySelector('.hk-x').onclick=cl;
@@ -3262,35 +3264,57 @@ function open(){css();let o=$('#hkPrev');if(o)o.remove();o=document.createElemen
  $('#pvNew').onclick=()=>{snap();S.push(blank());persist();render();};
  $('#pvUndo').onclick=()=>{if(!UNDO.length)return;S=JSON.parse(UNDO.pop());persist();render();};
  $('#pvCmp').onclick=compare;
- const say=(c,t)=>{const d=$('#pvChat');d.insertAdjacentHTML('beforeend',`<p class="${c}">${esc(t)}</p>`);d.scrollTop=1e9;};
- const send=async()=>{const m=$('#pvMsg').value.trim();if(!m)return;$('#pvMsg').value='';say('u',m);
-  try{const state=S.map((r,i)=>Object.assign({satir:i+1},Object.fromEntries(KEYS.map(k=>[k,r[k]]))));
-   const main=mainState();
-   const hist=CHAT.slice(-6).map(h=>h.r+': '+h.t).join('\n');
-   const parts=[{text:`Önceki teftiş tablosu:\n${JSON.stringify(state)}\n\nAna teftiş tablosu:\n${JSON.stringify(main)}\n\nÖnceki konuşma:\n${hist}\n\nKullanıcı isteği: ${m}`}];
-   for(const f of ATT.filter(f=>f.type.startsWith('image/')||f.type==='application/pdf'))parts.push(...await fileParts(f));
-   const r=await gem(parts,SYS_C);CHAT.push({r:'K',t:m},{r:'A',t:r.yanit||''});
-   snap();let nPrev=0,nMain=0;
-   (r.islemler||[]).forEach(p=>{
-     const hedef=(p.hedef||'onceki').toLowerCase();
-     if(hedef==='ana'||hedef==='main'){
-       if(applyMainOp(p))nMain++;
-     }else{
-       const i=(p.satir|0)-1;
-       if(p.tip==='guncelle'&&S[i]&&KEYS.includes(p.alan)){S[i][p.alan]=fix(p.alan,p.deger);nPrev++;}
-       else if(p.tip==='ekle'&&p.veri){S.push(blank(p.veri));nPrev++;}
-       else if(p.tip==='sil'&&S[i]){S[i]=null;nPrev++;}
-     }
-   });
-   S=S.filter(Boolean);
-   if(!nPrev&&!nMain)UNDO.pop();
-   persist();render();
-   if(typeof calculateTebSira==='function')calculateTebSira();
-   const toplam=nPrev+nMain;
-   const detay=[nPrev?`${nPrev} önceki teftiş`:'' ,nMain?`${nMain} ana tablo`:'' ].filter(Boolean).join(', ');
-   say('a',(r.yanit||'Tamam.')+(toplam?` (${detay} değişiklik uygulandı — beğenmezseniz "Geri Al")`:''));}
-  catch(e){say('a','⚠️ '+e.message);}};
- $('#pvSend').onclick=send;$('#pvMsg').onkeydown=e=>{if(e.key==='Enter')send();};
+ const say=(c,t,isHtml)=>{const d=$('#pvChat');d.insertAdjacentHTML('beforeend',`<div class="${c}" style="margin:6px 0;padding:8px 10px;border-radius:10px;${c==='u'?'background:#eff6ff;text-align:right':'background:#f8fafc;text-align:left'}">${isHtml?t:esc(t)}</div>`);d.scrollTop=1e9;};
+ function renderTable(t){
+  if(!t||!t.basliklar||!t.satirlar) return '';
+  let h='<div style="overflow:auto;margin-top:8px;border-radius:10px;border:1px solid var(--border-color)"><table style="width:100%;border-collapse:collapse;font-size:.8rem;background:#fff"><thead><tr>';
+  t.basliklar.forEach(x=>h+=`<th style="background:#0f766e;color:#fff;padding:7px 9px;text-align:left;white-space:nowrap">${esc(x)}</th>`);
+  h+='</tr></thead><tbody>';
+  t.satirlar.forEach((r,i)=>{h+=`<tr style="background:${i%2?'#f8fafc':'#fff'}">`;r.forEach(c=>h+=`<td style="padding:6px 9px;border-bottom:1px solid #e2e8f0;vertical-align:top">${esc(c)}</td>`);h+='</tr>';});
+  return h+'</tbody></table></div>';
+}
+
+const send=async()=>{
+  const m=$('#pvMsg').value.trim(); if(!m) return;
+  $('#pvMsg').value=''; say('u', esc(m));
+  try{
+    const state=S.map((r,i)=>Object.assign({satir:i+1},Object.fromEntries(KEYS.map(k=>[k,r[k]]))));
+    const main=mainState();
+    const hist=CHAT.slice(-6).map(h=>h.r+': '+h.t).join('\n');
+    const parts=[{text:`Önceki teftiş tablosu:\n${JSON.stringify(state)}\n\nAna teftiş tablosu:\n${JSON.stringify(main)}\n\nÖnceki konuşma:\n${hist}\n\nKullanıcı isteği: ${m}`}];
+    for(const f of ATT.filter(f=>f.type.startsWith('image/')||f.type==='application/pdf'))parts.push(...await fileParts(f));
+    const r=await gem(parts,SYS_C);
+    CHAT.push({r:'K',t:m},{r:'A',t:r.yanit||''});
+    snap(); let nPrev=0,nMain=0,detay=[];
+    (r.islemler||[]).forEach(p=>{
+      const hedef=(p.hedef||'onceki').toLowerCase();
+      if(hedef==='ana'||hedef==='main'){
+        if(applyMainOp(p)){nMain++;detay.push(`ANA ${p.tip} ${p.satir||''} ${p.alan||''}`);}
+      }else{
+        const i=(p.satir|0)-1;
+        if(p.tip==='guncelle'&&S[i]&&KEYS.includes(p.alan)){S[i][p.alan]=fix(p.alan,p.deger);nPrev++;detay.push(`ÖNCEKİ #${p.satir} ${p.alan}`);}
+        else if(p.tip==='ekle'&&p.veri){S.push(blank(p.veri));nPrev++;detay.push(`ÖNCEKİ +yeni`);}
+        else if(p.tip==='sil'&&S[i]){S[i]=null;nPrev++;detay.push(`ÖNCEKİ -#${p.satir}`);}
+      }
+    });
+    S=S.filter(Boolean);
+    if(!nPrev&&!nMain) UNDO.pop();
+    persist(); render();
+    if(typeof calculateTebSira==='function') calculateTebSira();
+
+    const toplam=nPrev+nMain;
+    let html='';
+    if(r.tabloGoster) html+=renderTable(r.tabloGoster);
+    if(toplam){
+      html+=`<div style="margin-top:8px;padding:8px 12px;background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;font-size:.8rem">
+        <b>✅ ${toplam} değişiklik uygulandı</b> (${nPrev} önceki teftiş${nMain?', '+nMain+' ana tablo':''})
+        ${detay.length?'<div style="margin-top:4px;color:#065f46;font-size:.75rem">'+detay.slice(0,6).join(' • ')+(detay.length>6?' …':'')+'</div>':''}
+      </div>`;
+    }
+    say('a', esc(r.yanit||'Tamam.')+html);
+  }catch(e){ say('a','⚠️ '+esc(e.message)); }
+};
+ $('#pvSend').onclick=send;$('#pvMsg').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}};
  att();render();}
 
 function render(){const box=$('#pvRows');if(!box)return;const rows=$$('#dataTable tbody tr');$('#pvN').textContent=S.length?`(${S.length} kayıt)`:'';
