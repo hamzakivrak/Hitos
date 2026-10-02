@@ -3192,13 +3192,50 @@ function open(){css();let o=$('#hkPrev');if(o)o.remove();o=document.createElemen
  $('#pvUndo').onclick=()=>{if(!UNDO.length)return;S=JSON.parse(UNDO.pop());persist();render();};
  $('#pvCmp').onclick=compare;
  const say=(c,t)=>{const d=$('#pvChat');d.insertAdjacentHTML('beforeend',`<p class="${c}">${esc(t)}</p>`);d.scrollTop=1e9;};
- const send=async()=>{const m=$('#pvMsg').value.trim();if(!m)return;$('#pvMsg').value='';say('u',m);
-  try{const state=S.map((r,i)=>Object.assign({satir:i+1},Object.fromEntries(KEYS.map(k=>[k,r[k]]))));
-   const hist=CHAT.slice(-6).map(h=>h.r+': '+h.t).join('\n');const parts=[{text:`Mevcut tablo:\n${JSON.stringify(state)}\n\nÖnceki konuşma:\n${hist}\n\nKullanıcı isteği: ${m}`}];
-   for(const f of ATT.filter(f=>f.type.startsWith('image/')||f.type==='application/pdf'))parts.push(...await fileParts(f));
-   const r=await gem(parts,SYS_C);CHAT.push({r:'K',t:m},{r:'A',t:r.yanit||''});snap();let n=0;
-   (r.islemler||[]).forEach(p=>{const i=(p.satir|0)-1;if(p.tip==='guncelle'&&S[i]&&KEYS.includes(p.alan)){S[i][p.alan]=fix(p.alan,p.deger);n++;}else if(p.tip==='ekle'&&p.veri){S.push(blank(p.veri));n++;}else if(p.tip==='sil'&&S[i]){S[i]=null;n++;}});
-   S=S.filter(Boolean);if(!n)UNDO.pop();persist();render();say('a',(r.yanit||'Tamam.')+(n?` (${n} değişiklik uygulandı — beğenmezseniz "Geri Al")`:''));}
+ const send=async()=>{const m=$('#pvMsg').value.trim();if(!m)return;$('#pvMsg').value='';say('u',m);   try{     // 1. Orijinal tablo (Ana tablo) ve Önceki teftiş (S) durumunu al     const state=S.map((r,i)=>Object.assign({satir:i+1},Object.fromEntries(KEYS.map(k=>[k,r[k]]))));     const rows=$$('#dataTable tbody tr'); 
+    const mainTableData = rows.map((r, i) => ({
+      satir: i + 1,
+      unvan: cell(r, 16) || cell(r, 17),
+      ruhsatNo: cell(r, 4)
+    }));
+
+    const hist=CHAT.slice(-6).map(h=>h.r+': '+h.t).join('\n');
+    
+    // 2. SYS_C yi anlık olarak güçlendirerek tablo komutlarını tanıt
+    const enhancedSys = SYS_C + `\nAYRICA kullanıcı ana tabloya veri eklemeni isterse (örneğin ruhsat no), "islemler" dizisine şunu ekle: {"tip":"ana_tablo_guncelle", "satir":1, "sutun_index":4, "deger":"12345"}. Sütun indeksleri: Ruhsat No=4, Görüşülen Kişiler=5. Yanıtına hangi veriyi aktardığını kısaca ekle.`;
+    
+    const parts=[{text:`Ana Tablo (Hücre No:4 Ruhsat):\n${JSON.stringify(mainTableData)}\n\nÖnceki Teftiş Tablosu:\n${JSON.stringify(state)}\n\nÖnceki konuşma:\n${hist}\n\nKullanıcı isteği: ${m}`}];
+    for(const f of ATT.filter(f=>f.type.startsWith('image/')||f.type==='application/pdf'))parts.push(...await fileParts(f));
+    
+    const r=await gem(parts,enhancedSys);
+    CHAT.push({r:'K',t:m},{r:'A',t:r.yanit||''});
+    snap(); let n=0; let mainN=0;
+    
+    // 3. Gelen işlemleri ayırt et ve uygula
+    (r.islemler||[]).forEach(p=>{
+      const i=(p.satir|0)-1;
+      if(p.tip==='guncelle'&&S[i]&&KEYS.includes(p.alan)){
+        S[i][p.alan]=fix(p.alan,p.deger); n++;
+      } else if(p.tip==='ekle'&&p.veri){
+        S.push(blank(p.veri)); n++;
+      } else if(p.tip==='sil'&&S[i]){
+        S[i]=null; n++;
+      } else if (p.tip==='ana_tablo_guncelle' && rows[i] && p.sutun_index !== undefined) {
+        // ANA TABLOYA DOĞRUDAN MÜDAHALE
+        const targetCell = rows[i].cells[p.sutun_index];
+        if(targetCell) {
+          targetCell.innerText = String(p.deger);
+          targetCell.dispatchEvent(new Event('input', {bubbles:true}));
+          targetCell.style.backgroundColor = "#dbeafe";
+          setTimeout(() => targetCell.style.backgroundColor = "", 1500);
+          mainN++;
+        }
+      }
+    });
+    
+    S=S.filter(Boolean); if(!n && !mainN) UNDO.pop(); persist(); render();
+    say('a',(r.yanit||'Tamam.')+(n?` (${n} taslak değişikliği)`:'')+(mainN?` (${mainN} ana tablo verisi eklendi)`:''));
+  }
   catch(e){say('a','⚠️ '+e.message);}};
  $('#pvSend').onclick=send;$('#pvMsg').onkeydown=e=>{if(e.key==='Enter')send();};
  att();render();}
