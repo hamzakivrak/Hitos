@@ -9,7 +9,7 @@
     <meta name="theme-color" content="#1e293b">
     <meta name="application-name" content="HitosHK">
     <meta name="apple-mobile-web-app-title" content="HitosHK">
-    <title>HitosHK v76 – İSG Teftiş Otomasyonu</title>
+    <title>HitosHK v77 – İSG Teftiş Otomasyonu</title>
     <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
@@ -323,7 +323,7 @@ body.hk-compact td,body.hk-compact th{padding:6px 8px!important}
     <header class="app-header">
         <div class="app-title">
             <h1>📋 HitosHK</h1>
-            <span class="badge-pro">v76 · Pro Max + Zeki Asistan</span>
+            <span class="badge-pro">v77 · Pro Max + Önceki Teftiş Merkezi</span>
         </div>
         <div style="display:flex; gap:10px; flex-wrap: wrap;">
             <button class="btn btn-success" style="background:#059669; border:none;" onclick="saveProject()">💾 Projeyi Kaydet (.hk)</button>
@@ -512,6 +512,11 @@ body.hk-compact td,body.hk-compact th{padding:6px 8px!important}
                             <th style="background:#e0f2fe; color:#0369a1;">Davet Saati</th>
                             <th style="background:#e0f2fe; color:#0369a1;">Davet Adresi</th>
                             <th style="background:#bae6fd; color:#0284c7;">Teb.Sıra (Oto)</th>
+<th style="background:#fef3c7; color:#92400e;">Önceki Teftiş Başlangıç</th>
+<th style="background:#fef3c7; color:#92400e;">Önceki Teftiş Bitiş</th>
+<th style="background:#fef3c7; color:#92400e;">Önceki Rapor Tarihi</th>
+<th style="background:#fef3c7; color:#92400e;">Önceki Rapor No</th>
+<th style="background:#fef3c7; color:#92400e;">Önceki Aykırılıklar / Alınması Gerekli Tedbirler</th>
                         </tr>
                     </thead>
                     <tbody oninput="calculateTebSira()"></tbody>
@@ -1690,6 +1695,7 @@ function autoAssignForms() {
                 "TebIsveren": tamUnvan || kisaUnvan, 
                 "TebAdres": d(selectedRow, 1) || d(selectedRow, 2),  
                 "TebSira": d(selectedRow, 39),
+"ÖncekiTeftişBaşlangıç": d(selectedRow, 40), "OncekiTeftisBaslangic": d(selectedRow, 40), "ÖncekiTeftişBitiş": d(selectedRow, 41), "OncekiTeftisBitis": d(selectedRow, 41), "ÖncekiRaporTarihi": d(selectedRow, 42), "ÖncekiRaporNo": d(selectedRow, 43), "ÖncekiAykırılıklar": d(selectedRow, 44), "OncekiAykirliklar": d(selectedRow, 44), "ÖncekiAykırılıklarSatır": d(selectedRow, 44).split(/\n+/).filter(Boolean).join("; "),
                 "TebligatVarsaMetin1": tebligatMetin1,
                 "TebligatVarsaMetin2": tebligatMetin2
             });
@@ -1891,7 +1897,8 @@ function autoAssignForms() {
                 "RaporTarihiveNo": raporNoFull, "RaporTarihi": raporSadeceTarih, "OtomasyonNo": d(row, 30), "YIL-AY-GUN": yilAyGun,
                 "TebCrTarih": tebCrTarih, "TebDavTarih": tebDavTarih, "TebDavGün": tebDavGun, "TebDavSaat": d(row, 37),
                 "TebDavAdres": tebDavAdres, "TebIsveren": tamUnvan || kisaUnvan, "TebAdres": d(row, 1) || d(row, 2),  
-                "TebSira": d(row, 39), "TebligatVarsaMetin1": tebligatMetin1, "TebligatVarsaMetin2": tebligatMetin2,
+                "TebSira": d(row, 39),
+"ÖncekiTeftişBaşlangıç": d(row, 40), "OncekiTeftisBaslangic": d(row, 40), "ÖncekiTeftişBitiş": d(row, 41), "OncekiTeftisBitis": d(row, 41), "ÖncekiRaporTarihi": d(row, 42), "ÖncekiRaporNo": d(row, 43), "ÖncekiAykırılıklar": d(row, 44), "OncekiAykirliklar": d(row, 44), "ÖncekiAykırılıklarSatır": d(row, 44).split(/\n+/).filter(Boolean).join("; "), "TebligatVarsaMetin1": tebligatMetin1, "TebligatVarsaMetin2": tebligatMetin2,
                 "RaporKonusu": "" // Zarf ve Bildirimlerde Rapor Konusu Dinamik XML basımına gerek yok.
             });
 
@@ -2088,7 +2095,7 @@ function autoAssignForms() {
     
     function addManualRow() { 
         const tb = document.querySelector('#dataTable tbody'); let rowIdx = tb.rows.length + 1; let tr = `<tr tabindex="0" onclick="selRow(this)"><td style="text-align:center"><strong>${rowIdx}</strong><br><span style="font-size:10px;color:#777">...</span></td>`; 
-        for(let j=0; j<39; j++) { let events = (j===8) ? `oninput="calcDates(this)"` : ""; if([9,10,11,12].includes(j+1)) events += ` onclick="handleCellQuadClick(this)"`; if(j===37) events += ` oninput="propagateDavetAdresi(this)"`; if(j===34) events += ` onclick="handleTebligatAutoFill(this)"`; let st = (j===38) ? ` style="font-weight:bold; color:var(--primary);"` : ""; tr += `<td contenteditable="true" ${events}${st}></td>`; } 
+        for(let j=0; j<44; j++) { let events = (j===8) ? `oninput="calcDates(this)"` : ""; if([9,10,11,12].includes(j+1)) events += ` onclick="handleCellQuadClick(this)"`; if(j===37) events += ` oninput="propagateDavetAdresi(this)"`; if(j===34) events += ` onclick="handleTebligatAutoFill(this)"`; let st = (j===38) ? ` style="font-weight:bold; color:var(--primary);"` : ""; tr += `<td contenteditable="true" ${events}${st}></td>`; } 
         tr += `</tr>`; tb.insertAdjacentHTML('beforeend', tr); const newRow = tb.lastElementChild; selRow(newRow); newRow.scrollIntoView({behavior: "smooth", block: "center"}); updateDocRowSelect();
     }
     
@@ -2110,7 +2117,7 @@ function autoAssignForms() {
         reader.onload = function(e) {
             const data = new Uint8Array(e.target.result); const workbook = XLSX.read(data, {type: 'array'}); const firstSheet = workbook.Sheets[workbook.SheetNames[0]]; const jsonData = XLSX.utils.sheet_to_json(firstSheet, {header: 1});
             const tbody = document.querySelector("#dataTable tbody"); tbody.innerHTML = ""; let rowIndexCounter = 1;
-            const requiredCols = 39; 
+            const requiredCols = 44; 
 
             jsonData.slice(1).forEach((row, idx) => {
                 let hasContent = false; for(let c=1; c<=requiredCols; c++) { if(row[c] !== undefined && row[c] !== null && row[c].toString().trim() !== "") { hasContent = true; break; } }
@@ -2348,7 +2355,7 @@ function autoAssignForms() {
                     projectState.tableData.forEach((rowData) => {
                         let tr = `<tr tabindex="0" onclick="selRow(this)">`;
                             
-                        const requiredCols = 40; 
+                        const requiredCols = 45; 
                         while(rowData.length < requiredCols) {
                             rowData.push(""); 
                         }
@@ -3108,5 +3115,126 @@ function showDiff(out){
 })();
 
 </script>
+<script>
+// ===== HitosHK v77: Önceki Teftiş Veri Merkezi (AI ile çekme, kıyaslama, sohbet, ekran görüntüsü) =====
+(function(){
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const F=[['unvan','İşveren / Ünvan',17],['adres','Adres',2],['sgk','İşyeri SGK Sicil No',18],['dosyaSicil','Dosya Sicil',19],['telefon','Telefon',3],
+['onceki_bas','Önceki Teftiş Başlangıç',40],['onceki_bit','Önceki Teftiş Bitiş',41],['rapor_tarih','Önceki Rapor Tarihi',42],['rapor_no','Önceki Rapor No',43],['aykirilik','Önceki Aykırılıklar / Alınması Gerekli Tedbirler',44]];
+const KEYS=F.map(f=>f[0]), NCOL=45;
+const cell=(tr,i)=>(tr.cells[i]?tr.cells[i].innerText:'').trim().replace(/^-$/,'');
+const fold=s=>(s||'').toLocaleLowerCase('tr').replace(/ğ/g,'g').replace(/ü/g,'u').replace(/ş/g,'s').replace(/ı/g,'i').replace(/ö/g,'o').replace(/ç/g,'c');
+const nz=s=>fold(s).replace(/[^a-z0-9]/g,''), dg=s=>String(s||'').replace(/\D/g,'');
+const STOP=new Set(['ltd','sti','san','tic','as','ve','a','s','sirketi','anonim','limited','ticaret','sanayi']);
+const toks=s=>new Set(fold(s).split(/[^a-z0-9]+/).filter(w=>w&&!STOP.has(w)));
+const toast=(m,c,t)=>{if(window.showToast){showToast(m,c||'var(--primary)'); if(t!==0) setTimeout(window.hideToast,t||3000);}};
+let S=[]; try{S=JSON.parse(localStorage.getItem('hk_prev_rows')||'[]');}catch(e){}
+let ATT=[], CHAT=[], UNDO=[];
+const persist=()=>{try{localStorage.setItem('hk_prev_rows',JSON.stringify(S));}catch(e){}};
+const blank=o=>{const r={m:-2};KEYS.forEach(k=>r[k]=fix(k,o&&o[k]));return r;};
+function fix(k,v){ if(Array.isArray(v)) v=v.map((x,i)=>`${i+1}) ${String(x).replace(/^\s*\d+\s*[\).\-]\s*/,'')}`).join('\n'); return v==null?'':String(v).trim(); }
+const snap=()=>{UNDO.push(JSON.stringify(S)); if(UNDO.length>30)UNDO.shift();};
+
+// Ana tabloya yeni sütunları ekle (eksik hücreleri otomatik tamamlar)
+const tb=$('#dataTable tbody');
+function norm(){$$('#dataTable tbody tr').forEach(tr=>{while(tr.cells.length<NCOL){const td=document.createElement('td');td.contentEditable='true';tr.appendChild(td);}});}
+if(tb){new MutationObserver(norm).observe(tb,{childList:true});norm();}
+
+// Gemini
+async function gem(parts,sys){
+ let p={};try{p=JSON.parse(localStorage.getItem('hk_prefs')||'{}');}catch(e){}
+ const keys=(p.gkey||'').split(/[,;\s\n|]+/).filter(k=>k.length>20);
+ if(!keys.length){if(window.hkOpenSettings)window.hkOpenSettings('a');throw new Error('Önce Ayarlar > Yapay Zekâ bölümüne Gemini API anahtarınızı girin.');}
+ const model=p.gmodel&&p.gmodel.length>5?p.gmodel:'gemini-2.5-flash'; let err;
+ for(const k of keys){try{
+  const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(k)}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({systemInstruction:{parts:[{text:sys}]},contents:[{role:'user',parts}],generationConfig:{responseMimeType:'application/json',temperature:0.1}})});
+  const j=await r.json(); if(!r.ok){err=new Error(j.error&&j.error.message||('HTTP '+r.status));continue;}
+  const t=((j.candidates||[])[0]?.content?.parts||[]).map(x=>x.text||'').join(''); const m=t.match(/[\[{][\s\S]*[\]}]/); return JSON.parse(m?m[0]:t);
+ }catch(e){err=e;}}
+ throw err||new Error('Yanıt alınamadı');
+}
+const b64=f=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(f);});
+async function fileParts(f){const n=f.name.toLowerCase();
+ if(/\.docx$/.test(n)){const z=new PizZip(await f.arrayBuffer());const x=z.file('word/document.xml').asText();return [{text:`[${f.name}]\n`+x.replace(/<\/w:p>/g,'\n').replace(/<w:tab\/>/g,'\t').replace(/<[^>]+>/g,'')}];}
+ if(/\.(txt|csv|md)$/.test(n))return [{text:`[${f.name}]\n`+await f.text()}];
+ if(/\.doc$/.test(n))throw new Error(f.name+': eski .doc desteklenmiyor, .docx veya PDF kullanın.');
+ return [{text:`[${f.name}]`},{inline_data:{mime_type:f.type||(n.endsWith('.pdf')?'application/pdf':'image/png'),data:await b64(f)}}];}
+
+const SYS_X=`Sen bir İş Müfettişi asistanısın. Verilen önceki teftiş raporu / ekran görüntüsü / metinlerden HER İŞYERİ için bilgileri çıkar. SADECE JSON dizi döndür: [{"unvan":"","adres":"","sgk":"işyeri SGK sicil no","dosyaSicil":"","telefon":"","onceki_bas":"önceki teftiş başlangıç tarihi GG.AA.YYYY","onceki_bit":"önceki teftiş bitiş tarihi GG.AA.YYYY","rapor_tarih":"GG.AA.YYYY","rapor_no":"","aykirilik":["alınması gerekli tedbir / aykırılık 1","..."]}]. Raporda olmayan alanı boş bırak, ASLA uydurma. Aykırılıkları madde madde ayrı dizi öğesi yap.`;
+const SYS_C=`Kullanıcının "önceki teftiş verileri" tablosunu düzenlemesine yardım eden asistansın. Satır numaraları 1'den başlar. SADECE JSON döndür: {"yanit":"kısa Türkçe yanıt","islemler":[{"tip":"guncelle","satir":1,"alan":"adres","deger":"..."},{"tip":"ekle","veri":{"unvan":"..."}},{"tip":"sil","satir":2}]}. Geçerli alanlar: ${KEYS.join(', ')}. Tarihler GG.AA.YYYY. Değişiklik gerekmiyorsa islemler boş dizi olsun. Uydurma bilgi yazma.`;
+
+// Arayüz
+function css(){if($('#pvCss'))return;const s=document.createElement('style');s.id='pvCss';s.textContent=`.pv-card{border:1px solid var(--border-color);border-radius:14px;padding:12px;margin:10px 0;background:var(--card-bg)}.pv-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px}.pv-g label{font-size:.72rem;color:var(--text-muted);display:block;margin-bottom:2px}.pv-g textarea,.pv-card select,.pv-in{width:100%;font:inherit;font-size:.82rem;padding:6px 8px;border:1px solid var(--border-color);border-radius:8px;background:var(--card-bg);color:var(--text-main)}.pv-chat{max-height:200px;overflow:auto;border:1px solid var(--border-color);border-radius:12px;padding:8px;font-size:.85rem;margin-bottom:8px}.pv-chat .u{text-align:right;color:var(--primary)}.pv-chat p{margin:4px 0}.pv-chip{display:inline-block;background:#eef2ff;border-radius:99px;padding:2px 10px;margin:2px;font-size:.75rem}.pv-h{margin:16px 0 4px;font-size:.95rem}`;document.head.appendChild(s);}
+const TAGS=['ÖncekiTeftişBaşlangıç','ÖncekiTeftişBitiş','ÖncekiRaporTarihi','ÖncekiRaporNo','ÖncekiAykırılıklar','ÖncekiAykırılıklarSatır'];
+function open(){css();let o=$('#hkPrev');if(o)o.remove();o=document.createElement('div');o.className='hk-ov open';o.id='hkPrev';
+ o.innerHTML=`<div class="hk-box" style="width:min(1100px,100%)"><div class="hk-hd"><h3>📚 Önceki Teftiş Veri Merkezi</h3><button class="hk-x">&times;</button></div><div class="hk-body">
+ <p style="font-size:.85rem;margin-top:0">Eski rapor (PDF/Word/resim), ekran görüntüsü (Ctrl+V ile yapıştırabilirsiniz) veya metin ekleyin; yapay zekâ adres, sicil no, önceki teftiş tarihleri, rapor tarihi/no ve aykırılıkları tabloya çıkarır. Sonra ana tabloyla kıyaslayıp neyi tutacağınızı siz seçersiniz.</p>
+ <div class="pv-card"><input type="file" id="pvF" multiple accept=".pdf,.docx,.txt,.csv,image/*" style="display:none"><button class="btn btn-outline" id="pvAdd">📎 Dosya / Görüntü Ekle</button> <span id="pvAtt"></span>
+ <textarea class="pv-in" id="pvTxt" rows="3" placeholder="İsterseniz rapor metnini buraya yapıştırın..." style="margin-top:8px"></textarea>
+ <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-primary" id="pvRun" style="background:#7c3aed;border:0">🤖 Verileri Çek</button><button class="btn btn-outline" id="pvClr">Kaynakları Temizle</button></div></div>
+ <h4 class="pv-h">Önceki Teftiş Tablosu <small id="pvN"></small></h4><div id="pvRows"></div>
+ <div style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0"><button class="btn btn-outline" id="pvNew">➕ Satır</button><button class="btn btn-outline" id="pvUndo">↶ Geri Al</button><button class="btn btn-success" id="pvCmp">🔍 Ana Tabloyla Karşılaştır ve Aktar</button></div>
+ <h4 class="pv-h">💬 Yapay Zekâ ile Sohbet</h4><div class="pv-chat" id="pvChat"><p><em>Örn: "2. satırın adresini ... yap", "tüm aykırılıkları madde madde yaz", "sicil no 1234 olan satırı sil"</em></p></div>
+ <div style="display:flex;gap:8px"><input class="pv-in" id="pvMsg" placeholder="Tabloda ne değiştirmek istersiniz?"><button class="btn btn-primary" id="pvSend">Gönder</button></div>
+ <details style="margin-top:14px;font-size:.82rem"><summary><b>Word şablonlarında kullanılacak etiketler</b></summary><p>Şablonunuza şu etiketleri yazın (veri ana tablonun yeni sütunlarından gelir): ${TAGS.map(t=>`<code class="pv-chip">[%${t}%]</code>`).join('')}<br>İsterseniz yalnızca ihtiyacınız olan şablona ekleyin; eklemediğiniz şablonlar değişmez. <code>ÖncekiAykırılıklar</code> alt alta maddeler, <code>…Satır</code> tek satır (;) olarak basılır.</p></details>
+ </div></div>`;
+ document.body.appendChild(o);const cl=()=>o.remove();o.querySelector('.hk-x').onclick=cl;
+ const att=()=>{$('#pvAtt').innerHTML=ATT.map((f,i)=>`<span class="pv-chip">${esc(f.name)} <a href="#" data-i="${i}">✕</a></span>`).join('');$$('#pvAtt a').forEach(a=>a.onclick=e=>{e.preventDefault();ATT.splice(+a.dataset.i,1);att();});};
+ const inp=$('#pvF');$('#pvAdd').onclick=()=>inp.click();inp.onchange=()=>{ATT.push(...inp.files);inp.value='';att();};
+ o.addEventListener('paste',e=>{const it=[...(e.clipboardData||{}).items||[]].filter(x=>x.type.startsWith('image/'));if(it.length){e.preventDefault();it.forEach((x,i)=>{const f=x.getAsFile();ATT.push(new File([f],`ekran_goruntusu_${Date.now()}_${i}.png`,{type:f.type}));});att();toast('🖼️ Görüntü eklendi','var(--success)',1800);}});
+ $('#pvClr').onclick=()=>{ATT=[];$('#pvTxt').value='';att();};
+ $('#pvRun').onclick=async()=>{const t=$('#pvTxt').value.trim();if(!ATT.length&&!t){toast('ℹ️ Önce dosya, görüntü veya metin ekleyin');return;}
+  try{toast('🤖 Veriler çıkarılıyor...','var(--warning)',0);let parts=[];for(const f of ATT)parts.push(...await fileParts(f));if(t)parts.push({text:t});
+   const r=await gem(parts,SYS_X);const a=Array.isArray(r)?r:(r.isyerleri||[r]);snap();a.forEach(x=>S.push(blank(x)));persist();render();toast(`✅ ${a.length} işyeri verisi çıkarıldı. Kontrol edip düzeltebilirsiniz.`,'var(--success)',4000);}
+  catch(e){toast('⚠️ '+e.message,'var(--danger)',7000);}};
+ $('#pvNew').onclick=()=>{snap();S.push(blank());persist();render();};
+ $('#pvUndo').onclick=()=>{if(!UNDO.length)return;S=JSON.parse(UNDO.pop());persist();render();};
+ $('#pvCmp').onclick=compare;
+ const say=(c,t)=>{const d=$('#pvChat');d.insertAdjacentHTML('beforeend',`<p class="${c}">${esc(t)}</p>`);d.scrollTop=1e9;};
+ const send=async()=>{const m=$('#pvMsg').value.trim();if(!m)return;$('#pvMsg').value='';say('u',m);
+  try{const state=S.map((r,i)=>Object.assign({satir:i+1},Object.fromEntries(KEYS.map(k=>[k,r[k]]))));
+   const hist=CHAT.slice(-6).map(h=>h.r+': '+h.t).join('\n');const parts=[{text:`Mevcut tablo:\n${JSON.stringify(state)}\n\nÖnceki konuşma:\n${hist}\n\nKullanıcı isteği: ${m}`}];
+   for(const f of ATT.filter(f=>f.type.startsWith('image/')||f.type==='application/pdf'))parts.push(...await fileParts(f));
+   const r=await gem(parts,SYS_C);CHAT.push({r:'K',t:m},{r:'A',t:r.yanit||''});snap();let n=0;
+   (r.islemler||[]).forEach(p=>{const i=(p.satir|0)-1;if(p.tip==='guncelle'&&S[i]&&KEYS.includes(p.alan)){S[i][p.alan]=fix(p.alan,p.deger);n++;}else if(p.tip==='ekle'&&p.veri){S.push(blank(p.veri));n++;}else if(p.tip==='sil'&&S[i]){S[i]=null;n++;}});
+   S=S.filter(Boolean);if(!n)UNDO.pop();persist();render();say('a',(r.yanit||'Tamam.')+(n?` (${n} değişiklik uygulandı — beğenmezseniz "Geri Al")`:''));}
+  catch(e){say('a','⚠️ '+e.message);}};
+ $('#pvSend').onclick=send;$('#pvMsg').onkeydown=e=>{if(e.key==='Enter')send();};
+ att();render();}
+
+function render(){const box=$('#pvRows');if(!box)return;const rows=$$('#dataTable tbody tr');$('#pvN').textContent=S.length?`(${S.length} kayıt)`:'';
+ box.innerHTML=S.length?'':'<p style="font-size:.85rem;color:var(--text-muted)">Henüz kayıt yok. Yukarıdan veri çekin veya "➕ Satır" ile elle ekleyin.</p>';
+ S.forEach((r,i)=>{const d=document.createElement('div');d.className='pv-card';
+  const opts=`<option value="-2">Otomatik eşleştir</option><option value="-1">Eşleştirme (yeni satır)</option>`+rows.map((tr,j)=>`<option value="${j}" ${r.m===j?'selected':''}>${j+1}. ${esc((cell(tr,16)||cell(tr,17)).slice(0,40))}</option>`).join('');
+  d.innerHTML=`<div style="display:flex;gap:8px;align-items:center;margin-bottom:8px"><b>${i+1}.</b><select data-m>${opts}</select><button class="btn btn-outline" style="color:var(--danger);padding:4px 10px" data-d>🗑️</button></div><div class="pv-g">${F.map(([k,l])=>`<div style="${k==='aykirilik'?'grid-column:1/-1':''}"><label>${l}</label><textarea data-k="${k}" rows="${k==='aykirilik'?4:2}">${esc(r[k])}</textarea></div>`).join('')}</div>`;
+  d.querySelector('[data-m]').value=String(r.m);d.querySelector('[data-m]').onchange=e=>{r.m=+e.target.value;persist();};
+  d.querySelectorAll('textarea').forEach(t=>t.oninput=()=>{r[t.dataset.k]=t.value;persist();});
+  d.querySelector('[data-d]').onclick=()=>{snap();S.splice(i,1);persist();render();};box.appendChild(d);});}
+
+function autoMatch(s){const rows=$$('#dataTable tbody tr'),sg=dg(s.sgk);
+ if(sg.length>5){const i=rows.findIndex(r=>{const x=dg(cell(r,18));return x&&(x.includes(sg)||sg.includes(x));});if(i>=0)return i;}
+ const a=toks(s.unvan);if(!a.size)return -1;let b=-1,bs=.6;
+ rows.forEach((r,i)=>{const t=toks(cell(r,17)+' '+cell(r,16));const n=[...a].filter(x=>t.has(x)).length;const sc=n/Math.min(a.size,t.size||99);if(sc>=bs&&(n>=2||a.size===1)){bs=sc;b=i;}});return b;}
+
+function compare(){const rows=$$('#dataTable tbody tr');if(!rows.length){toast('ℹ️ Ana tabloda satır yok. Önce tabloyu doldurun.');return;}if(!S.length){toast('ℹ️ Önceki teftiş tablosu boş.');return;}
+ const items=[],nomatch=[];
+ S.forEach((s,si)=>{const mi=s.m===-2?autoMatch(s):s.m;const name=s.unvan||('Kayıt '+(si+1));
+  if(mi<0||!rows[mi]){nomatch.push({si,name});return;}const tr=rows[mi];
+  F.forEach(([k,l,c])=>{const nv=(s[k]||'').trim();if(!nv)return;const ov=cell(tr,c);if(nz(nv)===nz(ov))return;items.push({tr,k,l,c,ov,nv,name:`${mi+1}. ${(cell(tr,16)||cell(tr,17)).slice(0,34)}`});});});
+ let d=$('#hkCmp');if(d)d.remove();d=document.createElement('div');d.className='hk-ov open';d.id='hkCmp';d.style.zIndex=3100;
+ d.innerHTML=`<div class="hk-box"><div class="hk-hd"><h3>🔍 Farklar: Hangisi Kalsın?</h3><button class="hk-x">&times;</button></div><div class="hk-body">
+ ${items.length?`<p style="font-size:.85rem;margin-top:0">Ana tabloda boş olan alanlar için varsayılan "Önceki rapordan"; dolu ve farklı olanlarda varsayılan "Mevcut". Seçiminizi değiştirebilirsiniz.</p><div style="overflow:auto"><table class="hk-diff"><tr><th>İşyeri</th><th>Alan</th><th>Mevcut (ana tablo)</th><th>Önceki rapordan</th></tr>${items.map((x,i)=>`<tr><td>${esc(x.name)}</td><td>${esc(x.l)}</td><td class="old"><label><input type="radio" name="c${i}" value="o" ${x.ov?'checked':''}> ${esc(x.ov)||'— (boş)'}</label></td><td class="new"><label><input type="radio" name="c${i}" value="n" ${x.ov?'':'checked'}> <span style="white-space:pre-wrap">${esc(x.nv)}</span></label></td></tr>`).join('')}</table></div>`:'<p>Eşleşen satırlarda fark bulunamadı.</p>'}
+ ${nomatch.length?`<p style="font-size:.85rem"><b>Ana tabloda eşleşmeyen kayıtlar:</b></p>${nomatch.map(n=>`<label style="display:block;font-size:.84rem"><input type="checkbox" data-nm="${n.si}"> "${esc(n.name)}" için ana tabloya yeni satır ekle</label>`).join('')}<p style="font-size:.78rem;color:var(--text-muted)">Dilerseniz kayıttaki "Eşleştir" listesinden ana tablo satırını elle seçip tekrar karşılaştırabilirsiniz.</p>`:''}
+ <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px"><button class="btn btn-outline" id="pvX">Vazgeç</button><button class="btn btn-success" id="pvOk">✅ Seçimleri Ana Tabloya Aktar</button></div></div></div>`;
+ document.body.appendChild(d);const cl=()=>d.remove();d.querySelector('.hk-x').onclick=cl;$('#pvX').onclick=cl;
+ $('#pvOk').onclick=()=>{let n=0;items.forEach((x,i)=>{const v=d.querySelector(`input[name=c${i}]:checked`);if(v&&v.value==='n'){x.tr.cells[x.c].innerText=x.nv;x.tr.cells[x.c].dispatchEvent(new Event('input',{bubbles:true}));n++;}});
+  d.querySelectorAll('[data-nm]:checked').forEach(c=>{const s=S[+c.dataset.nm];if(!s)return;if(window.addManualRow)addManualRow();norm();const tr=$$('#dataTable tbody tr').pop();F.forEach(([k,l,col])=>{if(s[k]&&tr.cells[col])tr.cells[col].innerText=s[k];});n++;});
+  cl();render();toast(`✅ ${n} alan/satır ana tabloya aktarıldı`,'var(--success)');};}
+
+const ta=$('.table-actions');if(ta&&ta.children.length>1){const b=document.createElement('button');b.className='btn btn-primary';b.style.cssText='padding:6px 12px;font-size:.8rem;background:#0f766e;border:0';b.textContent='📚 Önceki Teftiş Verileri';b.title='Eski rapor / ekran görüntüsünden veri çek, kıyasla, aktar';b.onclick=open;ta.children[1].prepend(b);}
+})();
+</script>
+
 </body>
 </html>
