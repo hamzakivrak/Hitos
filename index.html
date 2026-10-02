@@ -3328,5 +3328,110 @@ const ta=$('.table-actions');if(ta&&ta.children.length>1){const b=document.creat
 })();
 </script>
 
+<style>
+/* =========================================================
+   HitosHK - Önceki Aykırılıklar sütunu katlanabilir görünüm
+   Ana tablonun 45. sütunu = index 44
+   ========================================================= */
+
+#dataTable tbody td:nth-child(45) {
+    cursor: pointer;
+    position: relative;
+
+    /* Kapalı durumda yaklaşık 3 satır */
+    max-height: 4.5em;
+    overflow: hidden;
+
+    /* Satırların korunması */
+    white-space: pre-line;
+    line-height: 1.45;
+
+    /* Görsel olarak tıklanabilir olduğunu belli etsin */
+    transition: background-color .15s ease;
+}
+
+/* Üzerine gelince */
+#dataTable tbody td:nth-child(45):hover {
+    background: rgba(37, 99, 235, .06);
+}
+
+/* Açılmış durum */
+#dataTable tbody td:nth-child(45).hk-expanded {
+    max-height: none;
+    overflow: visible;
+}
+
+/* Kapalı hücreye küçük açma işareti */
+#dataTable tbody td:nth-child(45):not(.hk-expanded)::after {
+    content: "  ▾";
+    position: absolute;
+    right: 5px;
+    bottom: 2px;
+    font-size: .75rem;
+    opacity: .65;
+}
+
+/* Açık hücrede kapatma işareti */
+#dataTable tbody td:nth-child(45).hk-expanded::after {
+    content: "  ▴";
+    position: absolute;
+    right: 5px;
+    bottom: 2px;
+    font-size: .75rem;
+    opacity: .65;
+}
+</style>
+
+<script>
+/* =========================================================
+   HitosHK - Önceki Aykırılıklar tıklayınca aç/kapa
+   ========================================================= */
+
+(function () {
+
+    function initPreviousViolations() {
+
+        const table = document.getElementById('dataTable');
+        if (!table) return;
+
+        table.querySelectorAll('tbody td:nth-child(45)').forEach(td => {
+
+            /* Aynı hücreye ikinci kez event bağlamayalım */
+            if (td.dataset.hkCollapseReady === '1') return;
+
+            td.dataset.hkCollapseReady = '1';
+
+            td.addEventListener('click', function (e) {
+
+                /* Hücreye tıklayınca aç/kapa */
+                this.classList.toggle('hk-expanded');
+
+            });
+
+        });
+    }
+
+    /* İlk yükleme */
+    initPreviousViolations();
+
+    /* Sonradan eklenen / değişen satırlar için */
+    const table = document.getElementById('dataTable');
+
+    if (table) {
+
+        const observer = new MutationObserver(function () {
+            initPreviousViolations();
+        });
+
+        observer.observe(table.querySelector('tbody') || table, {
+            childList: true,
+            subtree: true
+        });
+    }
+
+})();
+</script>
+
+    
 </body>
 </html>
