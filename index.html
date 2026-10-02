@@ -3192,56 +3192,14 @@ function open(){css();let o=$('#hkPrev');if(o)o.remove();o=document.createElemen
  $('#pvUndo').onclick=()=>{if(!UNDO.length)return;S=JSON.parse(UNDO.pop());persist();render();};
  $('#pvCmp').onclick=compare;
  const say=(c,t)=>{const d=$('#pvChat');d.insertAdjacentHTML('beforeend',`<p class="${c}">${esc(t)}</p>`);d.scrollTop=1e9;};
- const send=async()=>{
-  const m=$('#pvMsg').value.trim();
-  if(!m)return;
-  $('#pvMsg').value='';   say('u',m);   try{     const state=S.map((satirVeri,i)=>Object.assign({satir:i+1},Object.fromEntries(KEYS.map(k=>[k,satirVeri[k]]))));          // 1. Tablodaki HTML satırlarını alıyoruz     const domRows=$$('#dataTable tbody tr'); 
-    
-    // 2. Tablodan AI için güncel verileri çekiyoruz (Dış fonksiyonlara bağlılığı tamamen kaldırdık)
-    const mainTableData = domRows.map((trElement, i) => ({
-      satir: i + 1,
-      unvan: (trElement.cells[16] ? trElement.cells[16].innerText : '') || (trElement.cells[17] ? trElement.cells[17].innerText : ''),
-      ruhsatNo: trElement.cells[4] ? trElement.cells[4].innerText : ''
-    }));
-
-    const hist=CHAT.slice(-6).map(h=>h.r+': '+h.t).join('\n');
-    
-    // 3. AI Sistem Komutu
-    const enhancedSys = SYS_C + `\nÖNEMLİ: Kullanıcı ana tabloya (örneğin ruhsat no) bir veri eklemeni isterse, islemler dizisine şunu ekle: {"tip":"ana_tablo_guncelle", "satir":1, "sutun_index":4, "deger":"12345"}. Sütun indeksleri: Ruhsat No=4. Yanıtına hangi veriyi aktardığını ekle.`;
-    
-    const parts=[{text:`ANA TABLO (Hücre 4: Ruhsat No):\n${JSON.stringify(mainTableData)}\n\nÖNCEKİ TEFTİŞ TABLOSU:\n${JSON.stringify(state)}\n\nÖnceki konuşma:\n${hist}\n\nKullanıcı isteği: ${m}`}];
-    for(const f of ATT.filter(f=>f.type.startsWith('image/')||f.type==='application/pdf')) parts.push(...await fileParts(f));
-    
-    const r=await gem(parts,enhancedSys);
-    CHAT.push({r:'K',t:m},{r:'A',t:r.yanit||''});
-    snap(); let n=0; let mainN=0;
-    
-    // 4. Komutları Uygula
-    (r.islemler||[]).forEach(p=>{
-      const i=(p.satir|0)-1;
-      if(p.tip==='guncelle'&&S[i]&&KEYS.includes(p.alan)){
-        S[i][p.alan]=fix(p.alan,p.deger); n++;
-      } else if(p.tip==='ekle'&&p.veri){
-        S.push(blank(p.veri)); n++;
-      } else if(p.tip==='sil'&&S[i]){
-        S[i]=null; n++;
-      } else if (p.tip==='ana_tablo_guncelle' && domRows[i] && p.sutun_index !== undefined) {
-        const targetCell = domRows[i].cells[p.sutun_index];
-        if(targetCell) {
-          targetCell.innerText = String(p.deger);
-          targetCell.dispatchEvent(new Event('input', {bubbles:true}));
-          targetCell.style.backgroundColor = "#dbeafe";
-          setTimeout(() => { targetCell.style.backgroundColor = ""; }, 1500);
-          mainN++;
-        }
-      }
-    });
-    
-    S=S.filter(Boolean); if(!n && !mainN) UNDO.pop(); persist(); render();
-    say('a',(r.yanit||'Tamam.')+(n?` (${n} taslak değişikliği)`:'')+(mainN?` (${mainN} ana tablo verisi eklendi)`:''));
-  }
-  catch(e){say('a','⚠️ '+e.message);}
-};
+ const send=async()=>{const m=$('#pvMsg').value.trim();if(!m)return;$('#pvMsg').value='';say('u',m);
+  try{const state=S.map((r,i)=>Object.assign({satir:i+1},Object.fromEntries(KEYS.map(k=>[k,r[k]]))));
+   const hist=CHAT.slice(-6).map(h=>h.r+': '+h.t).join('\n');const parts=[{text:`Mevcut tablo:\n${JSON.stringify(state)}\n\nÖnceki konuşma:\n${hist}\n\nKullanıcı isteği: ${m}`}];
+   for(const f of ATT.filter(f=>f.type.startsWith('image/')||f.type==='application/pdf'))parts.push(...await fileParts(f));
+   const r=await gem(parts,SYS_C);CHAT.push({r:'K',t:m},{r:'A',t:r.yanit||''});snap();let n=0;
+   (r.islemler||[]).forEach(p=>{const i=(p.satir|0)-1;if(p.tip==='guncelle'&&S[i]&&KEYS.includes(p.alan)){S[i][p.alan]=fix(p.alan,p.deger);n++;}else if(p.tip==='ekle'&&p.veri){S.push(blank(p.veri));n++;}else if(p.tip==='sil'&&S[i]){S[i]=null;n++;}});
+   S=S.filter(Boolean);if(!n)UNDO.pop();persist();render();say('a',(r.yanit||'Tamam.')+(n?` (${n} değişiklik uygulandı — beğenmezseniz "Geri Al")`:''));}
+  catch(e){say('a','⚠️ '+e.message);}};
  $('#pvSend').onclick=send;$('#pvMsg').onkeydown=e=>{if(e.key==='Enter')send();};
  att();render();}
 
