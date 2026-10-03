@@ -9,7 +9,16 @@
     <meta name="theme-color" content="#1e293b">
     <meta name="application-name" content="HitosHK">
     <meta name="apple-mobile-web-app-title" content="HitosHK">
-    <title>HitosHK v77 – İSG Teftiş Otomasyonu</title>
+    <titfunction showDiff(out){
+  let d=document.getElementById('hkDiff'); if(d) d.remove(); d=document.createElement('div'); d.className='hk-ov open'; d.id='hkDiff';
+  const ch=out.filter(x=>!x.err), er=out.filter(x=>x.err);
+  d.innerHTML=`<div class="hk-box"><div class="hk-hd"><h3>🤖 Yapay Zekâ Önerileri</h3><button class="hk-x">&times;</button></div><div class="hk-body">
+  ${ch.length?`<p style="font-size:.85rem">Web'de bulunan farklar. Uygulamak istediklerinizi işaretleyin; işaretlemedikleriniz değişmez.</p><table class="hk-diff"><tr><th></th><th>İşyeri</th><th>Alan</th><th>Tablodaki</th><th>Önerilen</th></tr>${ch.map((x,k)=>`<tr><td><input type="checkbox" checked data-k="${k}"></td><td>${esc(x.ad)}</td><td>${x.f}</td><td class="old">${esc(x.old)||'—'}</td><td class="new">${esc(x.nw)}<br><small>${(x.src||[]).map(u=>`<a href="${esc(u)}" target="_blank" rel="noopener">kaynak</a>`).join(' ')}</small></td></tr>`).join('')}</table>`:'<p>Fark bulunamadı: adres ve telefon bilgileri web ile uyumlu veya işyeri web\'de güvenle bulunamadı.</p>'}
+  ${er.map(x=>`<p style="color:var(--danger);font-size:.82rem">⚠️ ${esc(x.ad)}: ${esc(x.err)}</p>`).join('')}
+  <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px"><button class="btn btn-outline" id="hkDc">Kapat</button>${ch.length?'<button class="btn btn-success" id="hkDa">✅ Seçilenleri Tabloya Uygula</button>':''}</div></div></div>`;
+  document.body.appendChild(d); const cl=()=>d.remove(); d.querySelector('.hk-x').onclick=cl; d.querySelector('#hkDc').onclick=cl; d.onclick=e=>{if(e.target===d)cl();};
+  const a=d.querySelector('#hkDa'); if(a) a.onclick=()=>{let n=0; d.querySelectorAll('input[data-k]:checked').forEach(c=>{const x=ch[+c.dataset.k]; x.tr.cells[x.c].innerText=x.nw; x.tr.cells[x.c].dispatchEvent(new Event('input',{bubbles:true})); n++;}); cl(); showToast(`✅ ${n} alan güncellendi`,'var(--success)'); setTimeout(hideToast,2500);};
+}le>HitosHK v77 – İSG Teftiş Otomasyonu</title>
     <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
@@ -3045,74 +3054,259 @@ const ta=$('.table-actions');
 if(ta&&ta.children.length>1){ const b=document.createElement('button'); b.className='btn btn-primary'; b.style.cssText='padding:6px 12px;font-size:.8rem;background:#7c3aed;border:0'; b.textContent='🤖 Yapay Zekâ ile Doğrula'; b.title='İşvereni web\'de arar, adres/telefon farklarını gösterir'; b.onclick=aiVerify; ta.children[1].prepend(b); }
 const cell=(tr,i)=>(tr.cells[i]?tr.cells[i].innerText:'').trim().replace(/^-$/,'');
 async function ask(tr){
-  const ad=cell(tr,16)||cell(tr,17), sehir=cell(tr,20);
-  const prompt=`Türkiye'deki şu işyerini web'de ara: "${ad}" ${sehir?'('+sehir+')':''}. Mevcut kayıt adres: "${cell(tr,2)}", telefon: "${cell(tr,3)}". Yalnızca şu JSON'u döndür, başka metin yazma: {"bulundu":true/false,"adres":"güncel açık adres","telefon":"güncel telefon","not":"kısa gerekçe"}. Emin değilsen bulundu:false yaz.`;
-  const body={contents:[{parts:[{text:prompt}]}]}; if(P.gsearch) body.tools=[{google_search:{}}];
-  
-  // DİKKAT: Sorunu çözen satır burası! 
-  // Artık virgül (,), noktalı virgül (;), düz boşluk veya satır atlaması fark etmeksizin anahtarları ayırıp, hatalı boşlukları temizleyecek.
+  const isveren = cell(tr,17) || cell(tr,16);   // İşveren (17), yoksa Unvan (16)
+  const unvan   = cell(tr,16);                  // Kısa unvan
+  const sgk     = cell(tr,18);                  // SGK Sicil No
+  const sehir   = cell(tr,20);
+  const adres   = cell(tr,2);
+  const telefon = cell(tr,3);
+  const ruhsat  = cell(tr,4);
+
+  const sgkSatir = sgk ? `İşyeri SGK Sicil No: "${sgk}"` : `İşyeri SGK Sicil No: (tabloda boş)`;
+
+  const prompt = `Türkiye'de faaliyet gösteren bir işyerini web'de ara ve doğrula.
+
+Aranacak işyeri bilgileri:
+- İşveren / Tam Ünvan: "${isveren}"
+- Kısa Unvan: "${unvan}"
+- ${sgkSatir}
+- Şehir: "${sehir || '-'}"
+- Mevcut kayıtlı adres: "${adres}"
+- Mevcut kayıtlı telefon: "${telefon}"
+- Mevcut kayıtlı ruhsat no: "${ruhsat}"
+
+Görev:
+1. Yukarıdaki İŞVEREN ADI + SGK SİCİL NO kombinasyonunu birlikte kullanarak işyerini doğrula. SGK sicil no 23 hanelidir ve işyerinin kimlik numarasıdır; bu numarayı öncelikli kriter olarak kullan.
+2. SGK no tabloda boşsa sadece işveren adı + şehir + adres ile doğrula ve sonuçta "sgkKaynagi" alanına "isveren" yaz.
+3. Bulunan bilgiler ile mevcut kayıtlı bilgileri KARŞILAŞTIR.
+4. Sadece şu JSON'u döndür, başka hiçbir metin yazma:
+
+{
+  "bulundu": true/false,
+  "guven": 0-100,
+  "isveren": "doğrulanmış tam ünvan",
+  "unvan": "kısa unvan veya aynı",
+  "sgk": "doğrulanmış SGK sicil no (bulunamadıysa mevcut değeri aynen yaz)",
+  "adres": "güncel açık adres",
+  "telefon": "güncel telefon",
+  "ruhsatNo": "güncel ruhsat no veya boş",
+  "kaynaklar": ["url1","url2"],
+  "not": "kısa gerekçe (max 200 karakter)",
+  "eslesme": "tam" | "kismi" | "yok"
+}
+
+Kurallar:
+- SGK no eşleşiyorsa "eslesme":"tam" yaz ve guven değerini 90+ ver.
+- SGK no tabloda varsa ve web'de farklı bir SGK bulunduysa MUTLAKA uyar: eslesme "kismi" veya "yok" olsun.
+- Uydurma bilgi yazma. Emin değilsen bulundu:false yaz.`;
+
+  const body = { contents:[{parts:[{text:prompt}]}] };
+  if(P.gsearch) body.tools = [{ google_search:{} }];
+
   const keys = (P.gkey||'').split(/[,;\s\n|]+/).map(k => k.trim()).filter(k => k.length > 20);
-  
   if(keys.length === 0) throw new Error('Geçerli bir API Anahtarı bulunamadı.');
 
   let sonHata = null;
-
   for (let i = 0; i < keys.length; i++) {
     try {
       const currentKey = keys[i];
       const modelName = P.gmodel && P.gmodel.length > 5 ? P.gmodel : 'gemini-1.5-flash';
-      
-      const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(modelName)}:generateContent?key=${encodeURIComponent(currentKey)}`,{
+
+      const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(modelName)}:generateContent?key=${encodeURIComponent(currentKey)}`, {
         method:'POST',
         headers:{'Content-Type':'application/json'},
-        body:JSON.stringify(body)
+        body: JSON.stringify(body)
       });
-      
-      const j=await r.json(); 
-      
+
+      const j = await r.json();
       if(!r.ok) {
         sonHata = new Error(j.error && j.error.message || ('HTTP '+r.status));
         console.warn(`[Anahtar ${i+1} Başarısız]:`, sonHata.message);
-        continue; // Bir anahtar patlarsa direkt sonrakine geç
+        continue;
       }
-      
-      const txt=((j.candidates||[])[0]?.content?.parts||[]).map(p=>p.text||'').join(''); 
-      const m=txt.match(/\{[\s\S]*\}/); if(!m) throw new Error('Yanıt JSON formatında okunamadı');
-      const o=JSON.parse(m[0]); 
-      o.kaynak=((j.candidates[0].groundingMetadata||{}).groundingChunks||[]).map(c=>c.web&&c.web.uri).filter(Boolean).slice(0,2); 
-      
-      return o; // İşlem başarılıysa sonucu döndür ve çık
-      
+
+      const txt = ((j.candidates||[])[0]?.content?.parts||[]).map(p=>p.text||'').join('');
+      const m = txt.match(/\{[\s\S]*\}/);
+      if(!m) throw new Error('Yanıt JSON formatında okunamadı');
+      const o = JSON.parse(m[0]);
+
+      const gk = ((j.candidates[0].groundingMetadata||{}).groundingChunks||[])
+        .map(c => c.web && c.web.uri).filter(Boolean).slice(0,3);
+      o.kaynaklar = [...new Set([...(o.kaynaklar||[]), ...gk])].slice(0,3);
+
+      return o;
     } catch(e) {
       sonHata = e;
       console.warn(`[Anahtar ${i+1} Hatası]:`, e.message);
     }
   }
-  
-  // Tüm anahtarlar denendi ve hepsi patladıysa son hatayı ekrana yansıt
   throw sonHata;
 }
 const nz=s=>(s||'').toLocaleLowerCase('tr').replace(/[^a-z0-9ğüşıöç]/g,'');
 async function aiVerify(){
-  if(!P.gkey){openSet('a'); showToast('ℹ️ Önce Gemini API anahtarınızı girin','var(--primary)'); return;}
-  let rows=$$('#dataTable tbody tr'); if(!rows.length){showToast('ℹ️ Tabloda satır yok','var(--primary)');return;}
-  const selRow=$('#dataTable tbody tr.selected'); if(selRow&&confirm('Yalnızca seçili satır doğrulansın mı? (İptal = tüm satırlar)')) rows=[selRow];
-  rows=rows.slice(0,20); const out=[]; let i=0;
-  for(const tr of rows){ i++; showToast(`🤖 Aranıyor ${i}/${rows.length}: ${cell(tr,16)||cell(tr,17)}`,'var(--warning)');
-    try{ const o=await ask(tr); if(o.bulundu){ [['Adres',2,o.adres],['Telefon',3,o.telefon]].forEach(([f,c,v])=>{ if(v&&nz(v)!==nz(cell(tr,c))) out.push({tr,f,c,old:cell(tr,c),nw:v,ad:cell(tr,16)||cell(tr,17),src:o.kaynak,note:o.not}); }); } }
-    catch(e){ out.push({err:e.message,ad:cell(tr,16)||cell(tr,17)}); if(/API key|403|400/i.test(e.message)) break; } }
-  hideToast(); showDiff(out);
+  if(!P.gkey){ openSet('a'); showToast('ℹ️ Önce Gemini API anahtarınızı girin','var(--primary)'); return; }
+  let rows = $$('#dataTable tbody tr');
+  if(!rows.length){ showToast('ℹ️ Tabloda satır yok','var(--primary)'); return; }
+
+  const selRow = $('#dataTable tbody tr.selected');
+  if(selRow && confirm('Yalnızca seçili satır doğrulansın mı? (İptal = tüm satırlar)')) rows = [selRow];
+  rows = rows.slice(0, 20);
+
+  const out = [];
+  let i = 0;
+  for(const tr of rows){
+    i++;
+    const isveren = cell(tr,17) || cell(tr,16);
+    const sgk = cell(tr,18);
+    showToast(`🤖 Aranıyor ${i}/${rows.length}: ${isveren}${sgk?' • SGK: '+sgk:''}`, 'var(--warning)');
+
+    try{
+      const o = await ask(tr);
+      if(o.bulundu){
+        const kontroller = [
+          { key:'isveren',  col:17, label:'İşveren',  nw:o.isveren  },
+          { key:'unvan',    col:16, label:'Unvan',    nw:o.unvan    },
+          { key:'sgk',      col:18, label:'SGK No',   nw:o.sgk      },
+          { key:'adres',    col:2,  label:'Adres',    nw:o.adres    },
+          { key:'telefon',  col:3,  label:'Telefon',  nw:o.telefon  },
+          { key:'ruhsatNo', col:4,  label:'Ruhsat No',nw:o.ruhsatNo }
+        ];
+        kontroller.forEach(k => {
+          if(!k.nw) return;
+          if(nz(k.nw) !== nz(cell(tr,k.col))){
+            out.push({
+              tr, tr_id: tr.rowIndex,
+              key: k.key, f: k.label, c: k.col,
+              old: cell(tr,k.col),
+              nw: k.nw,
+              ad: isveren,
+              sgk: sgk,
+              eslesme: o.eslesme || 'kismi',
+              guven: o.guven || 0,
+              src: o.kaynaklar,
+              note: o.not
+            });
+          }
+        });
+      }
+    } catch(e){
+      out.push({ err: e.message, ad: isveren, sgk: sgk });
+      if(/API key|403|400/i.test(e.message)) break;
+    }
+  }
+  hideToast();
+  showDiff(out);
 }
+
 function showDiff(out){
-  let d=document.getElementById('hkDiff'); if(d) d.remove(); d=document.createElement('div'); d.className='hk-ov open'; d.id='hkDiff';
-  const ch=out.filter(x=>!x.err), er=out.filter(x=>x.err);
-  d.innerHTML=`<div class="hk-box"><div class="hk-hd"><h3>🤖 Yapay Zekâ Önerileri</h3><button class="hk-x">&times;</button></div><div class="hk-body">
-  ${ch.length?`<p style="font-size:.85rem">Web'de bulunan farklar. Uygulamak istediklerinizi işaretleyin; işaretlemedikleriniz değişmez.</p><table class="hk-diff"><tr><th></th><th>İşyeri</th><th>Alan</th><th>Tablodaki</th><th>Önerilen</th></tr>${ch.map((x,k)=>`<tr><td><input type="checkbox" checked data-k="${k}"></td><td>${esc(x.ad)}</td><td>${x.f}</td><td class="old">${esc(x.old)||'—'}</td><td class="new">${esc(x.nw)}<br><small>${(x.src||[]).map(u=>`<a href="${esc(u)}" target="_blank" rel="noopener">kaynak</a>`).join(' ')}</small></td></tr>`).join('')}</table>`:'<p>Fark bulunamadı: adres ve telefon bilgileri web ile uyumlu veya işyeri web\'de güvenle bulunamadı.</p>'}
-  ${er.map(x=>`<p style="color:var(--danger);font-size:.82rem">⚠️ ${esc(x.ad)}: ${esc(x.err)}</p>`).join('')}
-  <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px"><button class="btn btn-outline" id="hkDc">Kapat</button>${ch.length?'<button class="btn btn-success" id="hkDa">✅ Seçilenleri Tabloya Uygula</button>':''}</div></div></div>`;
-  document.body.appendChild(d); const cl=()=>d.remove(); d.querySelector('.hk-x').onclick=cl; d.querySelector('#hkDc').onclick=cl; d.onclick=e=>{if(e.target===d)cl();};
-  const a=d.querySelector('#hkDa'); if(a) a.onclick=()=>{let n=0; d.querySelectorAll('input[data-k]:checked').forEach(c=>{const x=ch[+c.dataset.k]; x.tr.cells[x.c].innerText=x.nw; x.tr.cells[x.c].dispatchEvent(new Event('input',{bubbles:true})); n++;}); cl(); showToast(`✅ ${n} alan güncellendi`,'var(--success)'); setTimeout(hideToast,2500);};
+  let d = document.getElementById('hkDiff'); if(d) d.remove();
+  d = document.createElement('div'); d.className = 'hk-ov open'; d.id = 'hkDiff';
+  d.style.zIndex = 3100;
+
+  const ch = out.filter(x => !x.err);
+  const er = out.filter(x => x.err);
+
+  const gruplar = {};
+  ch.forEach((x, idx) => {
+    const k = x.tr_id;
+    (gruplar[k] = gruplar[k] || []).push({ ...x, _i: idx });
+  });
+
+  let html = `<div class="hk-box"><div class="hk-hd"><h3>🤖 Yapay Zekâ Önerileri (İşveren + SGK Eşleştirmeli)</h3><button class="hk-x">&times;</button></div><div class="hk-body">`;
+
+  if(ch.length){
+    html += `<p style="font-size:.85rem;margin-top:0">
+      Yapay zekâ, <b>İşveren adı + SGK Sicil No</b> kombinasyonunu kullanarak web'de arama yaptı.
+      Aşağıda fark çıkan alanlar listelenmiştir. Uygulamak istediklerinizi işaretleyin.
+    </p>`;
+
+    html += `<div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+      <button class="btn btn-outline" style="padding:4px 10px;font-size:.78rem" id="hkSelAll">☑️ Tümünü Seç</button>
+      <button class="btn btn-outline" style="padding:4px 10px;font-size:.78rem" id="hkSelNone">⬜ Hiçbirini Seçme</button>
+      <button class="btn btn-outline" style="padding:4px 10px;font-size:.78rem" id="hkSelTam">✅ Sadece "Tam Eşleşme"</button>
+      <button class="btn btn-outline" style="padding:4px 10px;font-size:.78rem" id="hkSelGuven">🔒 Sadece Güven ≥ 80</button>
+    </div>`;
+
+    html += `<div style="overflow:auto;max-height:60vh">
+    <table class="hk-diff">
+      <thead><tr>
+        <th style="width:30px"></th>
+        <th>İşveren / SGK</th>
+        <th>Alan</th>
+        <th>Tablodaki Değer</th>
+        <th>AI Önerisi</th>
+        <th>Eşleşme</th>
+      </tr></thead><tbody>`;
+
+    Object.values(gruplar).forEach(grup => {
+      grup.forEach((x) => {
+        const badge = x.eslesme === 'tam'
+          ? '<span style="background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:99px;font-size:.7rem;font-weight:700">TAM</span>'
+          : x.eslesme === 'kismi'
+            ? '<span style="background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:99px;font-size:.7rem;font-weight:700">KISMİ</span>'
+            : '<span style="background:#fee2e2;color:#991b1b;padding:2px 8px;border-radius:99px;font-size:.7rem;font-weight:700">YOK</span>';
+
+        const guven = x.guven ? `<br><small style="color:#64748b">Güven: %${x.guven}</small>` : '';
+
+        html += `<tr>
+          <td><input type="checkbox" checked data-k="${x._i}"></td>
+          <td style="font-size:.78rem">
+            <b>${esc(x.ad || '-')}</b><br>
+            <small style="color:#64748b">SGK: ${esc(x.sgk || '—')}</small>
+            ${guven}
+          </td>
+          <td><b>${esc(x.f)}</b></td>
+          <td class="old" style="font-size:.8rem">${esc(x.old) || '— <em>(boş)</em>'}</td>
+          <td class="new" style="font-size:.8rem">${esc(x.nw)}${x.src && x.src.length ? '<br><small>' + x.src.map(u => `<a href="${esc(u)}" target="_blank" rel="noopener">🔗 kaynak</a>`).join(' ') + '</small>' : ''}</td>
+          <td style="text-align:center">${badge}</td>
+        </tr>`;
+      });
+    });
+
+    html += '</tbody></table></div>';
+  } else {
+    html += '<p>Fark bulunamadı. Adres, telefon, işveren ve SGK bilgileri web ile uyumlu veya işyeri web\'de güvenle bulunamadı.</p>';
+  }
+
+  er.forEach(x => {
+    html += `<p style="color:var(--danger);font-size:.82rem">⚠️ ${esc(x.ad)} (SGK: ${esc(x.sgk||'—')}): ${esc(x.err)}</p>`;
+  });
+
+  html += `<div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px">
+    <button class="btn btn-outline" id="hkDc">Kapat</button>
+    ${ch.length ? '<button class="btn btn-success" id="hkDa">✅ Seçilenleri Tabloya Uygula</button>' : ''}
+  </div></div></div>`;
+
+  d.innerHTML = html;
+  document.body.appendChild(d);
+
+  const cl = () => d.remove();
+  d.querySelector('.hk-x').onclick = cl;
+  d.querySelector('#hkDc').onclick = cl;
+  d.onclick = e => { if(e.target === d) cl(); };
+
+  const setAll = v => d.querySelectorAll('input[data-k]').forEach(c => c.checked = v);
+  const selAll = d.querySelector('#hkSelAll');    if(selAll) selAll.onclick = () => setAll(true);
+  const selNone = d.querySelector('#hkSelNone');  if(selNone) selNone.onclick = () => setAll(false);
+  const selTam = d.querySelector('#hkSelTam');    if(selTam) selTam.onclick = () => d.querySelectorAll('input[data-k]').forEach(c => c.checked = ch[+c.dataset.k].eslesme === 'tam');
+  const selGuven = d.querySelector('#hkSelGuven'); if(selGuven) selGuven.onclick = () => d.querySelectorAll('input[data-k]').forEach(c => c.checked = (ch[+c.dataset.k].guven || 0) >= 80);
+
+  const a = d.querySelector('#hkDa');
+  if(a) a.onclick = () => {
+    let n = 0;
+    d.querySelectorAll('input[data-k]:checked').forEach(c => {
+      const x = ch[+c.dataset.k];
+      x.tr.cells[x.c].innerText = x.nw;
+      x.tr.cells[x.c].dispatchEvent(new Event('input', { bubbles: true }));
+      n++;
+    });
+    if(typeof calculateTebSira === 'function') calculateTebSira();
+    cl();
+    showToast(`✅ ${n} alan tabloya aktarıldı`, 'var(--success)');
+    setTimeout(hideToast, 2500);
+  };
 }
+
 })();
 
 </script>
