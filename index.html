@@ -9,16 +9,7 @@
     <meta name="theme-color" content="#1e293b">
     <meta name="application-name" content="HitosHK">
     <meta name="apple-mobile-web-app-title" content="HitosHK">
-    <titfunction showDiff(out){
-  let d=document.getElementById('hkDiff'); if(d) d.remove(); d=document.createElement('div'); d.className='hk-ov open'; d.id='hkDiff';
-  const ch=out.filter(x=>!x.err), er=out.filter(x=>x.err);
-  d.innerHTML=`<div class="hk-box"><div class="hk-hd"><h3>🤖 Yapay Zekâ Önerileri</h3><button class="hk-x">&times;</button></div><div class="hk-body">
-  ${ch.length?`<p style="font-size:.85rem">Web'de bulunan farklar. Uygulamak istediklerinizi işaretleyin; işaretlemedikleriniz değişmez.</p><table class="hk-diff"><tr><th></th><th>İşyeri</th><th>Alan</th><th>Tablodaki</th><th>Önerilen</th></tr>${ch.map((x,k)=>`<tr><td><input type="checkbox" checked data-k="${k}"></td><td>${esc(x.ad)}</td><td>${x.f}</td><td class="old">${esc(x.old)||'—'}</td><td class="new">${esc(x.nw)}<br><small>${(x.src||[]).map(u=>`<a href="${esc(u)}" target="_blank" rel="noopener">kaynak</a>`).join(' ')}</small></td></tr>`).join('')}</table>`:'<p>Fark bulunamadı: adres ve telefon bilgileri web ile uyumlu veya işyeri web\'de güvenle bulunamadı.</p>'}
-  ${er.map(x=>`<p style="color:var(--danger);font-size:.82rem">⚠️ ${esc(x.ad)}: ${esc(x.err)}</p>`).join('')}
-  <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px"><button class="btn btn-outline" id="hkDc">Kapat</button>${ch.length?'<button class="btn btn-success" id="hkDa">✅ Seçilenleri Tabloya Uygula</button>':''}</div></div></div>`;
-  document.body.appendChild(d); const cl=()=>d.remove(); d.querySelector('.hk-x').onclick=cl; d.querySelector('#hkDc').onclick=cl; d.onclick=e=>{if(e.target===d)cl();};
-  const a=d.querySelector('#hkDa'); if(a) a.onclick=()=>{let n=0; d.querySelectorAll('input[data-k]:checked').forEach(c=>{const x=ch[+c.dataset.k]; x.tr.cells[x.c].innerText=x.nw; x.tr.cells[x.c].dispatchEvent(new Event('input',{bubbles:true})); n++;}); cl(); showToast(`✅ ${n} alan güncellendi`,'var(--success)'); setTimeout(hideToast,2500);};
-}le>HitosHK v77 – İSG Teftiş Otomasyonu</title>
+    <title>HitosHK v77 – İSG Teftiş Otomasyonu</title>
     <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
@@ -553,7 +544,6 @@ body.hk-compact td,body.hk-compact th{padding:6px 8px!important}
             </div>
         </div>
     </div>
-    </section>
 
     <section id="docButtons" class="doc-panel">
         <div class="doc-panel-header">
