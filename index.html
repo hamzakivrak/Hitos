@@ -10,6 +10,7 @@
     <meta name="application-name" content="HitosHK">
     <meta name="apple-mobile-web-app-title" content="HitosHK">
     <title>HitosHK v77 – İSG Teftiş Otomasyonu</title>
+    <link rel="manifest" href="manifest.json">
     <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
@@ -3815,5 +3816,13 @@ const ta=$('.table-actions');if(ta&&ta.children.length>1){const b=document.creat
 </script>
 
     
+<script>
+// HitosHK: çevrimdışı çalışma için service worker kaydı
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('./sw.js').catch(function (e) { console.warn('SW kaydı başarısız:', e); });
+  });
+}
+</script>
 </body>
 </html>
