@@ -3824,5 +3824,73 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
+<script>
+// ===== HitosHK: GitHub'dan güncelleme butonu =====
+(function(){
+  async function hkUpdateApp(full){
+    if(!navigator.onLine){ showToast('📴 İnternet yok. Güncellemek için internete bağlanın.','var(--danger)'); setTimeout(hideToast,4000); return; }
+    const rows=document.querySelectorAll('#dataTable tbody tr').length;
+    const msg=(full?'Tüm uygulama önbelleği temizlenip baştan indirilecek.':'Uygulamanın en son sürümü GitHub\'dan indirilecek.')
+      +'\n\n'+(rows?'⚠️ Tabloda '+rows+' satır var. Sayfa yenileneceği için kaydedilmemiş veriler kaybolur. Önce "Projeyi Kaydet (.hk)" yapın.\n\n':'')
+      +(full?'Not: Tesseract Türkçe OCR verisi de silinir; bir sonraki OCR kullanımında internetle yeniden iner.\n\n':'')
+      +'Devam edilsin mi?';
+    if(!confirm(msg)) return;
+    try{
+      showToast('⏳ GitHub\'dan son sürüm kontrol ediliyor...','var(--warning)');
+      const base=new URL('./',location.href).href;
+      const urls=[...new Set([base, base+'index.html', base+'manifest.json', location.href.split('#')[0].split('?')[0]])];
+      const resp={};
+      // Önce hepsi inmeli; herhangi biri başarısızsa hiçbir şey silinmez/değişmez
+      for(const u of urls){
+        const r=await fetch(u,{cache:'reload'});
+        if(!r.ok) throw new Error('HTTP '+r.status);
+        resp[u]=r;
+      }
+      if('caches' in window){
+        const names=(await caches.keys()).filter(k=>k.startsWith('hitoshk-'));
+        if(full){ await Promise.all(names.map(k=>caches.delete(k))); }
+        else { for(const k of names){ const c=await caches.open(k); for(const u of urls) await c.put(u,resp[u].clone()); } }
+      }
+      if('serviceWorker' in navigator){
+        const reg=await navigator.serviceWorker.getRegistration();
+        if(reg){
+          if(full){ await reg.unregister(); }
+          else {
+            await reg.update();
+            const w=reg.installing||reg.waiting;
+            if(w && w.state!=='activated'){
+              await new Promise(res=>{ w.addEventListener('statechange',()=>{ if(w.state==='activated') res(); }); setTimeout(res,15000); });
+            }
+          }
+        }
+      }
+      showToast('✅ Güncel sürüm alındı, sayfa yenileniyor...','var(--success)');
+      window.addEventListener('beforeunload',e=>e.stopImmediatePropagation(),true);
+      setTimeout(()=>location.reload(),700);
+    }catch(e){
+      showToast('⚠️ Güncelleme yapılamadı, eski sürümle devam ediliyor: '+e.message,'var(--danger)');
+      setTimeout(hideToast,6000);
+    }
+  }
+  window.hkUpdateApp=hkUpdateApp;
+
+  const box=document.querySelector('.hk-actions');
+  if(box){
+    const b=document.createElement('button');
+    b.className='hk-ab'; b.title="GitHub'dan son sürümü indir ve yenile";
+    b.innerHTML='🔄 <span>Güncelle</span>'; b.onclick=()=>hkUpdateApp(false);
+    box.insertBefore(b, box.querySelector('.danger')||null);
+  }
+  const about=document.querySelector('#hkSet .hk-pane[data-p="h"] .hk-man');
+  if(about){
+    about.insertAdjacentHTML('beforeend',
+      '<h4>Güncelleme</h4><p>İnternet varken GitHub\'daki son sürümü indirir. Şablonlarınız, ayarlarınız ve API anahtarlarınız silinmez.</p>'
+      +'<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-primary" id="hkUpd1">🔄 Son sürümü indir</button>'
+      +'<button class="btn btn-outline" id="hkUpd2">🧹 Önbelleği temizle ve baştan indir</button></div>');
+    document.getElementById('hkUpd1').onclick=()=>hkUpdateApp(false);
+    document.getElementById('hkUpd2').onclick=()=>hkUpdateApp(true);
+  }
+})();
+</script>
 </body>
 </html>
